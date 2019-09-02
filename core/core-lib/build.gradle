@@ -1,0 +1,20 @@
+apply plugin: 'com.android.library'
+
+apply from: '../../base.gradle'
+
+dependencies {
+
+    api 'com.github.hslooooooool:abcl-l:1.0'
+
+    /*悬浮菜单*/
+    api 'com.noober.floatmenu:common:1.0.4'
+
+    // 上拉加载下拉刷新
+    api deps.smartrefresh
+    api deps.smartrefresh_header
+
+    // 鲁班图片压缩
+    api deps.zip_luban
+
+    kapt deps.glide.compiler
+}

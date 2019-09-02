@@ -1,0 +1,59 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	package="qsos.app.demo">
+	
+	<application
+		android:name="qsos.app.demo.AppApplication"
+		android:allowBackup="true"
+		android:icon="@drawable/ic_launcher"
+		android:label="@string/app_name"
+		android:networkSecurityConfig="@xml/app_network_security_config"
+		android:supportsRtl="true"
+		android:theme="@style/AppTheme"
+		tools:replace="android:label,android:icon,android:theme">
+		
+		<!--共享文件夹-->
+		<activity
+			android:name="qsos.app.demo.view.activity.SplashActivity"
+			android:configChanges="orientation|keyboardHidden|screenSize"
+			android:screenOrientation="portrait">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<action android:name="android.intent.action.VIEW" />
+				
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		
+		<!--闪屏页-->
+		<activity
+			android:name="qsos.app.demo.view.activity.DemoActivity"
+			android:configChanges="orientation|keyboardHidden|screenSize" />
+		
+		<provider
+			android:name="qsos.app.demo.AppFileProvider"
+			android:authorities="${applicationId}.provider"
+			android:exported="false"
+			android:grantUriPermissions="true">
+			<meta-data
+				android:name="android.support.FILE_PROVIDER_PATHS"
+				android:resource="@xml/app_file_paths" />
+		</provider>
+	</application>
+	
+	<uses-permission
+		android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+		tools:ignore="ProtectedPermissions" />
+	<uses-permission
+		android:name="android.permission.WRITE_MEDIA_STORAGE"
+		tools:ignore="ProtectedPermissions" />
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	<uses-permission android:name="android.permission.CAMERA" />
+	
+	<uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+</manifest>

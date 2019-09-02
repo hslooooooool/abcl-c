@@ -1,0 +1,42 @@
+<resources>
+	
+	<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+		<!--自定义配置主题-->
+		<item name="colorPrimary">@color/colorPrimary</item>
+		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+		<item name="colorAccent">@color/colorAccent</item>
+		<item name="android:homeAsUpIndicator">@android:drawable/ic_menu_manage</item>
+		<item name="android:windowAnimationStyle">@style/AppAnimationActivity</item>
+		<item name="android:windowBackground">@android:color/white</item>
+	</style>
+	
+	<style name="AppTheme.Toolbar" parent="Widget.AppCompat.ActionBar">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">?attr/actionBarSize</item>
+		<item name="android:background">@color/colorPrimary</item>
+		<item name="android:theme">@style/ThemeOverlay.AppCompat.Light</item>
+	</style>
+	
+	<style name="AppAnimationActivity" parent="@android:style/Animation.Activity">
+		<item name="android:activityOpenEnterAnimation">@anim/activity_exit</item>
+		<item name="android:activityOpenExitAnimation">@anim/activity_back_enter</item>
+		<item name="android:activityCloseEnterAnimation">@anim/activity_enter</item>
+		<item name="android:activityCloseExitAnimation">@anim/activity_back_exit</item>
+	</style>
+	
+	<!-- ToolBar 主题设置-->
+	<style name="ToolBarStyle" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+		<item name="android:textColorPrimary">@android:color/black</item>
+		<item name="android:textColorSecondary">@android:color/black</item>
+		<item name="android:actionMenuTextColor">@android:color/black</item>
+		<item name="actionMenuTextColor">@android:color/black</item>
+		<item name="android:textColor">@android:color/black</item>
+		<item name="android:textSize">16sp</item>
+	</style>
+	
+	<!--ToolBar 字体大小-->
+	<style name="ToolBarTextStyle">
+		<item name="android:textSize">16sp</item>
+		<item name="android:textColor">@android:color/black</item>
+	</style>
+</resources>

@@ -1,0 +1,44 @@
+apply plugin: 'com.android.application'
+
+apply from: '../base.gradle'
+
+android {
+    defaultConfig {
+        applicationId "qsos.app.demo"
+    }
+
+    // 自定义apk名称含版本号信息
+    android.applicationVariants.all { variant ->
+        // 更新gradle 4.10.1+使用如下
+        variant.outputs.all {
+            outputFileName = "${apkName()}-${variant.versionCode}-${apkTime()}.apk"
+        }
+    }
+
+    buildTypes {
+        release {
+            // 默认的混淆文件以及我们指定的混淆文件
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            // 默认的混淆文件以及我们指定的混淆文件
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    api project(":core:core-exception")
+    api project(":core:core-netservice")
+}
+
+// 获取编译时间
+static def apkTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
+
+// 获取软件名称
+static def apkName() {
+    // 清松
+    return "QSOS"
+}

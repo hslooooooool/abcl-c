@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!--状态栏颜色-->
+	<color name="colorPrimaryDark">#f4f4f4</color>
+	<!--主题色-->
+	<color name="colorPrimary">#5f9ea0</color>
+	<!--按钮字色-->
+	<color name="colorAccent">#5f9ea0</color>
+	<color name="colorBack">#DBDBDB</color>
+</resources>

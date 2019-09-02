@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:focusable="true"
+	android:focusableInTouchMode="true"
+	android:orientation="horizontal"
+	android:padding="10dp">
+	
+	<ImageView
+		android:id="@+id/item_tweet_head_iv"
+		android:layout_width="40dp"
+		android:layout_height="40dp"
+		android:background="@android:color/darker_gray"
+		android:contentDescription="head"
+		android:scaleType="fitXY" />
+	
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:paddingLeft="10dp"
+		android:paddingRight="10dp">
+		
+		<TextView
+			android:id="@+id/item_tweet_content_tv"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="5dp"
+			android:textColor="@android:color/darker_gray"
+			android:textIsSelectable="true"
+			android:textSize="14sp"
+			app:layout_constraintLeft_toLeftOf="@id/item_tweet_nick_tv"
+			app:layout_constraintTop_toBottomOf="@id/item_tweet_nick_tv"
+			tools:text="测试测试测试测试测试" />
+		
+		<TextView
+			android:id="@+id/item_tweet_nick_tv"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:includeFontPadding="false"
+			android:paddingTop="5dp"
+			android:textColor="@android:color/holo_blue_dark"
+			android:textSize="16sp"
+			android:textStyle="bold"
+			tools:text="测试测试测试测试测试" />
+		
+		<qsos.app.demo.view.widget.image.NineGridLayout
+			android:id="@+id/item_tweet_image_ngl"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="5dp"
+			android:background="@android:color/white"
+			app:layout_constraintLeft_toLeftOf="@id/item_tweet_content_tv"
+			app:layout_constraintTop_toBottomOf="@+id/item_tweet_content_tv"
+			app:space="5dp" />
+		
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+			
+			<TextView
+				android:id="@+id/item_tweet_time_tv"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerVertical="true"
+				android:layout_marginTop="5dp"
+				android:text="刚刚"
+				android:textSize="12sp" />
+			
+			<TextView
+				android:id="@+id/item_tweet_action_tv"
+				android:layout_width="wrap_content"
+				android:layout_height="20dp"
+				android:layout_alignParentEnd="true"
+				android:layout_centerVertical="true"
+				android:layout_marginTop="5dp"
+				android:background="@android:color/darker_gray"
+				android:gravity="center"
+				android:includeFontPadding="false"
+				android:text="  •\t•  "
+				android:textSize="12sp" />
+		
+		</RelativeLayout>
+	</LinearLayout>
+
+</LinearLayout>
