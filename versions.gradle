@@ -48,9 +48,8 @@ arch_core.testing = "androidx.arch.core:core-testing:2.0.1"
 deps.arch_core = arch_core
 
 def retrofit = [:]
-retrofit.runtime = "com.squareup.retrofit2:retrofit:2.5.0"
-retrofit.gson = "com.squareup.retrofit2:converter-gson:2.5.0"
-retrofit.mock = "com.squareup.retrofit2:retrofit-mock:2.5.0"
+retrofit.runtime = "com.squareup.retrofit2:retrofit:2.6.1"
+retrofit.gson = "com.squareup.retrofit2:converter-gson:2.6.1"
 retrofit.adapter = "com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0"
 deps.retrofit = retrofit
 

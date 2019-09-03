@@ -134,7 +134,7 @@ class DemoActivity(
                 mList.clear()
             }
             val oldSize = mList.size
-            if (!it.data.isNullOrEmpty()) {
+            if (it.data != null) {
                 val addSize = it.data!!.size
                 mList.addAll(it.data!!)
 
@@ -188,12 +188,19 @@ class DemoActivity(
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
         menu?.add(0, 1, 0, "LIVE")
-        menu?.add(0, 2, 0, "VLOG")
+        menu?.add(0, 2, 0, "CLEAR")
         menu?.setGroupEnabled(0, true)
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         ToastUtils.showToast(this, "${item.title}")
+        if (item.title == "CLEAR") {
+            mTweetModel.clear({
+                ToastUtils.showToast(this, it ?: "清除成功")
+            }, {
+                ToastUtils.showToast(this, it)
+            })
+        }
         return super.onContextItemSelected(item)
     }
 

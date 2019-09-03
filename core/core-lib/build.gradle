@@ -4,7 +4,7 @@ apply from: '../../base.gradle'
 
 dependencies {
 
-    api 'com.github.hslooooooool:abcl-l:1.0'
+    api 'com.github.hslooooooool:abcl-l:1.2'
 
     // 上拉加载下拉刷新
     api deps.smartrefresh

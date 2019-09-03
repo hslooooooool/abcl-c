@@ -43,6 +43,10 @@ class TweetModelIml : ITweetModel, ViewModel() {
         mTweetRepository.delete(success, fail)
     }
 
+    override fun clear(success: (msg: String?) -> Unit, fail: (msg: String) -> Unit) {
+        mTweetRepository.clear(success, fail)
+    }
+
     override fun put(em: EmployeeBeen, success: (em: EmployeeBeen) -> Unit, fail: (msg: String) -> Unit) {
         mTweetRepository.put(em, success, fail)
     }

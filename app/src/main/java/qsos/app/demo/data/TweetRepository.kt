@@ -12,6 +12,8 @@ import qsos.lib.netservice.ApiEngine
 import qsos.lib.netservice.data.BaseHttpLiveData
 import qsos.lib.netservice.expand.retrofitByDef
 import qsos.lib.netservice.expand.retrofitWithLiveDataByDef
+import retrofit2.HttpException
+import retrofit2.await
 import vip.qsos.exception.GlobalException
 import vip.qsos.exception.GlobalExceptionHelper
 import kotlin.coroutines.CoroutineContext
@@ -78,31 +80,35 @@ class TweetRepository(
                 )
     }
 
+    override fun clear(success: (msg: String?) -> Unit, fail: (msg: String) -> Unit) {
+        CoroutineScope(mCoroutineContext).launch {
+            val result = ApiEngine.createService(ApiTweet::class.java).clear()
+            val list = ApiEngine.createService(ApiTweet::class.java).list().await()
+            mDataTweetList.postValue(list)
+            if (result.code == 200) success(result.msg) else {
+                fail(result.msg ?: "清除失败")
+                GlobalExceptionHelper.caughtException(GlobalException.ServerException(result.code, result.msg
+                        ?: "清除失败"))
+            }
+        }
+    }
+
     override fun put(em: EmployeeBeen, success: (em: EmployeeBeen) -> Unit, fail: (msg: String) -> Unit) {
         CoroutineScope(mCoroutineContext).launch(Dispatchers.Main) {
-            ApiEngine.createService(ApiTweet::class.java).put(em).let { api ->
-                val work = async(Dispatchers.IO) {
-                    try {
-                        api.execute()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        fail(e.message ?: "更新失败")
-                        null
-                    }
+            val sApi = async(Dispatchers.IO) {
+                ApiEngine.createService(ApiTweet::class.java).put(em).execute()
+            }
+            try {
+                val response = sApi.await()
+                if (response.isSuccessful && response.code() == 200 && response.body()?.data != null) {
+                    success(response.body()!!.data!!)
+                } else {
+                    fail(response.errorBody().toString())
                 }
-                work.invokeOnCompletion {
-                    if (work.isCancelled) {
-                        api.cancel()
-                    }
-                }
-                val response = work.await()
-                response?.let {
-                    if (response.isSuccessful && response.code() == 200 && response.body()?.data != null) {
-                        success(response.body()!!.data!!)
-                    } else {
-                        fail(response.errorBody().toString())
-                    }
-                }
+            } catch (http: HttpException) {
+                fail(http.message ?: "网络错误")
+            } catch (e: Throwable) {
+                fail(e.message ?: "请求错误")
             }
         }
     }

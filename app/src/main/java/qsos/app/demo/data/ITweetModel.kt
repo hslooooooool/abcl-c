@@ -20,5 +20,7 @@ interface ITweetRepo {
 
     fun delete(success: () -> Unit, fail: (msg: String) -> Unit)
 
+    fun clear(success: (msg: String?) -> Unit, fail: (msg: String) -> Unit)
+
     fun put(em: EmployeeBeen, success: (em: EmployeeBeen) -> Unit, fail: (msg: String) -> Unit)
 }
