@@ -87,7 +87,7 @@ class FileRepository(
                     fileEntity.url = it!!.url
                     listener.back(fileEntity)
                 }
-                onFailed { _, _ ->
+                onFailed { _, _, _ ->
                     fileEntity.url = null
                     fileEntity.progress = -1
                     fileEntity.loadSuccess = false
@@ -124,7 +124,7 @@ class FileRepository(
             onSuccess {
                 listener.back(it!!)
             }
-            onFailed { code, msg ->
+            onFailed { code, msg, _ ->
                 listener.back(BaseResponse(code, msg))
             }
         }
