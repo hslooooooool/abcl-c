@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import qsos.core.lib.utils.net.NetUtil
 import qsos.lib.netservice.data.BaseHttpLiveData
 import qsos.lib.netservice.data.BaseHttpStatus
 import qsos.lib.netservice.data.BaseResponse
@@ -58,53 +57,42 @@ fun <ResultType> CoroutineScope.retrofitByDef(
 ) {
     val retrofitCoroutine = DefaultRetrofitCoroutineScope.DslByDef<ResultType>()
     retrofitCoroutine.dslByDef()
-    if (!NetUtil.netWorkIsConnected) {
-        retrofitCoroutine.onFailed?.invoke(HttpStatusEnum.NO_NET.code, HttpStatusEnum.NO_NET.msg)
-    } else {
-        this.launch(Dispatchers.Main) {
-            retrofitCoroutine.api?.let { api ->
-                // IO线程执行网络请求
-                val work = async(Dispatchers.IO) {
-                    retrofitCoroutine.onStart?.invoke()
-                    try {
-                        // 协程内同步进行网络请求
-                        api.execute()
-                    } catch (e: ConnectException) {
-                        // 网络连接异常
-                        retrofitCoroutine.onFailed?.invoke(HttpStatusEnum.NO_NET.code, HttpStatusEnum.NO_NET.msg)
-                        null
-                    } catch (e: Exception) {
-                        // 其它异常
-                        e.printStackTrace()
-                        retrofitCoroutine.onFailed?.invoke(HttpStatusEnum.ERROR.code, e.message.toString())
-                        null
-                    }
-                }
-                // 协程关闭时，取消任务
-                work.invokeOnCompletion {
-                    if (work.isCancelled) {
-                        api.cancel()
-                        retrofitCoroutine.clean()
-                    }
-                }
-
-                val response = work.await()
-                retrofitCoroutine.onComplete?.invoke()
-                response?.let {
-                    // 网络请求完成后执行判断
-                    if (response.isSuccessful) {
-                        // 服务器处理成功
-                        if (response.code() == 200) {
-                            retrofitCoroutine.onSuccess?.invoke(response.body()?.data)
-                        } else {
-                            retrofitCoroutine.onFailed?.invoke(response.code(), response.errorBody().toString())
-                        }
-                    } else {
-                        // 服务器处理失败，按服务标准对异常进行统一处理，回执码如：400,401,403,404,500,501,504等
-                        retrofitCoroutine.onFailed?.invoke(response.code(), response.errorBody().toString())
-                    }
+    this.launch(Dispatchers.Main) {
+        var httpStatus = BaseHttpStatus(200, "请求成功")
+        retrofitCoroutine.onStart?.invoke()
+        retrofitCoroutine.api?.let { api ->
+            // IO线程执行网络请求
+            val work = async(Dispatchers.IO) {
+                try {
+                    api.execute()
+                } catch (e: ConnectException) {
+                    httpStatus = BaseHttpStatus.base(HttpStatusEnum.NO_NET)
+                    null
+                } catch (e: Exception) {
+                    httpStatus = BaseHttpStatus(HttpStatusEnum.ERROR.code, e.message
+                            ?: HttpStatusEnum.ERROR.msg)
+                    null
                 }
             }
+            work.invokeOnCompletion {
+                if (work.isCancelled) {
+                    // 释放缓存
+                    api.cancel()
+                    retrofitCoroutine.clean()
+                }
+            }
+            val response = work.await()
+            if (response == null) {
+                retrofitCoroutine.onFailed?.invoke(httpStatus.statusCode, httpStatus.statusMsg, httpStatus.statusError)
+            } else {
+                if (response.isSuccessful) {
+                    retrofitCoroutine.onSuccess?.invoke(response.body()?.data)
+                } else {
+                    retrofitCoroutine.onFailed?.invoke(response.code(), response.errorBody().toString(), null)
+                }
+            }
+
+            retrofitCoroutine.onComplete?.invoke()
         }
     }
 }
@@ -120,43 +108,37 @@ fun <ResultType> CoroutineScope.retrofitWithLiveDataByDef(
 ) {
     val retrofitCoroutine = DefaultRetrofitCoroutineScope.DslByLiveDataWithDef<ResultType>()
     retrofitCoroutine.dslByDef()
-    if (!NetUtil.netWorkIsConnected) {
-        retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.NO_NET))
-    } else {
-        this.launch(Dispatchers.Main) {
-            retrofitCoroutine.api?.let { api ->
-                val work = async(Dispatchers.IO) {
-                    retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.LOADING))
-                    try {
-                        api.execute()
-                    } catch (e: ConnectException) {
-                        retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.NO_NET))
-                        null
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.ERROR))
-                        null
-                    }
+    this.launch(Dispatchers.Main) {
+        var httpStatus = BaseHttpStatus(200, "请求成功")
+        retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.LOADING))
+        retrofitCoroutine.api?.let { api ->
+            val work = async(Dispatchers.IO) {
+                try {
+                    api.execute()
+                } catch (e: ConnectException) {
+                    httpStatus = BaseHttpStatus.base(HttpStatusEnum.NO_NET)
+                    null
+                } catch (e: Exception) {
+                    httpStatus = BaseHttpStatus(HttpStatusEnum.ERROR.code, e.message
+                            ?: HttpStatusEnum.ERROR.msg)
+                    null
                 }
-                work.invokeOnCompletion {
-                    if (work.isCancelled) {
-                        api.cancel()
-                        retrofitCoroutine.clean()
-                    }
+            }
+            work.invokeOnCompletion {
+                if (work.isCancelled) {
+                    api.cancel()
+                    retrofitCoroutine.clean()
                 }
-                val response = work.await()
-                retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.FINISH))
-                response?.let {
-                    if (response.isSuccessful) {
-                        if (response.code() == 200) {
-                            retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.SUCCESS))
-                            retrofitCoroutine.data?.postValue(response.body())
-                        } else {
-                            retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.errorBody().toString()))
-                        }
-                    } else {
-                        retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.errorBody().toString()))
-                    }
+            }
+            val response = work.await()
+            if (response == null) {
+                retrofitCoroutine.data?.httpState?.postValue(httpStatus)
+            } else {
+                if (response.isSuccessful) {
+                    retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.SUCCESS))
+                    retrofitCoroutine.data?.postValue(response.body())
+                } else {
+                    retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.errorBody().toString()))
                 }
             }
         }
@@ -172,44 +154,37 @@ fun <ResultType> CoroutineScope.retrofitWithSuccessByDef(
 ) {
     val retrofitCoroutine = DefaultRetrofitCoroutineScope.DslWithSuccessByDef<ResultType>()
     retrofitCoroutine.dslByDef()
-    if (!NetUtil.netWorkIsConnected) {
-        retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.NO_NET))
-    } else {
-        this.launch(Dispatchers.Main) {
-            retrofitCoroutine.api?.let { api ->
-                val work = async(Dispatchers.IO) {
-                    retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.LOADING))
-                    try {
-                        api.execute()
-                    } catch (e: ConnectException) {
-                        retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.NO_NET))
-                        return@async null
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.ERROR))
-                        return@async null
-                    }
+    this.launch(Dispatchers.Main) {
+        var httpStatus = BaseHttpStatus(200, "请求成功")
+        retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.LOADING))
+        retrofitCoroutine.api?.let { api ->
+            val work = async(Dispatchers.IO) {
+                try {
+                    api.execute()
+                } catch (e: ConnectException) {
+                    httpStatus = BaseHttpStatus.base(HttpStatusEnum.NO_NET)
+                    null
+                } catch (e: Exception) {
+                    httpStatus = BaseHttpStatus(HttpStatusEnum.ERROR.code, e.message
+                            ?: HttpStatusEnum.ERROR.msg)
+                    null
                 }
-                work.invokeOnCompletion {
-                    if (work.isCancelled) {
-                        api.cancel()
-                        retrofitCoroutine.clean()
-                    }
+            }
+            work.invokeOnCompletion {
+                if (work.isCancelled) {
+                    api.cancel()
+                    retrofitCoroutine.clean()
                 }
-                val response = work.await()
-                retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.FINISH))
-                response?.let {
-                    if (response.isSuccessful) {
-                        if (response.code() == 200) {
-                            retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.SUCCESS))
-                            retrofitCoroutine.onSuccess?.invoke(response.body()?.data)
-                        } else {
-                            retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.errorBody().toString()))
-                        }
-
-                    } else {
-                        retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.errorBody().toString()))
-                    }
+            }
+            val response = work.await()
+            if (response == null) {
+                retrofitCoroutine.data?.httpState?.postValue(httpStatus)
+            } else {
+                if (response.isSuccessful) {
+                    retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.SUCCESS))
+                    retrofitCoroutine.onSuccess?.invoke(response.body()?.data)
+                } else {
+                    retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.errorBody().toString()))
                 }
             }
         }

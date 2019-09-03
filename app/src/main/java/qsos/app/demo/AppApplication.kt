@@ -13,7 +13,6 @@ import qsos.lib.base.utils.rx.RxBus
 import timber.log.Timber
 import vip.qsos.exception.GlobalException
 import vip.qsos.exception.GlobalExceptionHelper
-import vip.qsos.exception.GlobalExceptionType
 
 /**
  * @author : 华清松
@@ -55,21 +54,8 @@ open class AppApplication : BaseApplication(), LifecycleOwner {
                 }
     }
 
-    /**统一处理异常，如重新登录、强制下线、异常反馈、网络检查*/
+    /**TODO 统一处理异常，如重新登录、强制下线、异常反馈、网络检查*/
     private fun dealGlobalException(ex: GlobalException) {
-        when (ex.exceptionType) {
-            GlobalExceptionType.HttpException -> {
-                /**在此处理，应在弹出对应处置窗口*/
-            }
-            GlobalExceptionType.ConnectException -> {
-                /**在此处理，应在弹出网络检测窗口，前往网络设置*/
-            }
-            GlobalExceptionType.JsonException, GlobalExceptionType.ServerException, GlobalExceptionType.TimeoutException -> {
-                /**在此无需处理，应在具体请求页面进行交互*/
-            }
-            GlobalExceptionType.NullPointerException, GlobalExceptionType.OtherException -> {
-                /**在此处理，应在弹出异常提交窗口，将异常发送给服务器*/
-            }
-        }
+
     }
 }

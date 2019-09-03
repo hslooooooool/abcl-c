@@ -1,7 +1,6 @@
 package qsos.app.demo.data
 
 import android.annotation.SuppressLint
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
@@ -52,11 +51,10 @@ class TweetRepository(
             onSuccess {
                 success()
             }
-            onFailed { code, error ->
-                Observable.just(error).subscribeOn(AndroidSchedulers.mainThread()).subscribe {
-                    fail(error)
+            onFailed { code: Int, msg: String, error: Throwable? ->
+                GlobalExceptionHelper.caughtException(GlobalException(code, msg, error)) {
+                    fail(msg)
                 }
-                GlobalExceptionHelper.caughtException(GlobalException.ServerException(code, error))
             }
         }
     }
@@ -74,8 +72,7 @@ class TweetRepository(
                             }
                         },
                         {
-                            GlobalExceptionHelper.caughtException(GlobalException.ServerException(500, it.message
-                                    ?: "删除失败"))
+                            GlobalExceptionHelper.caughtException(GlobalException(500, it.message))
                         }
                 )
     }
@@ -87,8 +84,6 @@ class TweetRepository(
             mDataTweetList.postValue(list)
             if (result.code == 200) success(result.msg) else {
                 fail(result.msg ?: "清除失败")
-                GlobalExceptionHelper.caughtException(GlobalException.ServerException(result.code, result.msg
-                        ?: "清除失败"))
             }
         }
     }

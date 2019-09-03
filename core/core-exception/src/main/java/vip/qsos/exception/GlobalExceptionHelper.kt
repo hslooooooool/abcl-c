@@ -33,39 +33,42 @@ object GlobalExceptionHelper : Thread.UncaughtExceptionHandler {
         caughtException(e)
     }
 
-    /**捕获异常并处理*/
+    /**捕获异常并处理
+     * @param e 抛出的异常
+     * @param deal 自行传入后续处理，可空
+     * */
     fun caughtException(e: Throwable, deal: (e: ExceptionEvent) -> Unit? = {
         Timber.tag("网络服务异常").e(e)
     }) {
         val mExceptionEvent: ExceptionEvent = when (e) {
-            is GlobalException.ServerException -> {
+            is GlobalException -> {
                 Timber.tag("网络服务异常").e(e)
-                ExceptionEvent(GlobalException(GlobalExceptionType.ServerException, e), "服务接口访问方式可能错误")
+                ExceptionEvent(GlobalException(e), "网络服务异常")
             }
             is ConnectException -> {
                 Timber.tag("网络连接异常").e(e)
-                ExceptionEvent(GlobalException(GlobalExceptionType.ConnectException, e), "网络连接故障")
+                ExceptionEvent(GlobalException(e), "网络连接故障")
             }
             is SocketTimeoutException -> {
                 Timber.tag("网络连接超时").e(e)
-                ExceptionEvent(GlobalException(GlobalExceptionType.TimeoutException, e), "服务器响应超时")
+                ExceptionEvent(GlobalException(e), "服务器响应超时")
             }
             is NullPointerException -> {
                 Timber.tag("空指针异常").e(e)
-                ExceptionEvent(GlobalException(GlobalExceptionType.NullPointerException, e), "空指针异常")
+                ExceptionEvent(GlobalException(e), "空指针异常")
             }
             is JsonParseException, is JSONException, is ParseException -> {
                 Timber.tag("Json解析异常").e(e)
-                ExceptionEvent(GlobalException(GlobalExceptionType.JsonException, e), "Json解析异常")
+                ExceptionEvent(GlobalException(e), "Json解析异常")
             }
             is HttpException -> handleHttpException(e)
             else -> {
                 Timber.tag("未知异常").e(e)
-                ExceptionEvent(GlobalException(GlobalExceptionType.OtherException, e), "未知异常")
+                ExceptionEvent(GlobalException(e), "未知异常")
             }
         }
         deal(mExceptionEvent)
-        saveCrashFile(mExceptionEvent.name, mExceptionEvent.exception.exception.toString())
+        saveCrashFile(mExceptionEvent.name, mExceptionEvent.toString())
         RxBus.send(mExceptionEvent)
     }
 
@@ -75,43 +78,43 @@ object GlobalExceptionHelper : Thread.UncaughtExceptionHandler {
         return when (e.code()) {
             400 -> {
                 Timber.tag("网络服务异常").w("服务接口访问错误")
-                ExceptionEvent(GlobalException(GlobalExceptionType.ServerException, e), "服务接口访问错误")
+                ExceptionEvent(GlobalException(e.code(), e.message(), e), "服务接口访问错误")
             }
             401 -> {
                 Timber.tag("网络服务异常").w("未授权访问")
-                ExceptionEvent(GlobalException(GlobalExceptionType.HttpException, e), "未授权访问")
+                ExceptionEvent(GlobalException(e.code(), e.message(), e), "未授权访问")
             }
             403 -> {
                 Timber.tag("网络服务异常").w("服务请求被拒绝")
-                ExceptionEvent(GlobalException(GlobalExceptionType.ServerException, e), "服务请求被拒绝")
+                ExceptionEvent(GlobalException(e.code(), e.message(), e), "服务请求被拒绝")
             }
             404 -> {
                 Timber.tag("网络服务异常").w("服务接口不存在")
-                ExceptionEvent(GlobalException(GlobalExceptionType.ServerException, e), "服务接口不存在")
+                ExceptionEvent(GlobalException(e.code(), e.message(), e), "服务接口不存在")
             }
             405 -> {
                 Timber.tag("网络服务异常").w("服务接口已被禁用")
-                ExceptionEvent(GlobalException(GlobalExceptionType.ServerException, e), "服务接口已被禁用")
+                ExceptionEvent(GlobalException(e.code(), e.message(), e), "服务接口已被禁用")
             }
             500 -> {
                 Timber.tag("网络服务异常").w("服务器出现问题")
-                ExceptionEvent(GlobalException(GlobalExceptionType.ServerException, e), "服务器出现问题")
+                ExceptionEvent(GlobalException(e.code(), e.message(), e), "服务器出现问题")
             }
             501 -> {
                 Timber.tag("网络服务异常").w("服务接口访问方式可能错误")
-                ExceptionEvent(GlobalException(GlobalExceptionType.ServerException, e), "服务接口访问方式可能错误")
+                ExceptionEvent(GlobalException(e.code(), e.message(), e), "服务接口访问方式可能错误")
             }
             503 -> {
                 Timber.tag("网络服务异常").w("服务暂时无法访问")
-                ExceptionEvent(GlobalException(GlobalExceptionType.ServerException, e), "服务暂时无法访问")
+                ExceptionEvent(GlobalException(e.code(), e.message(), e), "服务暂时无法访问")
             }
             504 -> {
                 Timber.tag("网络服务异常").w("服务响应超时")
-                ExceptionEvent(GlobalException(GlobalExceptionType.ServerException, e), "服务响应超时")
+                ExceptionEvent(GlobalException(e.code(), e.message(), e), "服务响应超时")
             }
             else -> {
                 Timber.tag("网络服务异常").w("服务未知异常")
-                ExceptionEvent(GlobalException(GlobalExceptionType.ServerException, e), "服务未知异常")
+                ExceptionEvent(GlobalException(e.code(), e.message(), e), "服务未知异常")
             }
         }
     }

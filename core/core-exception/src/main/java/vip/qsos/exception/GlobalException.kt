@@ -2,21 +2,36 @@ package vip.qsos.exception
 
 /**
  * @author : 华清松
+ * 全局异常参数实体
+ */
+interface IGlobalException {
+    /**异常码*/
+    var code: Int
+    /**异常信息*/
+    var msg: String?
+    /**全局异常*/
+    var error: Throwable?
+}
+
+/**
+ * @author : 华清松
  * 全局异常实体
  */
-data class GlobalException(
-        var exceptionType: GlobalExceptionType,
-        var exception: Throwable
-) {
-    /**服务器主动发出的异常，通常为业务限制异常，应在具体页面内部处理*/
-    class ServerException(var code: Int, var msg: String = "服务器错误") : RuntimeException("服务器错误:code=$code\tmsg=$msg") {
-        override fun toString(): String {
-            return "服务器异常 >>>>>> code=$code\tmsg=$msg\n"
-        }
-    }
+class GlobalException : IGlobalException, Exception {
+    override var code: Int = 200
+    override var msg: String? = ""
+    override var error: Throwable? = null
 
-    override fun toString(): String {
-        return "全局异常$exceptionType >>>>>>${exception.localizedMessage}\n"
+    constructor()
+    constructor(error: Throwable){
+        this.code = -1
+        this.msg =  message ?: "未知异常"
+        this.error = error
+    }
+    constructor(code: Int, msg: String?, error: Throwable? = null) {
+        this.code = code
+        this.msg = msg ?: message ?: "未知异常"
+        this.error = error
     }
 }
 
