@@ -65,18 +65,18 @@
 							android:layout_height="60dp"
 							android:layout_alignParentEnd="true"
 							android:layout_margin="20dp"
-							android:background="@android:color/darker_gray"
-							android:scaleType="fitCenter" />
+							android:background="@android:color/holo_green_light"
+							android:scaleType="fitXY" />
 						
 						<TextView
 							android:id="@+id/tweet_list_head_name_tv"
 							android:layout_width="wrap_content"
 							android:layout_height="wrap_content"
 							android:layout_alignTop="@id/tweet_list_head_avatar_iv"
-							android:layout_marginTop="10dp"
+							android:layout_marginTop="5dp"
 							android:layout_toStartOf="@+id/tweet_list_head_avatar_iv"
 							android:maxLines="1"
-							android:textColor="@android:color/darker_gray"
+							android:textColor="@android:color/white"
 							android:textSize="14sp"
 							android:textStyle="bold"
 							tools:text="MY NAME" />

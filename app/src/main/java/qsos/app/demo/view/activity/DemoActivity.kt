@@ -26,6 +26,7 @@ import qsos.lib.base.base.adapter.BaseLifeCycleAdapter
 import qsos.lib.base.base.holder.BaseHolder
 import qsos.lib.base.utils.BaseUtils
 import qsos.lib.base.utils.ToastUtils
+import java.util.*
 import kotlin.math.min
 
 /**
@@ -105,11 +106,24 @@ class DemoActivity(
             }
         })
 
+        tweet_list_head_avatar_iv.setOnClickListener {
+            val sEm = mTweetModel.mOne().value?.data
+            if (sEm != null) {
+                sEm.name = Date().time.toString()
+                mTweetModel.put(sEm,
+                        {
+                            updateUserInfo(it)
+                        },
+                        {
+                            ToastUtils.showToast(this, it)
+                        }
+                )
+            }
+        }
+
         /**观测用户数据更新*/
         mTweetModel.mOne().observe(this, Observer {
-            ImageLoaderUtils.display(mContext, tweet_list_head_avatar_iv, it.data?.head)
-            ImageLoaderUtils.display(mContext, item_tweet_head_profile_iv, it.data?.head)
-            tweet_list_head_name_tv.text = it.data?.name
+            if (it.data != null) updateUserInfo(it.data!!)
         })
 
         /**观测推特数据更新*/
@@ -120,12 +134,17 @@ class DemoActivity(
                 mList.clear()
             }
             val oldSize = mList.size
-            val addSize = it.data!!.size
-            mList.addAll(it.data!!)
-            if (mRefresh || oldSize == 0) {
-                mTweetAdapter.notifyDataSetChanged()
+            if (!it.data.isNullOrEmpty()) {
+                val addSize = it.data!!.size
+                mList.addAll(it.data!!)
+
+                if (mRefresh || oldSize == 0) {
+                    mTweetAdapter.notifyDataSetChanged()
+                } else {
+                    mTweetAdapter.notifyItemRangeInserted(oldSize, addSize)
+                }
             } else {
-                mTweetAdapter.notifyItemRangeInserted(oldSize, addSize)
+                ToastUtils.showToast(this, it.msg ?: "服务器错误")
             }
         })
 
@@ -140,7 +159,7 @@ class DemoActivity(
 
         mTweetModel.delete(
                 {
-                    ToastUtils.showToast(this, "删除成功")
+                    println("删除成功")
                 },
                 {
                     ToastUtils.showToast(this, it)
@@ -149,7 +168,7 @@ class DemoActivity(
 
         mTweetModel.addOne(
                 {
-                    ToastUtils.showToast(this, "添加成功")
+                    println("添加成功")
                 },
                 {
                     ToastUtils.showToast(this, it)
@@ -159,6 +178,12 @@ class DemoActivity(
         mTweetModel.getOne()
         mTweetModel.getList()
 
+    }
+
+    private fun updateUserInfo(user: EmployeeBeen) {
+        ImageLoaderUtils.display(mContext, tweet_list_head_avatar_iv, user.head)
+        ImageLoaderUtils.display(mContext, item_tweet_head_profile_iv, user.head)
+        tweet_list_head_name_tv.text = user.name
     }
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {

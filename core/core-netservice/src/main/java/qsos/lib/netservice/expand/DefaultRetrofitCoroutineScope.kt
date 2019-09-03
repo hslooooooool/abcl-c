@@ -97,8 +97,7 @@ fun <ResultType> CoroutineScope.retrofitByDef(
                         if (response.code() == 200) {
                             retrofitCoroutine.onSuccess?.invoke(response.body()?.data)
                         } else {
-                            retrofitCoroutine.onFailed?.invoke(response.body()!!.code, response.body()?.msg
-                                    ?: "服务器异常")
+                            retrofitCoroutine.onFailed?.invoke(response.code(), response.errorBody().toString())
                         }
                     } else {
                         // 服务器处理失败，按服务标准对异常进行统一处理，回执码如：400,401,403,404,500,501,504等
@@ -153,8 +152,7 @@ fun <ResultType> CoroutineScope.retrofitWithLiveDataByDef(
                             retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.SUCCESS))
                             retrofitCoroutine.data?.postValue(response.body())
                         } else {
-                            retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.body()!!.code, response.body()?.msg
-                                    ?: "服务器异常"))
+                            retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.errorBody().toString()))
                         }
                     } else {
                         retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.ERROR))
@@ -206,8 +204,7 @@ fun <ResultType> CoroutineScope.retrofitWithSuccessByDef(
                             retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.SUCCESS))
                             retrofitCoroutine.onSuccess?.invoke(response.body()?.data)
                         } else {
-                            retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.body()!!.code, response.body()?.msg
-                                    ?: "服务器异常"))
+                            retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.errorBody().toString()))
                         }
 
                     } else {

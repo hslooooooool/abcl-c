@@ -31,7 +31,6 @@ dependencies {
     api project(":core:core-exception")
     api project(":core:core-netservice")
 
-
     /*悬浮菜单*/
     api 'com.noober.floatmenu:common:1.0.4'
 

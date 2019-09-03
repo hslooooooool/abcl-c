@@ -6,8 +6,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import qsos.core.lib.utils.net.NetUtil
 import qsos.lib.netservice.data.BaseHttpStatus
-import qsos.lib.netservice.data.HttpStatusEnum
 import qsos.lib.netservice.data.HttpLiveData
+import qsos.lib.netservice.data.HttpStatusEnum
 import retrofit2.Call
 import java.net.ConnectException
 
@@ -143,7 +143,7 @@ fun <ResultType> CoroutineScope.retrofitWithLiveData(
                         retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.SUCCESS))
                         retrofitCoroutine.data?.postValue(response.body())
                     } else {
-                        retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.ERROR))
+                        retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.errorBody().toString()))
                     }
                 }
             }
@@ -191,7 +191,7 @@ fun <ResultType> CoroutineScope.retrofitWithSuccess(
                         retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.SUCCESS))
                         retrofitCoroutine.onSuccess?.invoke(response.body())
                     } else {
-                        retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.ERROR))
+                        retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.errorBody().toString()))
                     }
                 }
             }

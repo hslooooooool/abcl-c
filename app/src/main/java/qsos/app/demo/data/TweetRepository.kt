@@ -5,6 +5,9 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import qsos.lib.netservice.ApiEngine
 import qsos.lib.netservice.data.BaseHttpLiveData
 import qsos.lib.netservice.expand.retrofitByDef
@@ -58,8 +61,8 @@ class TweetRepository(
 
     override fun delete(success: () -> Unit, fail: (msg: String) -> Unit) {
         ApiEngine.createService(ApiTweet::class.java).delete()
-                .observeOn(Schedulers.io())
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         {
                             if (it.code == 200) {
@@ -73,8 +76,34 @@ class TweetRepository(
                                     ?: "删除失败"))
                         }
                 )
-
-
     }
 
+    override fun put(em: EmployeeBeen, success: (em: EmployeeBeen) -> Unit, fail: (msg: String) -> Unit) {
+        CoroutineScope(mCoroutineContext).launch(Dispatchers.Main) {
+            ApiEngine.createService(ApiTweet::class.java).put(em).let { api ->
+                val work = async(Dispatchers.IO) {
+                    try {
+                        api.execute()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        fail(e.message ?: "更新失败")
+                        null
+                    }
+                }
+                work.invokeOnCompletion {
+                    if (work.isCancelled) {
+                        api.cancel()
+                    }
+                }
+                val response = work.await()
+                response?.let {
+                    if (response.isSuccessful && response.code() == 200 && response.body()?.data != null) {
+                        success(response.body()!!.data!!)
+                    } else {
+                        fail(response.errorBody().toString())
+                    }
+                }
+            }
+        }
+    }
 }
