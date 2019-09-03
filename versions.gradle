@@ -47,12 +47,6 @@ arch_core.runtime = "androidx.arch.core:core-runtime:2.0.1"
 arch_core.testing = "androidx.arch.core:core-testing:2.0.1"
 deps.arch_core = arch_core
 
-def retrofit = [:]
-retrofit.runtime = "com.squareup.retrofit2:retrofit:2.6.1"
-retrofit.gson = "com.squareup.retrofit2:converter-gson:2.6.1"
-retrofit.adapter = "com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0"
-deps.retrofit = retrofit
-
 deps.okhttp3_logging = "com.squareup.okhttp3:logging-interceptor:4.0.0-alpha01"
 deps.okhttp3 = "com.squareup.okhttp3:okhttp:4.0.0-alpha01"
 deps.okio = "com.squareup.okio:okio:2.2.2"

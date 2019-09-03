@@ -155,7 +155,7 @@ fun <ResultType> CoroutineScope.retrofitWithLiveDataByDef(
                             retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.errorBody().toString()))
                         }
                     } else {
-                        retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.ERROR))
+                        retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.errorBody().toString()))
                     }
                 }
             }
@@ -208,7 +208,7 @@ fun <ResultType> CoroutineScope.retrofitWithSuccessByDef(
                         }
 
                     } else {
-                        retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.ERROR))
+                        retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.errorBody().toString()))
                     }
                 }
             }
