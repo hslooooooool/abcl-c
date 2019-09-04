@@ -79,3 +79,4 @@ dependencies {
 - [ABCL安卓快速开发框架](https://github.com/hslooooooool/abcl)
 - [ABCL安卓快速开发框架之L层](https://github.com/hslooooooool/abcl-l)
 - [ABCL安卓快速开发框架之C层](https://github.com/hslooooooool/abcl-c)
+- [测试使用的后台代码](https://github.com/hslooooooool/ktorm-demo)
