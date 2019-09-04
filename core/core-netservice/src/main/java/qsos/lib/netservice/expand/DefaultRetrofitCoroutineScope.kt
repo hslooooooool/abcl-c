@@ -69,7 +69,7 @@ fun <ResultType> CoroutineScope.retrofitByDef(
                     httpStatus = BaseHttpStatus(404, e.message, e)
                     null
                 } catch (e: Exception) {
-                    httpStatus = BaseHttpStatus(HttpStatusEnum.ERROR.code, e.message, e)
+                    httpStatus = BaseHttpStatus(-1, e.message, e)
                     null
                 }
             }
@@ -118,7 +118,7 @@ fun <ResultType> CoroutineScope.retrofitWithLiveDataByDef(
                     httpStatus = BaseHttpStatus(404, e.message, e)
                     null
                 } catch (e: Exception) {
-                    httpStatus = BaseHttpStatus(HttpStatusEnum.ERROR.code, e.message, e)
+                    httpStatus = BaseHttpStatus(-1, e.message, e)
                     null
                 }
             }
@@ -163,7 +163,7 @@ fun <ResultType> CoroutineScope.retrofitWithSuccessByDef(
                     httpStatus = BaseHttpStatus(404, e.message, e)
                     null
                 } catch (e: Exception) {
-                    httpStatus = BaseHttpStatus(HttpStatusEnum.ERROR.code, e.message, e)
+                    httpStatus = BaseHttpStatus(-1, e.message, e)
                     null
                 }
             }
