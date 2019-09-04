@@ -5,7 +5,9 @@ package qsos.core.lib.config
  * 配置参数
  */
 object BaseConfig {
-    /**配置是否调试模式*/
+    /**配置是否调试模式
+     * 影响范围：OkHttp日志打印，Glide日志打印
+     * */
     var DEBUG = false
     /**配置请求地址*/
     var BASE_URL = "http://192.168.1.17:8084/"

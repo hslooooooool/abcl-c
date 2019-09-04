@@ -41,14 +41,13 @@ open class AppApplication : BaseApplication(), LifecycleOwner {
         super.onCreate()
 
         BaseConfig.DEBUG = true
+        /**BASE_URL配置*/
         BaseConfig.BASE_URL = "http://192.168.1.11:8084"
 
         /**Timber 日志*/
         Timber.plant(GlobalExceptionHelper.CrashReportingTree())
-
         /**全局异常捕获处理*/
         Thread.setDefaultUncaughtExceptionHandler(GlobalExceptionHelper)
-
         RxBus.toFlow(GlobalExceptionHelper.ExceptionEvent::class.java)
                 .subscribe {
                     dealGlobalException(it.exception)
