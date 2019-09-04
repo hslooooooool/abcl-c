@@ -7,7 +7,6 @@ import com.google.gson.JsonParseException
 import org.json.JSONException
 import qsos.lib.base.base.BaseApplication
 import qsos.lib.base.utils.rx.RxBus
-import retrofit2.HttpException
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -56,7 +55,6 @@ object GlobalExceptionHelper : Thread.UncaughtExceptionHandler {
             is JsonParseException, is JSONException, is ParseException -> {
                 ExceptionEvent(GlobalException(-2, e))
             }
-            is HttpException -> handleHttpException(e)
             else -> {
                 ExceptionEvent(GlobalException(e))
             }
@@ -65,11 +63,6 @@ object GlobalExceptionHelper : Thread.UncaughtExceptionHandler {
         deal(mExceptionEvent)
         // 传递出去，统一处理
         RxBus.send(mExceptionEvent)
-    }
-
-    /**错误码参见 https://blog.csdn.net/Gjc_csdn/article/details/80449996 */
-    private fun handleHttpException(e: HttpException): ExceptionEvent {
-        return ExceptionEvent(GlobalException(e.code(), e.message(), e))
     }
 
     /**Timber日志输出*/

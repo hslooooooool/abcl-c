@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.app_item_tweet.view.*
 import qsos.app.demo.R
 import qsos.app.demo.data.EmployeeBeen
 import qsos.app.demo.data.TweetModelIml
-import qsos.app.demo.router.DemoPath
+import qsos.app.demo.router.TweetPath
 import qsos.app.demo.utils.StatusBarUtil
 import qsos.core.lib.utils.image.ImageLoaderUtils
 import qsos.lib.base.base.activity.BaseActivity
@@ -33,7 +33,7 @@ import kotlin.math.min
  * @author : 华轻松
  * 朋友圈界面
  */
-@Route(group = DemoPath.GROUP, path = DemoPath.DEMO)
+@Route(group = TweetPath.GROUP, path = TweetPath.TWEET)
 class DemoActivity(
         override val layoutId: Int? = R.layout.app_activity_demo,
         override val reload: Boolean = false

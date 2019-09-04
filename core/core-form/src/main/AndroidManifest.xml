@@ -1,0 +1,14 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="qsos.core.form">
+	
+	<application>
+		<!--表单界面-->
+		<activity android:name="qsos.core.form.view.activity.FormActivity" />
+		<!--输入界面-->
+		<activity android:name="qsos.core.form.view.activity.InputActivity" />
+		<!--用户选择界面-->
+		<activity android:name="qsos.core.form.view.activity.UserChoseActivity" />
+		<!--用户单选界面-->
+		<activity android:name="qsos.core.form.view.activity.UserSingleChoseActivity" />
+	</application>
+</manifest>

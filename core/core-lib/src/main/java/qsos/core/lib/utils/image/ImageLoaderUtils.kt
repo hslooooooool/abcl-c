@@ -33,6 +33,21 @@ object ImageLoaderUtils {
                 .into(imageView)
     }
 
+    /**加载资源图片*/
+    fun display(context: Context, imageView: ImageView?, @DrawableRes url: Int) {
+        if (imageView == null) {
+            return
+        }
+        GlideApp.with(context)
+                .load(url)
+                // 磁盘缓存
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
+                // 避免闪烁
+                .skipMemoryCache(false)
+                .dontAnimate()
+                .into(imageView)
+    }
+
     /**加载url图片,失败加载默认图片*/
     fun displayWithErrorAndPlace(context: Context, imageView: ImageView?, url: String?, @DrawableRes error: Int, @DrawableRes place: Int) {
         if (imageView == null) {

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical">
+	
+	<qsos.core.form.view.widget.FormMaxHeightRecyclerView
+		android:id="@+id/operation_rv"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@color/white"
+		app:formMaxHeight="350dp" />
+	
+	<TextView
+		android:id="@+id/operation_close"
+		android:layout_width="match_parent"
+		android:layout_height="63dp"
+		android:layout_marginTop="10dp"
+		android:background="@color/white"
+		android:gravity="center"
+		android:text="关闭"
+		android:textColor="@color/black_light"
+		android:textSize="18sp" />
+</LinearLayout>

@@ -1,39 +1,52 @@
 package qsos.app.demo.view.activity
 
 import android.os.Bundle
-import android.os.Handler
+import androidx.recyclerview.widget.GridLayoutManager
 import com.alibaba.android.arouter.launcher.ARouter
+import kotlinx.android.synthetic.main.app_activity_splash.*
+import kotlinx.android.synthetic.main.app_item_component.view.*
 import qsos.app.demo.R
-import qsos.app.demo.router.DemoPath
-import qsos.lib.base.base.BaseApplication
+import qsos.app.demo.router.TweetPath
+import qsos.core.form.FormPath
 import qsos.lib.base.base.activity.BaseActivity
+import qsos.lib.base.base.adapter.BaseNormalAdapter
 import qsos.lib.base.utils.ActivityManager
 
 /**
  * @author : 华清松
  * 闪屏界面
  */
-class SplashActivity : BaseActivity() {
+class SplashActivity(
+        override val layoutId: Int = R.layout.app_activity_splash,
+        override val reload: Boolean = false
+) : BaseActivity() {
 
-    override val layoutId = R.layout.app_activity_splash
-    override val reload = false
+    private val mList = arrayListOf("朋友圈", "表单")
 
     override fun initData(savedInstanceState: Bundle?) {}
 
     override fun initView() {
         ActivityManager.finishAllButNotMe(this)
 
-        mHandler.sendEmptyMessageDelayed(0, 1000)
+        splash_rv.layoutManager = GridLayoutManager(this, 3)
+        splash_rv.adapter = BaseNormalAdapter(R.layout.app_item_component, mList,
+                setHolder = { holder, data, _ ->
+                    holder.itemView.tv_item_component.text = data
+                    holder.itemView.tv_item_component.setOnClickListener {
+                        when (data) {
+                            "朋友圈" -> {
+                                ARouter.getInstance().build(TweetPath.TWEET).navigation()
+                            }
+                            "表单" -> {
+                                ARouter.getInstance().build(FormPath.MAIN)
+                                        .withString(FormPath.FORM_TYPE, "添加公告")
+                                        .navigation()
+                            }
+                        }
+                    }
+                })
+        splash_rv.adapter?.notifyDataSetChanged()
     }
 
     override fun getData() {}
-
-    private val mHandler = Handler {
-        while (BaseApplication.buildFinish) {
-            ARouter.getInstance().build(DemoPath.DEMO).navigation()
-            finish()
-            break
-        }
-        return@Handler true
-    }
 }

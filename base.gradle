@@ -106,10 +106,12 @@ dependencies {
     api deps.lifecycle.reactivestreams
     annotationProcessor deps.lifecycle.compiler
     kapt deps.lifecycle.compiler
-    // Multidex
+    // multidex
     api deps.multidex
     // gson
     api deps.gson
+    // glide
+    kapt deps.glide.compiler
 }
 
 repositories {

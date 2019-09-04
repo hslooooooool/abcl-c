@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheckBox xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/chose_multiple_cb"
+	android:layout_width="match_parent"
+	android:layout_height="63dp"
+	android:layout_marginLeft="10dp"
+	android:layout_marginRight="10dp"
+	android:ellipsize="end"
+	android:gravity="center_vertical|start"
+	android:maxLines="1"
+	android:textColor="@color/black"
+	android:textSize="18sp" />

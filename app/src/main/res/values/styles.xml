@@ -3,9 +3,8 @@
 	<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
 		<!--自定义配置主题-->
 		<item name="colorPrimary">@color/colorPrimary</item>
-		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+		<item name="colorPrimaryDark">@color/colorPrimary</item>
 		<item name="colorAccent">@color/colorAccent</item>
-		<item name="android:homeAsUpIndicator">@android:drawable/ic_menu_manage</item>
 		<item name="android:windowAnimationStyle">@style/AppAnimationActivity</item>
 		<item name="android:windowBackground">@android:color/white</item>
 	</style>

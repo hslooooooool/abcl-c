@@ -30,10 +30,14 @@ android {
 dependencies {
     api project(":core:core-exception")
     api project(":core:core-netservice")
+    api project(":core:core-form")
 
     /*悬浮菜单*/
     api 'com.noober.floatmenu:common:1.0.4'
 
+    // 上拉加载下拉刷新
+    api deps.smartrefresh
+    api deps.smartrefresh_header
 }
 
 // 获取编译时间
