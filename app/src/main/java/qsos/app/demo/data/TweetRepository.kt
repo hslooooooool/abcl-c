@@ -51,9 +51,9 @@ class TweetRepository(
             onSuccess {
                 success()
             }
-            onFailed { code: Int, msg: String, error: Throwable? ->
+            onFailed { code: Int, msg: String?, error: Throwable? ->
                 GlobalExceptionHelper.caughtException(GlobalException(code, msg, error)) {
-                    fail(msg)
+                    fail(msg ?: "添加失败")
                 }
             }
         }
@@ -63,18 +63,13 @@ class TweetRepository(
         ApiEngine.createService(ApiTweet::class.java).delete()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        {
-                            if (it.code == 200) {
-                                success()
-                            } else {
-                                fail(it.msg ?: "删除失败")
-                            }
-                        },
-                        {
-                            GlobalExceptionHelper.caughtException(GlobalException(500, it.message))
-                        }
-                )
+                .subscribe {
+                    if (it.code == 200) {
+                        success()
+                    } else {
+                        fail(it.msg ?: "删除失败")
+                    }
+                }
     }
 
     override fun clear(success: (msg: String?) -> Unit, fail: (msg: String) -> Unit) {

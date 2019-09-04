@@ -30,7 +30,7 @@ abstract class AbsRetrofitCoroutineScope {
         var onComplete: (() -> Unit?)? = null
             private set
         /**请求失败*/
-        var onFailed: ((code: Int, msg: String, error: Throwable?) -> Unit?)? = null
+        var onFailed: ((code: Int, msg: String?, error: Throwable?) -> Unit?)? = null
             private set
 
         open fun clean() {
@@ -52,7 +52,7 @@ abstract class AbsRetrofitCoroutineScope {
             this.onComplete = block
         }
 
-        open fun onFailed(block: (code: Int, msg: String, error: Throwable?) -> Unit) {
+        open fun onFailed(block: (code: Int, msg: String?, error: Throwable?) -> Unit) {
             this.onFailed = block
         }
 

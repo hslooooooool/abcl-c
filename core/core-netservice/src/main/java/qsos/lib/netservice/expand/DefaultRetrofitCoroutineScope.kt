@@ -66,11 +66,10 @@ fun <ResultType> CoroutineScope.retrofitByDef(
                 try {
                     api.execute()
                 } catch (e: ConnectException) {
-                    httpStatus = BaseHttpStatus.base(HttpStatusEnum.NO_NET)
+                    httpStatus = BaseHttpStatus(404, e.message, e)
                     null
                 } catch (e: Exception) {
-                    httpStatus = BaseHttpStatus(HttpStatusEnum.ERROR.code, e.message
-                            ?: HttpStatusEnum.ERROR.msg)
+                    httpStatus = BaseHttpStatus(HttpStatusEnum.ERROR.code, e.message, e)
                     null
                 }
             }
@@ -116,11 +115,10 @@ fun <ResultType> CoroutineScope.retrofitWithLiveDataByDef(
                 try {
                     api.execute()
                 } catch (e: ConnectException) {
-                    httpStatus = BaseHttpStatus.base(HttpStatusEnum.NO_NET)
+                    httpStatus = BaseHttpStatus(404, e.message, e)
                     null
                 } catch (e: Exception) {
-                    httpStatus = BaseHttpStatus(HttpStatusEnum.ERROR.code, e.message
-                            ?: HttpStatusEnum.ERROR.msg)
+                    httpStatus = BaseHttpStatus(HttpStatusEnum.ERROR.code, e.message, e)
                     null
                 }
             }
@@ -162,11 +160,10 @@ fun <ResultType> CoroutineScope.retrofitWithSuccessByDef(
                 try {
                     api.execute()
                 } catch (e: ConnectException) {
-                    httpStatus = BaseHttpStatus.base(HttpStatusEnum.NO_NET)
+                    httpStatus = BaseHttpStatus(404, e.message, e)
                     null
                 } catch (e: Exception) {
-                    httpStatus = BaseHttpStatus(HttpStatusEnum.ERROR.code, e.message
-                            ?: HttpStatusEnum.ERROR.msg)
+                    httpStatus = BaseHttpStatus(HttpStatusEnum.ERROR.code, e.message, e)
                     null
                 }
             }

@@ -2,6 +2,7 @@ package vip.qsos.exception
 
 import android.net.ParseException
 import android.os.Environment
+import android.util.Log
 import com.google.gson.JsonParseException
 import org.json.JSONException
 import qsos.lib.base.base.BaseApplication
@@ -33,122 +34,80 @@ object GlobalExceptionHelper : Thread.UncaughtExceptionHandler {
         caughtException(e)
     }
 
-    /**捕获异常并处理
+    /**捕获异常并处理，可通过以下方式接受异常，便于全局自定义处理机制
+     * RxBus.toFlow(GlobalExceptionHelper.ExceptionEvent::class.java).subscribe{}
+     *
+     * @see RxBus.toFlow
      * @param e 抛出的异常
      * @param deal 自行传入后续处理，可空
      * */
-    fun caughtException(e: Throwable, deal: (e: ExceptionEvent) -> Unit? = {
-        Timber.tag("网络服务异常").e(e)
-    }) {
+    fun caughtException(e: Throwable, deal: (e: ExceptionEvent) -> Unit? = {}) {
+        Timber.e(e)
         val mExceptionEvent: ExceptionEvent = when (e) {
-            is GlobalException -> {
-                Timber.tag("网络服务异常").e(e)
-                ExceptionEvent(GlobalException(e), "网络服务异常")
-            }
             is ConnectException -> {
-                Timber.tag("网络连接异常").e(e)
-                ExceptionEvent(GlobalException(e), "网络连接故障")
+                ExceptionEvent(GlobalException(404, e))
             }
             is SocketTimeoutException -> {
-                Timber.tag("网络连接超时").e(e)
-                ExceptionEvent(GlobalException(e), "服务器响应超时")
+                ExceptionEvent(GlobalException(504, e))
             }
             is NullPointerException -> {
-                Timber.tag("空指针异常").e(e)
-                ExceptionEvent(GlobalException(e), "空指针异常")
+                ExceptionEvent(GlobalException(0, e))
             }
             is JsonParseException, is JSONException, is ParseException -> {
-                Timber.tag("Json解析异常").e(e)
-                ExceptionEvent(GlobalException(e), "Json解析异常")
+                ExceptionEvent(GlobalException(-2, e))
             }
             is HttpException -> handleHttpException(e)
             else -> {
-                Timber.tag("未知异常").e(e)
-                ExceptionEvent(GlobalException(e), "未知异常")
+                ExceptionEvent(GlobalException(e))
             }
         }
+        // 自行处理
         deal(mExceptionEvent)
-        saveCrashFile(mExceptionEvent.name, mExceptionEvent.toString())
+        // 传递出去，统一处理
         RxBus.send(mExceptionEvent)
     }
 
-    /**错误码详见 @see https://blog.csdn.net/Gjc_csdn/article/details/80449996 */
+    /**错误码参见 https://blog.csdn.net/Gjc_csdn/article/details/80449996 */
     private fun handleHttpException(e: HttpException): ExceptionEvent {
-        Timber.tag("网络服务异常").w(e.message())
-        return when (e.code()) {
-            400 -> {
-                Timber.tag("网络服务异常").w("服务接口访问错误")
-                ExceptionEvent(GlobalException(e.code(), e.message(), e), "服务接口访问错误")
-            }
-            401 -> {
-                Timber.tag("网络服务异常").w("未授权访问")
-                ExceptionEvent(GlobalException(e.code(), e.message(), e), "未授权访问")
-            }
-            403 -> {
-                Timber.tag("网络服务异常").w("服务请求被拒绝")
-                ExceptionEvent(GlobalException(e.code(), e.message(), e), "服务请求被拒绝")
-            }
-            404 -> {
-                Timber.tag("网络服务异常").w("服务接口不存在")
-                ExceptionEvent(GlobalException(e.code(), e.message(), e), "服务接口不存在")
-            }
-            405 -> {
-                Timber.tag("网络服务异常").w("服务接口已被禁用")
-                ExceptionEvent(GlobalException(e.code(), e.message(), e), "服务接口已被禁用")
-            }
-            500 -> {
-                Timber.tag("网络服务异常").w("服务器出现问题")
-                ExceptionEvent(GlobalException(e.code(), e.message(), e), "服务器出现问题")
-            }
-            501 -> {
-                Timber.tag("网络服务异常").w("服务接口访问方式可能错误")
-                ExceptionEvent(GlobalException(e.code(), e.message(), e), "服务接口访问方式可能错误")
-            }
-            503 -> {
-                Timber.tag("网络服务异常").w("服务暂时无法访问")
-                ExceptionEvent(GlobalException(e.code(), e.message(), e), "服务暂时无法访问")
-            }
-            504 -> {
-                Timber.tag("网络服务异常").w("服务响应超时")
-                ExceptionEvent(GlobalException(e.code(), e.message(), e), "服务响应超时")
-            }
-            else -> {
-                Timber.tag("网络服务异常").w("服务未知异常")
-                ExceptionEvent(GlobalException(e.code(), e.message(), e), "服务未知异常")
-            }
+        return ExceptionEvent(GlobalException(e.code(), e.message(), e))
+    }
+
+    /**Timber日志输出*/
+    open class CrashReportingTree : Timber.Tree() {
+        override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+            super.log(priority, tag, message, t)
+            if (priority > Log.INFO) saveCrashFile(tag ?: "异常捕获", "$message ${t.toString()}")
         }
     }
 
     /**
      * 保存错误信息到文件中
      */
-    @Throws(Exception::class)
     private fun saveCrashFile(type: String, value: String) {
-        Timber.tag("存储异常日志").i("异常写入中...")
         val sb = StringBuffer()
-        try {
-            val date = mTimeFormat.format(Date())
-            sb.append("\r\n[$date]\n")
-            sb.append("$type\n$value\n")
-        } catch (e: Exception) {
-            sb.append("异常写入错误...\r\n")
-        }
+        val date = mTimeFormat.format(Date())
+        sb.append("\r\n[$date]\n$type\n")
+        sb.append("$value\n\n----------------------------华丽分割线----------------------------\n\n")
         writeFile(sb.toString())
     }
 
-    @Throws(Exception::class)
     private fun writeFile(sb: String) {
-        val time = mDayFormat.format(Date())
-        val fileName = "crash-$time.txt"
-        val dir = File(mExceptionPath)
-        if (!dir.exists()) {
-            dir.mkdirs()
+        try {
+            val time = mDayFormat.format(Date())
+            val fileName = "crash-$time.txt"
+            val dir = File(mExceptionPath)
+            if (!dir.exists()) {
+                dir.mkdirs()
+            }
+            val fos = FileOutputStream(mExceptionPath + fileName, true)
+            val osw = OutputStreamWriter(fos, "utf-8")
+            osw.write(sb)
+            osw.flush()
+            osw.close()
+            Timber.tag("存储异常日志").i("以上异常已记录到: ${mExceptionPath + fileName}")
+        } catch (e: Exception) {
+            Timber.tag("存储异常日志").i("以上异常记录失败")
         }
-        val fos = FileOutputStream(mExceptionPath + fileName, true)
-        val osw = OutputStreamWriter(fos, "utf-8")
-        osw.write(sb)
-        osw.flush()
-        osw.close()
     }
 
     /**
@@ -156,8 +115,7 @@ object GlobalExceptionHelper : Thread.UncaughtExceptionHandler {
      * 全局异常数据实体，使用RxBus监听，建议在Application或MainActivity中监听即可
      */
     data class ExceptionEvent(
-            val exception: GlobalException,
-            val name: String
+            val exception: GlobalException
     ) : RxBus.RxBusEvent<GlobalException> {
 
         override fun message(): GlobalException? {
@@ -165,8 +123,15 @@ object GlobalExceptionHelper : Thread.UncaughtExceptionHandler {
         }
 
         override fun name(): String {
-            return name
+            return "异常码:${exception.code}"
         }
 
+        override fun toString(): String {
+            var ss = super.toString() + "\n"
+            ss += " code=${exception.code}"
+            ss += " msg=${exception.msg}"
+            ss += " error=${exception.error?.toString()}"
+            return ss
+        }
     }
 }

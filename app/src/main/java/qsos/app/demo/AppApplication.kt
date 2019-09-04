@@ -44,7 +44,8 @@ open class AppApplication : BaseApplication(), LifecycleOwner {
         BaseConfig.BASE_URL = "http://192.168.1.11:8084"
 
         /**Timber 日志*/
-        Timber.plant(Timber.DebugTree())
+        Timber.plant(GlobalExceptionHelper.CrashReportingTree())
+
         /**全局异常捕获处理*/
         Thread.setDefaultUncaughtExceptionHandler(GlobalExceptionHelper)
 

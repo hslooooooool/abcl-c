@@ -8,7 +8,7 @@ import java.net.ConnectException
  */
 data class BaseHttpStatus(
         override val statusCode: Int,
-        override val statusMsg: String,
+        override val statusMsg: String?,
         override val statusError: Throwable? = null
 ) : IHttpStatusCode {
 
@@ -37,11 +37,6 @@ interface IHttpStatusCode {
  * 自行定义与拓展网络请求状态枚举，根据定义的回执码，判断网络请求结果
  */
 enum class HttpStatusEnum(val code: Int, val msg: String) : IHttpStatusCode {
-    NO_NET(-2, "网络连接失败") {
-        override val statusCode = code
-        override val statusMsg = msg
-        override val statusError = ConnectException("网络连接失败")
-    },
     ERROR(-1, "请求失败") {
         override val statusCode = code
         override val statusMsg = msg
