@@ -15,7 +15,7 @@ import qsos.lib.base.utils.ToastUtils
 
 /**
  * @author : 华清松
- * @description : 文件列表容器
+ * 文件列表容器
  */
 class FormFileAdapter(files: ArrayList<Value>)
     : BaseAdapter<Value>(files) {
@@ -31,7 +31,7 @@ class FormFileAdapter(files: ArrayList<Value>)
     override fun onItemClick(view: View, position: Int, obj: Any?) {
         when (view.id) {
             R.id.iv_item_form_file_delete -> {
-                if (!data[position].limit_edit) {
+                if (!data[position].limitEdit) {
                     Completable.fromAction {
                         FormDatabase.getInstance(mContext).formItemValueDao.delete(data[position])
                     }

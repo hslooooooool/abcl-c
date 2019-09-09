@@ -2,7 +2,7 @@ package qsos.core.form.db.entity
 
 /**
  * @author : 华清松
- * @description : 表单业务类型
+ * 表单业务类型
  */
 enum class FormType(key: String) {
 

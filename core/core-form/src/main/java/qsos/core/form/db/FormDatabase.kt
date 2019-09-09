@@ -13,7 +13,7 @@ import qsos.core.form.db.entity.Value
 
 /**
  * @author : 华清松
- * @description : 表单数据库，当前版本【1】
+ * 表单数据库，当前版本【1】
  */
 @Database(
         version = 1,

@@ -7,11 +7,11 @@ import qsos.core.form.db.entity.Value
 
 /**
  * @author : 华清松
- * @description : 表单操作接口
+ * 表单操作接口
  */
 interface IFormModel {
     /**获取表单数据*/
-    fun getForm(formType: FormType, connectId: String?)
+    fun getForm(formType: FormType)
 
     /**获取表单数据库*/
     fun getFormByDB(formId: Long)
@@ -32,7 +32,7 @@ interface IFormModel {
     fun deleteForm(form: FormEntity)
 
     /**提交表单数据*/
-    fun postForm(formType: String, connectId: String?, formId: Long)
+    fun postForm(formType: String, formId: Long)
 
     /**获取表单项数据*/
     fun getFormItemByDB(formItemId: Long)
@@ -41,5 +41,5 @@ interface IFormModel {
     fun updateValue(value: Value)
 
     /**获取可选用户列表 key 可以是姓名、手机号*/
-    fun getUsers(connectId: String?, formItem: FormItem, key: String?)
+    fun getUsers(formItem: FormItem, key: String?)
 }

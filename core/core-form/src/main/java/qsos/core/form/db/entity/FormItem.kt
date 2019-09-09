@@ -5,48 +5,42 @@ import androidx.room.ForeignKey.CASCADE
 
 /**
  * @author : 华清松
- * 通用表单子项实体类
+ * 表单子项实体类
+ * @param id 表单ID，自增
+ *
+ * @param formId 外键-表单id
+ *
+ * @param title 表单名称
+ * @param notice 表单提示内容
+ * @param valueType 表单项值类型，0：文本展示；1：输入；2：选项；3：时间；4：人员；5：附件；6：位置
+ * @param editable 表单项是否可编辑
+ * @param position 表单项顺序
+ * @param visible 表单项是否显示
+ * @param require 表单项是否必填
+ * @param formItemValue 表单项值列表项
  */
-@Entity(tableName = "form_item",
-        foreignKeys = [ForeignKey(
-                entity = FormEntity::class,
-                parentColumns = ["id"],
-                childColumns = ["form_id"],
-                onDelete = CASCADE)],
-        indices = [Index(value = ["id"], unique = true)]
+@Entity(tableName = "formItem",
+        foreignKeys = [
+            ForeignKey(entity = FormEntity::class, parentColumns = ["id"], childColumns = ["formId"], onDelete = CASCADE)
+        ],
+        indices = [
+            Index(value = ["id"], unique = true)
+        ]
 )
-class FormItem {
-    constructor()
-    constructor(form_item_type: Int, form_item_key: String, form_item_required: Boolean, form_item_value: FormItemValue) {
-        this.form_item_type = form_item_type
-        this.form_item_key = form_item_key
-        this.form_item_required = form_item_required
-        this.form_item_value = form_item_value
-    }
-
-    @PrimaryKey(autoGenerate = true)
-    var id: Long? = null
-
-    /*外键*/
-    var form_id: Long? = null
-    /*表单项顺序*/
-    var form_order: Int? = 0
-    /*表单项是否显示*/
-    var form_visible: Boolean = true
-    /*表单项值类型，0：文本展示；1：输入；2：选项；3：时间；4：人员；5：附件；6：位置；*/
-    var form_item_type: Int? = null
-    /*表单项状态，0：不可编辑；1：可编辑*/
-    var form_item_status: Int? = 1
-    /*表单项名称*/
-    var form_item_key: String? = null
-    /*表单项提示*/
-    var form_item_hint: String? = null
-    /*表单项是否必填*/
-    var form_item_required: Boolean = false
-
-    @Embedded
-    var form_item_value: FormItemValue? = null
-}
+data class FormItem(
+        @PrimaryKey(autoGenerate = true)
+        var id: Long? = null,
+        var formId: Long? = null,
+        var title: String? = null,
+        var notice: String? = null,
+        var valueType: Int? = null,
+        var editable: Boolean = true,
+        var position: Int? = 0,
+        var visible: Boolean = true,
+        var require: Boolean = false,
+        @Embedded
+        var formItemValue: FormItemValue? = null
+)
 
 enum class FormItemType(val key: String, val tag: Int) {
     TEXT("文本展示", 0),

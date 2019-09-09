@@ -10,7 +10,7 @@ import qsos.lib.base.callback.OnListItemClickListener
 
 /**
  * @author : 华清松
- * @description : 图片文件布局
+ * 图片文件布局
  */
 class FormFileHolder(
         itemView: View,
@@ -18,9 +18,9 @@ class FormFileHolder(
 ) : BaseHolder<Value>(itemView) {
 
     override fun setData(data: Value, position: Int) {
-        when (data.file_type) {
+        when (data.file.fileType) {
             "IMAGE" -> {
-                ImageLoaderUtils.display(itemView.context, itemView.iv_item_form_file_icon, data.file_url)
+                ImageLoaderUtils.display(itemView.context, itemView.iv_item_form_file_icon, data.file.fileUrl)
             }
             "VIDEO" -> {
                 ImageLoaderUtils.display(itemView.context, itemView.iv_item_form_file_icon, R.drawable.take_video)
@@ -33,7 +33,7 @@ class FormFileHolder(
             }
         }
 
-        itemView.tv_item_form_file_name.text = data.file_name
+        itemView.tv_item_form_file_name.text = data.file.fileName
 
         itemView.iv_item_form_file_icon.setOnClickListener {
             itemClick.onItemClick(it, position, 1)

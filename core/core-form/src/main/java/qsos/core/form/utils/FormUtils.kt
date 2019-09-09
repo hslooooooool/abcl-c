@@ -7,7 +7,7 @@ import java.util.*
 
 /**
  * @author : 华清松
- * @description : 表单工具类
+ * 表单工具类
  */
 object FormUtils {
 

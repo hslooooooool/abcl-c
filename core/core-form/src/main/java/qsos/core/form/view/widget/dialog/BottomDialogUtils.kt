@@ -14,7 +14,7 @@ import kotlin.math.abs
 
 /**
  * @author 华清松
- * @description : 底部自定义弹窗
+ * 底部自定义弹窗
  */
 object BottomDialogUtils {
 

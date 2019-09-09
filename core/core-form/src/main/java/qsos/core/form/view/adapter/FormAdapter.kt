@@ -23,12 +23,10 @@ import java.util.*
 
 /**
  * @author : 华清松
- * @desc : 表单列表容器
+ * @notice : 表单列表容器
  */
 @SuppressLint("CheckResult")
-class FormAdapter(connectId: String?, findItems: ArrayList<FormItem>) : BaseAdapter<FormItem>(findItems) {
-
-    private val mConnectId = connectId
+class FormAdapter(formItems: ArrayList<FormItem>) : BaseAdapter<FormItem>(formItems) {
 
     interface OnFileListener {
         fun getFile(type: String, position: Int)
@@ -62,7 +60,7 @@ class FormAdapter(connectId: String?, findItems: ArrayList<FormItem>) : BaseAdap
     }
 
     override fun getItemViewType(position: Int): Int {
-        when (data[position].form_item_type) {
+        when (data[position].valueType) {
             /*文本*/
             FormItemType.TEXT.tag -> return R.layout.form_item_text
             /*输入*/
@@ -86,7 +84,7 @@ class FormAdapter(connectId: String?, findItems: ArrayList<FormItem>) : BaseAdap
     }
 
     override fun onItemClick(view: View, position: Int, obj: Any?) {
-        if (data[position].form_item_status == 0) {
+        if (!data[position].editable) {
             return
         }
         when (view.id) {
@@ -100,15 +98,14 @@ class FormAdapter(connectId: String?, findItems: ArrayList<FormItem>) : BaseAdap
             }
             /**表单输入项*/
             R.id.item_form_input -> {
-                ARouter.getInstance().build(FormPath.ITEM_INPUT)
+                ARouter.getInstance().build(FormPath.FORM_ITEM_INPUT)
                         .withLong("item_id", data[position].id!!)
                         .navigation()
             }
             /**选择人员*/
             R.id.tv_item_form_users_size -> {
-                ARouter.getInstance().build(FormPath.ITEM_USERS)
-                        .withLong("item_id", data[position].id!!)
-                        .withString("connect_id", mConnectId)
+                ARouter.getInstance().build(FormPath.FORM_ITEM_USERS)
+                        .withLong(FormPath.FORM_ITEM_ID, data[position].id!!)
                         .navigation()
             }
             /**选择选项*/
@@ -128,11 +125,11 @@ class FormAdapter(connectId: String?, findItems: ArrayList<FormItem>) : BaseAdap
     override fun onItemLongClick(view: View, position: Int, obj: Any?) {}
 
     private fun chooseTime(view: View, position: Int) {
-        var values = data[position].form_item_value?.values
+        var values = data[position].formItemValue?.values
         values = values ?: arrayListOf()
         val size = values.size
         if (size == 1) {
-            val date = values[0].limit_type
+            val date = values[0].limitType
 
             var showDay = true
             if ("yyyy-MM-dd HH:mm" == date) {
@@ -143,14 +140,14 @@ class FormAdapter(connectId: String?, findItems: ArrayList<FormItem>) : BaseAdap
             backListener?.back(false)
             BottomDialogUtils.showRealDateChoseView(view.context,
                     "yyyy-MM-dd HH:mm" == date, showDay,
-                    null, null, Date(values[0].time), object : OnDateListener {
+                    null, null, Date(values[0].time.timeStart), object : OnDateListener {
                 override fun setDate(type: Int?, date: Date?) {
                     backListener?.back(true)
                     if (date != null) {
-                        data[position].form_item_value!!.values!![0].time = date.time
+                        data[position].formItemValue!!.values!![0].time.timeStart = date.time
 
                         Completable.fromAction {
-                            FormDatabase.getInstance(mContext).formItemValueDao.update(data[position].form_item_value!!.values!!)
+                            FormDatabase.getInstance(mContext).formItemValueDao.update(data[position].formItemValue!!.values!!)
                         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
                                 {
                                     notifyItemChanged(position)
@@ -166,8 +163,8 @@ class FormAdapter(connectId: String?, findItems: ArrayList<FormItem>) : BaseAdap
 
             )
         } else if (size == 2) {
-            val date1 = values[0].limit_type
-            val date2 = values[1].limit_type
+            val date1 = values[0].limitType
+            val date2 = values[1].limitType
             var showDay1 = true
             if ("yyyy-MM-dd HH:mm" == date1) {
                 showDay1 = true
@@ -183,21 +180,21 @@ class FormAdapter(connectId: String?, findItems: ArrayList<FormItem>) : BaseAdap
             backListener?.back(false)
             BottomDialogUtils.showRealDateChoseView(view.context,
                     "yyyy-MM-dd HH:mm" == date1, showDay1,
-                    null, null, Date(values[0].time),
+                    null, null, Date(values[0].time.timeStart),
                     object : OnDateListener {
                         override fun setDate(type: Int?, date: Date?) {
                             if (date != null) {
-                                data[position].form_item_value!!.values!![0].time = date.time
+                                data[position].formItemValue!!.values!![0].time.timeStart = date.time
                                 BottomDialogUtils.showRealDateChoseView(view.context, "yyyy-MM-dd HH:mm" == date2,
                                         showDay2,
-                                        Date(values[0].time), null, Date(values[1].time),
+                                        Date(values[0].time.timeStart), null, Date(values[1].time.timeStart),
                                         object : OnDateListener {
                                             override fun setDate(type: Int?, date: Date?) {
                                                 backListener?.back(true)
                                                 if (date != null) {
-                                                    data[position].form_item_value!!.values!![1].time = date.time
+                                                    data[position].formItemValue!!.values!![1].time.timeStart = date.time
                                                     Completable.fromAction {
-                                                        FormDatabase.getInstance(mContext).formItemValueDao.update(data[position].form_item_value!!.values!!)
+                                                        FormDatabase.getInstance(mContext).formItemValueDao.update(data[position].formItemValue!!.values!!)
                                                     }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
                                                             {
                                                                 notifyItemChanged(position)
@@ -220,26 +217,26 @@ class FormAdapter(connectId: String?, findItems: ArrayList<FormItem>) : BaseAdap
 
     private fun choose(position: Int) {
         // 单选
-        if (data[position].form_item_value!!.limit_max == 1) {
+        if (data[position].formItemValue!!.limitMax == 1) {
             val operations = arrayListOf<Operation>()
-            val values = data[position].form_item_value!!.values
+            val values = data[position].formItemValue!!.values
             values!!.forEach {
                 val operation = Operation()
-                operation.key = it.ck_name
+                operation.key = it.check.ckName
                 operation.value = it.id
-                operation.isCheck = it.ck_check
+                operation.isCheck = it.check.ckChecked
                 operations.add(operation)
             }
             backListener?.back(false)
             BottomDialogUtils.setBottomChoseListView(mContext, operations, object : OnTListener<Operation> {
                 override fun back(t: Operation) {
                     backListener?.back(true)
-                    data[position].form_item_value!!.values!!.forEach {
-                        it.ck_check = it.id == t.value
+                    data[position].formItemValue!!.values!!.forEach {
+                        it.check.ckChecked = it.id == t.value
                     }
-                    if (data[position].form_item_value!!.values!!.isNotEmpty()) {
+                    if (data[position].formItemValue!!.values!!.isNotEmpty()) {
                         Completable.fromAction {
-                            FormDatabase.getInstance(mContext).formItemValueDao.update(data[position].form_item_value!!.values!!)
+                            FormDatabase.getInstance(mContext).formItemValueDao.update(data[position].formItemValue!!.values!!)
                         }.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(
@@ -259,28 +256,28 @@ class FormAdapter(connectId: String?, findItems: ArrayList<FormItem>) : BaseAdap
         } else {
             // 多选
             val operations = arrayListOf<Operation>()
-            val values = data[position].form_item_value!!.values
+            val values = data[position].formItemValue!!.values
             values!!.forEach {
                 val operation = Operation()
-                operation.key = it.ck_name
+                operation.key = it.check.ckName
                 operation.value = it.id
-                operation.isCheck = it.ck_check
+                operation.isCheck = it.check.ckChecked
                 operations.add(operation)
             }
             backListener?.back(false)
-            BottomDialogUtils.setBottomSelectListView(mContext, data[position].form_item_key, operations, object : OnTListener<List<Operation>> {
+            BottomDialogUtils.setBottomSelectListView(mContext, data[position].title, operations, object : OnTListener<List<Operation>> {
                 override fun back(t: List<Operation>) {
                     backListener?.back(true)
-                    data[position].form_item_value!!.values!!.forEach { value ->
+                    data[position].formItemValue!!.values!!.forEach { value ->
                         t.forEach {
                             if (value.id == it.value) {
-                                value.ck_check = it.isCheck
+                                value.check.ckChecked = it.isCheck
                             }
                         }
                     }
-                    if (data[position].form_item_value!!.values!!.isNotEmpty()) {
+                    if (data[position].formItemValue!!.values!!.isNotEmpty()) {
                         Completable.fromAction {
-                            FormDatabase.getInstance(mContext).formItemValueDao.update(data[position].form_item_value!!.values!!)
+                            FormDatabase.getInstance(mContext).formItemValueDao.update(data[position].formItemValue!!.values!!)
                         }.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(
@@ -301,8 +298,8 @@ class FormAdapter(connectId: String?, findItems: ArrayList<FormItem>) : BaseAdap
     }
 
     private fun checkTakeLimit(view: View, position: Int) {
-        val limitMax = data[position].form_item_value!!.limit_max
-        val valueSize: Int? = data[position].form_item_value!!.values?.size ?: 0
+        val limitMax = data[position].formItemValue!!.limitMax
+        val valueSize: Int? = data[position].formItemValue!!.values?.size ?: 0
         if (limitMax != null && valueSize ?: 0 >= limitMax) {
             ToastUtils.showToast(view.context, "已达到添加数量限制")
         } else {

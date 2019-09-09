@@ -19,7 +19,6 @@ import qsos.core.form.data.FormModelIml
 import qsos.core.form.data.FormRepository
 import qsos.core.form.db.entity.FormEntity
 import qsos.core.form.db.entity.FormItem
-import qsos.core.form.db.entity.FormType
 import qsos.core.form.utils.FormVerifyUtils
 import qsos.core.form.view.adapter.FormAdapter
 import qsos.core.form.view.other.FormItemDecoration
@@ -31,24 +30,21 @@ import qsos.lib.base.utils.ToastUtils
  */
 @Route(group = FormPath.FORM, path = FormPath.MAIN)
 class FormActivity(
-        @JvmField @Autowired(name = FormPath.FORM_CONNECT_ID) var connectId: String? = "",
-        @JvmField @Autowired(name = FormPath.FORM_TYPE) var formType: String? = "",
+        @JvmField @Autowired(name = FormPath.FORM_ID) var formId: Long? = null,
         @JvmField @Autowired(name = FormPath.FORM_EDIT) var formEdit: Boolean = true,
-        @JvmField @Autowired(name = FormPath.FORM_POST_TYPE) var formPostType: Int = 0
-) : AbsFormActivity() {
 
+        override val layoutId: Int = R.layout.form_activity_main,
+        override val reload: Boolean = true
+) : AbsFormActivity() {
+    /**渲染表单项容器*/
     private lateinit var mAdapter: FormAdapter
     /**表单数据实现类*/
     private lateinit var mModel: FormModelIml
-    private var type: FormType? = null
-    private val mFormList = ArrayList<FormItem>()
+    private val mFormList = arrayListOf<FormItem>()
     private var mForm: FormEntity? = null
     /**待上传的表单项ID*/
     private var uploadFileFormItemId: Long = 0L
     private var mAddPosition: Int? = null
-
-    override val layoutId: Int = R.layout.form_activity_main
-    override val reload: Boolean = true
 
     override fun initData(savedInstanceState: Bundle?) {
         mModel = FormModelIml(FormRepository(mContext))
@@ -56,9 +52,8 @@ class FormActivity(
 
     @SuppressLint("CheckResult")
     override fun initView() {
-        formType = formType ?: ""
-        type = FormType.getEnum(formType)
-        if (type == null) {
+
+        if (formId == null) {
             ToastUtils.showToast(this, "没有此表单")
             finish()
             return
@@ -79,7 +74,7 @@ class FormActivity(
 
         form_main_rv.layoutManager = LinearLayoutManager(mContext)
 
-        mAdapter = FormAdapter(connectId, mFormList)
+        mAdapter = FormAdapter(mFormList)
         // 添加装饰类
         form_main_rv.addItemDecoration(FormItemDecoration())
         // 设置列表容器
@@ -104,12 +99,12 @@ class FormActivity(
             if (it == null) {
                 ToastUtils.showToast(this, "获取表单数据失败")
             } else {
-                form_main_btn?.text = mForm!!.submit_name ?: "提交"
+                form_main_btn?.text = mForm!!.submitName ?: "提交"
 
                 mFormList.clear()
                 val formItemList = arrayListOf<FormItem>()
-                for (item in mForm!!.form_item!!) {
-                    if (item.form_visible) formItemList.add(item)
+                for (item in mForm!!.formItem!!) {
+                    if (item.visible) formItemList.add(item)
                 }
                 mFormList.addAll(formItemList)
                 mAdapter.notifyDataSetChanged()
@@ -118,18 +113,10 @@ class FormActivity(
 
         mModel.formRepo.postFormStatus.observe(this, Observer {
             if (it.pass) {
-                when (formPostType) {
-                    0 -> {
-                        // 提交并清数据库
-                        mModel.postForm(type!!.name, connectId, mForm!!.id!!)
-                    }
-                    1 -> {
-                        val intent = Intent()
-                        intent.putExtra(FormPath.FORM_ID, mForm!!.id ?: -1L)
-                        setResult(Activity.RESULT_OK, intent)
-                        finish()
-                    }
-                }
+                val intent = Intent()
+                intent.putExtra(FormPath.FORM_ID, mForm!!.id ?: -1L)
+                setResult(Activity.RESULT_OK, intent)
+                finish()
             } else {
                 ToastUtils.showToast(this, it.message)
                 form_main_btn?.isClickable = true
@@ -157,18 +144,14 @@ class FormActivity(
             if (it == null) {
                 ToastUtils.showToast(this, "添加失败")
             } else {
-                mFormList[mAddPosition!!].form_item_value!!.values!!.add(it)
+                mFormList[mAddPosition!!].formItemValue!!.values!!.add(it)
                 mAdapter.notifyItemChanged(mAddPosition!!)
             }
         })
     }
 
     override fun getData() {
-        if (mForm != null) {
-            mModel.getFormByDB(mForm!!.id!!)
-        } else {
-            mModel.getForm(type!!, connectId)
-        }
+        mModel.getFormByDB(formId!!)
     }
 
     override fun onBackPressed() {

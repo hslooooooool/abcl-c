@@ -7,23 +7,19 @@ package qsos.core.form
 object FormPath {
 
     const val FORM = "FORM"
-    /*表单页*/
+    /**表单页*/
     const val MAIN = "/$FORM/MAIN"
+    /**表单ID，必传，将从数据库获取表单结构 Long*/
+    const val FORM_ID = "/$MAIN/FORM_ID"
+    /**表单修改类型，可选，表单是否可修改，默认是 Boolean*/
+    const val FORM_EDIT = "/$MAIN/FORM_EDIT"
 
-    const val FORM_TYPE = "FORM_TYPE"
-    const val FORM_CONNECT_ID = "FORM_CONNECT_ID"
-    const val FORM_EDIT = "FORM_EDIT"
-    /**0 表单内提交 1回传提交*/
-    const val FORM_POST_TYPE = "FORM_POST_TYPE"
-    const val FORM_POST_CODE = 0 * 10011
-    const val FORM_ID = "FORM_ID"
-
-    /*表单项录入页*/
-    const val ITEM_INPUT = "/$FORM/ITEM_INPUT"
-    /*表单项用户页*/
-    const val ITEM_USERS = "/$FORM/ITEM_USERS"
-    /*审核协调选择用户*/
-    const val ITEM_USER = "/$FORM/ITEM_USER"
+    /**表单项文本录入页*/
+    const val FORM_ITEM_INPUT = "/$FORM/FORM_ITEM_INPUT"
+    /**表单项多用户选择/查看页*/
+    const val FORM_ITEM_USERS = "/$FORM/FORM_ITEM_USERS"
+    /**表单项ID key*/
+    const val FORM_ITEM_ID = "/FORM_ITEM/FORM_ITEM_ID"
 
     const val choseUserCode = 20001
 }

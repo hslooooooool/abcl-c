@@ -8,7 +8,7 @@ import qsos.lib.base.base.holder.BaseHolder
 
 /**
  * @author : 华清松
- * @description : 用户 列表项布局
+ * 用户 列表项布局
  */
 class UserHolder(itemView: View) : BaseHolder<FormUserEntity>(itemView) {
 

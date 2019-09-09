@@ -19,7 +19,7 @@ import qsos.core.form.db.entity.FormItem as FormItem1
 
 /**
  * @author : 华清松
- * @description : 表单数据获取
+ * 表单数据获取
  */
 @SuppressLint("CheckResult")
 class FormRepository(
@@ -32,11 +32,11 @@ class FormRepository(
         FormDatabase.getInstance(mContext).formDao.getFormById(formId)
                 .subscribeOn(Schedulers.io())
                 .doOnNext {
-                    it.form_item = FormDatabase.getInstance(mContext).formItemDao.getFormItemByFormId(it.id!!)
-                    it.form_item?.forEach { formItem ->
-                        formItem.form_item_value!!.values = arrayListOf()
-                        formItem.form_item_value!!.values!!.addAll(FormDatabase.getInstance(mContext).formItemValueDao.getValueByFormItemId(formItem.id!!))
-                        Timber.tag("数据库").i("查询formItem={formItem.id}下Value列表：${Gson().toJson(formItem.form_item_value!!.values)}")
+                    it.formItem = FormDatabase.getInstance(mContext).formItemDao.getFormItemByFormId(it.id!!)
+                    it.formItem?.forEach { formItem ->
+                        formItem.formItemValue!!.values = arrayListOf()
+                        formItem.formItemValue!!.values!!.addAll(FormDatabase.getInstance(mContext).formItemValueDao.getValueByFormItemId(formItem.id!!))
+                        Timber.tag("数据库").i("查询formItem={formItem.id}下Value列表：${Gson().toJson(formItem.formItemValue!!.values)}")
                     }
                 }
                 .observeOn(Schedulers.io())
@@ -55,8 +55,8 @@ class FormRepository(
         Observable.create<FormEntity> {
             val id = FormDatabase.getInstance(mContext).formDao.insert(form)
             form.id = id
-            form.form_item?.forEach { formItem ->
-                formItem.form_id = id
+            form.formItem?.forEach { formItem ->
+                formItem.formId = id
                 insertFormItem(formItem)
             }
             if (form.id != null) {
@@ -78,8 +78,8 @@ class FormRepository(
 
     override fun insertFormItem(formItem: FormItem1) {
         val formItemId = FormDatabase.getInstance(mContext).formItemDao.insert(formItem)
-        formItem.form_item_value!!.values?.forEach {
-            it.form_item_id = formItemId
+        formItem.formItemValue!!.values?.forEach {
+            it.formItemId = formItemId
             insertValue(it)
         }
     }
@@ -119,8 +119,8 @@ class FormRepository(
         FormDatabase.getInstance(mContext).formItemDao.getFormItemByIdF(formItemId)
                 .observeOn(Schedulers.io())
                 .map {
-                    it.form_item_value!!.values = arrayListOf()
-                    it.form_item_value!!.values?.addAll(FormDatabase.getInstance(mContext).formItemValueDao.getValueByFormItemId(formItemId))
+                    it.formItemValue!!.values = arrayListOf()
+                    it.formItemValue!!.values?.addAll(FormDatabase.getInstance(mContext).formItemValueDao.getValueByFormItemId(formItemId))
                     it
                 }.observeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -138,7 +138,7 @@ class FormRepository(
                 }
     }
 
-    override fun postForm(formType: String, connectId: String?, formId: Long) {
+    override fun postForm(formType: String, formId: Long) {
         FormDatabase.getInstance(mContext).formDao.getFormById(formId)
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
@@ -153,19 +153,19 @@ class FormRepository(
 
     }
 
-    override fun getForm(formType: FormType, connectId: String?) {
+    override fun getForm(formType: FormType) {
         val form = when (formType) {
             FormType.ADD_EXECUTE -> FormTransUtils.getTestExecuteData()
             FormType.ADD_NOTICE -> FormTransUtils.getTestOrderFeedbackData()
         }
-        if (form.form_item == null) {
+        if (form.formItem == null) {
             dbFormEntity.postValue(null)
         } else {
             insertForm(form)
         }
     }
 
-    override fun getUsers(connectId: String?, formItem: FormItem1, key: String?) {
+    override fun getUsers(formItem: FormItem1, key: String?) {
 
     }
 

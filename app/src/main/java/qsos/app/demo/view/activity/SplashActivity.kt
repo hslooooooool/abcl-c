@@ -39,7 +39,7 @@ class SplashActivity(
                             }
                             "表单" -> {
                                 ARouter.getInstance().build(FormPath.MAIN)
-                                        .withString(FormPath.FORM_TYPE, "添加公告")
+                                        .withString(FormPath.FORM_ID, "添加公告")
                                         .navigation()
                             }
                         }

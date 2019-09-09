@@ -27,20 +27,17 @@ import qsos.lib.base.utils.ToastUtils
 
 /**
  * @author : 华清松
- * @description : 表单用户选择
+ * 表单用户选择
  */
-@Route(group = FormPath.FORM, path = FormPath.ITEM_USERS)
+@Route(group = FormPath.FORM, path = FormPath.FORM_ITEM_USERS)
 class UserChoseActivity : AbsFormActivity(), Toolbar.OnMenuItemClickListener {
+
     /**表单数据实现类*/
     private lateinit var formModelIml: FormModelIml
 
-    @Autowired(name = "item_id")
+    @Autowired(name = FormPath.FORM_ITEM_ID)
     @JvmField
     var itemId: Long? = 0
-
-    @Autowired(name = "connect_id")
-    @JvmField
-    var connectId: String? = ""
 
     private var item: FormItem? = null
     private var mList = ArrayList<FormUserEntity>()
@@ -95,7 +92,7 @@ class UserChoseActivity : AbsFormActivity(), Toolbar.OnMenuItemClickListener {
                 BaseUtils.hideKeyboard(this)
                 form_users_et.isFocusable = false
                 form_users_et.isFocusableInTouchMode = false
-                formModelIml.getUsers(connectId, item!!, form_users_et.text.toString())
+                formModelIml.getUsers(item!!, form_users_et.text.toString())
                 return@OnKeyListener true
             }
             return@OnKeyListener false
@@ -103,7 +100,7 @@ class UserChoseActivity : AbsFormActivity(), Toolbar.OnMenuItemClickListener {
 
         formModelIml.formRepo.dbFormItem.observe(this, Observer {
             item = it
-            formModelIml.getUsers(connectId, item!!, form_users_et.text.toString())
+            formModelIml.getUsers(item!!, form_users_et.text.toString())
         })
 
         formModelIml.formRepo.userList.observe(this, Observer {
@@ -114,8 +111,8 @@ class UserChoseActivity : AbsFormActivity(), Toolbar.OnMenuItemClickListener {
                 mList.addAll(it)
 
                 chose = getValues().size
-                limitMin = item?.form_item_value?.limit_min
-                limitMax = item?.form_item_value?.limit_max
+                limitMin = item?.formItemValue?.limitMin
+                limitMax = item?.formItemValue?.limitMax
 
                 changeChoseUser()
 
@@ -135,7 +132,7 @@ class UserChoseActivity : AbsFormActivity(), Toolbar.OnMenuItemClickListener {
     }
 
     private fun getValues(): List<Value> {
-        return item?.form_item_value?.values!!
+        return item?.formItemValue?.values!!
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

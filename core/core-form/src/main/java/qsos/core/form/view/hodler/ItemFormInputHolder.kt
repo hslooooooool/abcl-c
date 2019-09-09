@@ -9,7 +9,7 @@ import qsos.lib.base.callback.OnListItemClickListener
 
 /**
  * @author : 华清松
- * @description : 表单文本列表项视图
+ * 表单文本列表项视图
  */
 class ItemFormInputHolder(
         itemView: View,
@@ -18,11 +18,11 @@ class ItemFormInputHolder(
 
     override fun setData(data: FormItem, position: Int) {
 
-        itemView.item_form_input.hint = data.form_item_hint
-        itemView.item_form_key.text = data.form_item_key
+        itemView.item_form_input.hint = data.notice
+        itemView.item_form_key.text = data.title
 
-        if (data.form_item_value!!.values != null && !data.form_item_value!!.values!!.isEmpty()) {
-            itemView.item_form_input.text = data.form_item_value!!.values!![0].input_value
+        if (data.formItemValue!!.values != null && data.formItemValue!!.values!!.isNotEmpty()) {
+            itemView.item_form_input.text = data.formItemValue!!.values!![0].text?.content
         }
 
         itemView.item_form_input.setOnClickListener {

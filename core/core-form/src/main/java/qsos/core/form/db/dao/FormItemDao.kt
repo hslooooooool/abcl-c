@@ -9,15 +9,15 @@ import qsos.core.form.db.entity.FormItem
 
 /**
  * @author : 华清松
- * @description : 表单项 Dao 层
+ * 表单项 Dao 层
  */
 @Dao
 interface FormItemDao {
 
-    @Query("SELECT * FROM form_item where form_id=:formId")
+    @Query("SELECT * FROM formItem where formId=:formId")
     fun getFormItemByFormId(formId: Long): List<FormItem>
 
-    @Query("SELECT * FROM form_item where id=:id")
+    @Query("SELECT * FROM formItem where id=:id")
     fun getFormItemByIdF(id: Long): Flowable<FormItem>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -12,7 +12,7 @@ import qsos.lib.base.callback.OnListItemClickListener
 
 /**
  * @author : 华清松
- * @description : 表单时间列表项视图
+ * 表单时间列表项视图
  */
 class ItemFormTimeHolder(
         itemView: View,
@@ -21,19 +21,19 @@ class ItemFormTimeHolder(
 
     override fun setData(data: FormItem, position: Int) {
 
-        itemView.item_form_key.text = data.form_item_key!!
+        itemView.item_form_key.text = data.title!!
 
         var time = ""
-        if (data.form_item_value!!.values != null) {
-            if (data.form_item_value!!.values!!.size == 1) {
-                if (data.form_item_value!!.values!![0].time > 0L) {
-                    time = FormUtils.date(data.form_item_value!!.values!![0].time, data.form_item_value!!.values!![0].limit_type)
+        if (data.formItemValue!!.values != null) {
+            if (data.formItemValue!!.values!!.size == 1) {
+                if (data.formItemValue!!.values!![0].time.timeStart > 0L) {
+                    time = FormUtils.date(data.formItemValue!!.values!![0].time.timeStart, data.formItemValue!!.values!![0].limitType)
                 }
-            } else if (data.form_item_value!!.values!!.size == 2) {
-                if (data.form_item_value!!.values!![0].time > 0L && data.form_item_value!!.values!![1].time > 0L) {
-                    time = FormUtils.date(data.form_item_value!!.values!![0].time, data.form_item_value!!.values!![0].limit_type) +
+            } else if (data.formItemValue!!.values!!.size == 2) {
+                if (data.formItemValue!!.values!![0].time.timeStart > 0L && data.formItemValue!!.values!![1].time.timeStart > 0L) {
+                    time = FormUtils.date(data.formItemValue!!.values!![0].time.timeStart, data.formItemValue!!.values!![0].limitType) +
                             "\t至\t" +
-                            FormUtils.date(data.form_item_value!!.values!![1].time, data.form_item_value!!.values!![1].limit_type)
+                            FormUtils.date(data.formItemValue!!.values!![1].time.timeStart, data.formItemValue!!.values!![1].limitType)
 
                 }
             }

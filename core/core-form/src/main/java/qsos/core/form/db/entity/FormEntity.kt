@@ -7,23 +7,27 @@ import androidx.room.PrimaryKey
 
 /**
  * @author : 华清松
- * @description : 通用表单实体类
+ * 表单实体类
+ * @param id 表单ID，自增
+ * @param title 表单名称
+ * @param notice 表单提示内容
+ * @param submitName 表单提交按钮名称
+ * @param submitter 表单提交者
+ * @param sceneType 表单场景类型
  */
-@Entity(tableName = "form",
-        indices = [Index(value = ["id"], unique = true)]
-)
-class FormEntity {
-    @PrimaryKey(autoGenerate = true)
-    var id: Long? = null
+@Entity(tableName = "form", indices = [Index(value = ["id"], unique = true)])
+data class FormEntity(
+        @PrimaryKey(autoGenerate = true)
+        var id: Long? = null,
+        var title: String? = null,
+        var notice: String? = null,
+        var submitName: String? = null,
+        var submitter: String? = null,
+        var sceneType: String? = null
+) {
 
-    var submitter: Int? = 0
-    var scene_type: Int? = 0
-    var desc: String? = null
-    var title: String? = null
-    var submit_time: String? = null
-    var submit_name: String? = null
-
+    /**表单列表项*/
     @Ignore
-    var form_item: List<FormItem>? = arrayListOf()
-
+    var formItem: List<FormItem>? = arrayListOf()
+        get() = if (field == null) arrayListOf() else field
 }

@@ -9,6 +9,7 @@ import io.reactivex.schedulers.Schedulers
 import qsos.core.form.R
 import qsos.core.form.db.FormDatabase
 import qsos.core.form.db.entity.FormUserEntity
+import qsos.core.form.db.entity.FormValueOfUser
 import qsos.core.form.db.entity.Value
 import qsos.core.form.view.hodler.FormUsersHolder
 import qsos.lib.base.base.adapter.BaseAdapter
@@ -48,12 +49,9 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
                         chose++
                         it.userCb = true
                         FormDatabase.getInstance(mContext).formItemValueDao.insert(
-                                Value(
-                                        it.formItemId,
-                                        it.userName,
-                                        it.userPhone,
-                                        it.userAvatar,
-                                        it.userId
+                                Value.newUser(
+                                        it.formItemId!!,
+                                        FormValueOfUser(it.userName, it.userPhone, it.userAvatar, it.userId)
                                 )
                         )
                     }
@@ -63,7 +61,7 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
                     if (it.userCb) {
                         chose--
                         it.userCb = false
-                        FormDatabase.getInstance(mContext).formItemValueDao.deleteUserByUserId(it.formItemId!!, it.userPhone!!)
+                        FormDatabase.getInstance(mContext).formItemValueDao.deleteUserByUserDesc(it.formItemId!!, it.userPhone!!)
                     }
                 }
             }
@@ -94,12 +92,14 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
                     Completable.fromAction {
                         FormDatabase.getInstance(mContext).formItemValueDao.deleteByFormItemId(data[position].formItemId)
                         FormDatabase.getInstance(mContext).formItemValueDao.insert(
-                                Value(
-                                        data[position].formItemId,
-                                        data[position].userName,
-                                        data[position].userPhone,
-                                        data[position].userAvatar,
-                                        data[position].userId
+                                Value.newUser(
+                                        data[position].formItemId!!,
+                                        FormValueOfUser(
+                                                data[position].userName,
+                                                data[position].userPhone,
+                                                data[position].userAvatar,
+                                                data[position].userId
+                                        )
                                 )
                         )
                     }
@@ -119,7 +119,7 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
                     /*多选*/
                     if (data[position].userCb) {
                         Completable.fromAction {
-                            FormDatabase.getInstance(mContext).formItemValueDao.deleteUserByUserId(data[position].formItemId!!, data[position].userPhone!!)
+                            FormDatabase.getInstance(mContext).formItemValueDao.deleteUserByUserDesc(data[position].formItemId!!, data[position].userPhone!!)
                         }
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
@@ -136,12 +136,14 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
                         }
                         Completable.fromAction {
                             FormDatabase.getInstance(mContext).formItemValueDao.insert(
-                                    Value(
-                                            data[position].formItemId,
-                                            data[position].userName,
-                                            data[position].userPhone,
-                                            data[position].userAvatar,
-                                            data[position].userId
+                                    Value.newUser(
+                                            data[position].formItemId!!,
+                                            FormValueOfUser(
+                                                    data[position].userName,
+                                                    data[position].userPhone,
+                                                    data[position].userAvatar,
+                                                    data[position].userId
+                                            )
                                     )
                             )
                         }

@@ -12,7 +12,7 @@ import qsos.lib.base.callback.OnListItemClickListener
 
 /**
  * @author : 华清松
- * @description : 文件表单项
+ * 文件表单项
  */
 class ItemFormFileHolder(
         itemView: View,
@@ -21,16 +21,16 @@ class ItemFormFileHolder(
 
     @SuppressLint("SetTextI18n")
     override fun setData(data: FormItem, position: Int) {
-        itemView.form_item_file_title.text = data.form_item_key
+        itemView.form_item_file_title.text = data.title
 
-        if (data.form_item_value?.values != null) {
-            val files = data.form_item_value?.values!!
+        if (data.formItemValue?.values != null) {
+            val files = data.formItemValue?.values!!
             itemView.rv_item_form_files.layoutManager = GridLayoutManager(itemView.context, 4)
 
             itemView.rv_item_form_files.adapter = FormFileAdapter(files)
         }
 
-        when (data.form_item_value!!.limit_type) {
+        when (data.formItemValue!!.limitType) {
             "image" -> {
                 itemView.form_item_file_take_photo.visibility = View.VISIBLE
                 itemView.form_item_file_take_album.visibility = View.VISIBLE

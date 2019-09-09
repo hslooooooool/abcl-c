@@ -9,7 +9,7 @@ import qsos.core.form.R
 
 /**
  * @author : 华清松
- * @description : 自定义底部弹窗
+ * 自定义底部弹窗
  */
 
 abstract class BaseBottomDialog : DialogFragment() {

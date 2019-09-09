@@ -6,7 +6,7 @@ import qsos.core.form.db.entity.FormEntity
 
 /**
  * @author : 华清松
- * @description : 表单 Dao 层
+ * 表单 Dao 层
  *
  * 注意：最新版本的Room支持更多RxJava相关操作，如删除是否完成观察者
  */

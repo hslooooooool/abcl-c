@@ -19,9 +19,9 @@ import qsos.lib.base.utils.ToastUtils
 
 /**
  * @author : 华清松
- * @description : 表单输入页
+ * 表单输入页
  */
-@Route(group = FormPath.FORM, path = FormPath.ITEM_INPUT)
+@Route(group = FormPath.FORM, path = FormPath.FORM_ITEM_INPUT)
 class InputActivity : AbsFormActivity() {
 
     /**表单数据实现类*/
@@ -50,11 +50,11 @@ class InputActivity : AbsFormActivity() {
         btn_form_input_btn.setOnClickListener {
             if (itemValue != null) {
                 val content = et_form_input.text.toString()
-                itemValue?.input_value = content
+                itemValue?.text?.content = content
                 if (TextUtils.isEmpty(content)) {
                     ToastUtils.showToast(this, "你未输入内容")
                 }
-                if (item!!.form_item_required && content.length < limitMin || content.length > limitMax) {
+                if (item!!.require && content.length < limitMin || content.length > limitMax) {
                     ToastUtils.showToast(this, "字数不符合要求")
                 }
                 formModelIml.updateValue(itemValue!!)
@@ -67,20 +67,20 @@ class InputActivity : AbsFormActivity() {
 
         formModelIml.formRepo.dbFormItem.observe(this, Observer {
             item = it
-            limitMin = item!!.form_item_value!!.limit_min ?: 0
-            limitMax = item!!.form_item_value!!.limit_max ?: 0
+            limitMin = item!!.formItemValue!!.limitMin ?: 0
+            limitMax = item!!.formItemValue!!.limitMax ?: 0
 
-            if (item!!.form_item_value != null
-                    && item!!.form_item_value!!.values != null
-                    && item!!.form_item_value!!.values!!.isNotEmpty()) {
-                itemValue = item!!.form_item_value!!.values!![0]
+            if (item!!.formItemValue != null
+                    && item!!.formItemValue!!.values != null
+                    && item!!.formItemValue!!.values!!.isNotEmpty()) {
+                itemValue = item!!.formItemValue!!.values!![0]
             }
 
-            if (TextUtils.isEmpty(itemValue?.input_value)) {
-                itemValue?.input_value = ""
+            if (TextUtils.isEmpty(itemValue?.text?.content)) {
+                itemValue?.text?.content = ""
             }
-            et_form_input.setText(itemValue?.input_value)
-            et_form_input.hint = item?.form_item_hint ?: "点击输入"
+            et_form_input.setText(itemValue?.text?.content)
+            et_form_input.hint = item?.notice ?: "点击输入"
 
             if (limitMax > 0) {
                 et_form_input.filters = arrayOf(InputFilter.LengthFilter(limitMax))
@@ -91,11 +91,11 @@ class InputActivity : AbsFormActivity() {
                 limitMax >= 1 && limitMin < 1 -> "字数限制：最多输入 $limitMax 字"
                 else -> "字数限制：" + limitMin + "\t-\t" + limitMax + "字"
             }
-            tv_form_input_hint.text = item?.form_item_hint + limit
+            tv_form_input_hint.text = item?.notice + limit
 
-            et_form_input.setSelection(itemValue?.input_value?.length ?: 0)
+            et_form_input.setSelection(itemValue?.text?.content?.length ?: 0)
 
-            if (it.form_item_status == 0) {
+            if (!it.editable) {
                 btn_form_input_btn.visibility = View.INVISIBLE
                 et_form_input.isEnabled = false
                 tv_form_input_hint.visibility = View.INVISIBLE

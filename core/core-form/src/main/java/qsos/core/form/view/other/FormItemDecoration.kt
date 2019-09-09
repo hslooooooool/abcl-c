@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 /**
  * @author : 华清松
- * @description : 表单项分割线
+ * 表单项分割线
  */
 class FormItemDecoration : RecyclerView.ItemDecoration() {
     /**
