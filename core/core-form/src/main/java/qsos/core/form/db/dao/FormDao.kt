@@ -1,6 +1,7 @@
 package qsos.core.form.db.dao
 
 import androidx.room.*
+import io.reactivex.Completable
 import io.reactivex.Flowable
 import qsos.core.form.db.entity.FormEntity
 
@@ -20,6 +21,6 @@ interface FormDao {
     fun insert(form: FormEntity): Long
 
     @Delete
-    fun delete(form: FormEntity)
+    fun delete(form: FormEntity): Completable
 
 }

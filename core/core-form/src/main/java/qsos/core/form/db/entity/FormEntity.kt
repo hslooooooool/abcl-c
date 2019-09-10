@@ -14,6 +14,7 @@ import androidx.room.PrimaryKey
  * @param submitName 表单提交按钮名称
  * @param submitter 表单提交者
  * @param sceneType 表单场景类型
+ * @param editable 表单是否可编辑
  */
 @Entity(tableName = "form", indices = [Index(value = ["id"], unique = true)])
 data class FormEntity(
@@ -23,11 +24,12 @@ data class FormEntity(
         var notice: String? = null,
         var submitName: String? = null,
         var submitter: String? = null,
-        var sceneType: String? = null
+        var sceneType: String? = null,
+        var editable: Boolean = true
 ) {
 
     /**表单列表项*/
     @Ignore
-    var formItem: List<FormItem>? = arrayListOf()
+    var formItems: List<FormItem>? = arrayListOf()
         get() = if (field == null) arrayListOf() else field
 }

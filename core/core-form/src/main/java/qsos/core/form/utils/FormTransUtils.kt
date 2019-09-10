@@ -49,7 +49,7 @@ object FormTransUtils {
         formItem3.require = false
         formItem3.formItemValue = FormItemValue(null, 9, "image", null)
         formItemList.add(formItem3)
-        form.formItem = formItemList
+        form.formItems = formItemList
         return form
     }
 
@@ -169,9 +169,9 @@ object FormTransUtils {
         formItem1.title = "通知人员"
         formItem1.require = false
         formItem1.formItemValue = FormItemValue(0, null, "execute_toast", arrayListOf())
-        // todo 后期实现 formItemList.add(formItem1)
+        // todo 后期实现 formItems.add(formItem1)
 
-        form.formItem = formItemList
+        form.formItems = formItemList
         return form
     }
 

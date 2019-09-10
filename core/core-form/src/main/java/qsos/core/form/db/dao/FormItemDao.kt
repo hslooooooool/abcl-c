@@ -14,10 +14,10 @@ import qsos.core.form.db.entity.FormItem
 @Dao
 interface FormItemDao {
 
-    @Query("SELECT * FROM formItem where formId=:formId")
+    @Query("SELECT * FROM formItems where formId=:formId")
     fun getFormItemByFormId(formId: Long): List<FormItem>
 
-    @Query("SELECT * FROM formItem where id=:id")
+    @Query("SELECT * FROM formItems where id=:id")
     fun getFormItemByIdF(id: Long): Flowable<FormItem>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

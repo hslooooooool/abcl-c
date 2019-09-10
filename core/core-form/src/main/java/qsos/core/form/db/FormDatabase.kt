@@ -10,6 +10,7 @@ import qsos.core.form.db.dao.FormItemValueDao
 import qsos.core.form.db.entity.FormEntity
 import qsos.core.form.db.entity.FormItem
 import qsos.core.form.db.entity.Value
+import qsos.lib.base.base.BaseApplication
 
 /**
  * @author : 华清松
@@ -34,9 +35,9 @@ abstract class FormDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: FormDatabase? = null
 
-        fun getInstance(context: Context): FormDatabase =
+        fun getInstance(): FormDatabase =
                 INSTANCE ?: synchronized(this) {
-                    INSTANCE ?: create(context).also { INSTANCE = it }
+                    INSTANCE ?: create(BaseApplication.appContext).also { INSTANCE = it }
                 }
 
         private fun create(context: Context): FormDatabase {

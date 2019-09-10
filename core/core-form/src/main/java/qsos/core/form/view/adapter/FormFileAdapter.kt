@@ -1,8 +1,6 @@
 package qsos.core.form.view.adapter
 
-import android.annotation.SuppressLint
 import android.view.View
-import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import qsos.core.form.R
@@ -32,9 +30,7 @@ class FormFileAdapter(files: ArrayList<Value>)
         when (view.id) {
             R.id.iv_item_form_file_delete -> {
                 if (!data[position].limitEdit) {
-                    Completable.fromAction {
-                        FormDatabase.getInstance(mContext).formItemValueDao.delete(data[position])
-                    }
+                    FormDatabase.getInstance().formItemValueDao.delete(data[position])
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(
@@ -43,8 +39,7 @@ class FormFileAdapter(files: ArrayList<Value>)
                                         notifyDataSetChanged()
                                     },
                                     {
-                                        ToastUtils.showToast(mContext, "删除失败")
-                                        notifyDataSetChanged()
+                                        ToastUtils.showToastLong(mContext, "删除失败 ${it.message}")
                                     }
                             )
                 }
@@ -52,7 +47,6 @@ class FormFileAdapter(files: ArrayList<Value>)
         }
     }
 
-    @SuppressLint("CheckResult")
     override fun onItemLongClick(view: View, position: Int, obj: Any?) {
 
     }

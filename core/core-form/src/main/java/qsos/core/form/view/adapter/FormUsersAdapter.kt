@@ -48,7 +48,7 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
                     if (!it.userCb) {
                         chose++
                         it.userCb = true
-                        FormDatabase.getInstance(mContext).formItemValueDao.insert(
+                        FormDatabase.getInstance().formItemValueDao.insert(
                                 Value.newUser(
                                         it.formItemId!!,
                                         FormValueOfUser(it.userName, it.userPhone, it.userAvatar, it.userId)
@@ -61,7 +61,7 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
                     if (it.userCb) {
                         chose--
                         it.userCb = false
-                        FormDatabase.getInstance(mContext).formItemValueDao.deleteUserByUserDesc(it.formItemId!!, it.userPhone!!)
+                        FormDatabase.getInstance().formItemValueDao.deleteByFormItemIdAndUserDesc(it.formItemId!!, it.userPhone!!)
                     }
                 }
             }
@@ -90,8 +90,8 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
                 if (limitMax == 1) {
                     /*单选*/
                     Completable.fromAction {
-                        FormDatabase.getInstance(mContext).formItemValueDao.deleteByFormItemId(data[position].formItemId)
-                        FormDatabase.getInstance(mContext).formItemValueDao.insert(
+                        FormDatabase.getInstance().formItemValueDao.deleteByFormItemId(data[position].formItemId)
+                        FormDatabase.getInstance().formItemValueDao.insert(
                                 Value.newUser(
                                         data[position].formItemId!!,
                                         FormValueOfUser(
@@ -119,7 +119,7 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
                     /*多选*/
                     if (data[position].userCb) {
                         Completable.fromAction {
-                            FormDatabase.getInstance(mContext).formItemValueDao.deleteUserByUserDesc(data[position].formItemId!!, data[position].userPhone!!)
+                            FormDatabase.getInstance().formItemValueDao.deleteByFormItemIdAndUserDesc(data[position].formItemId!!, data[position].userPhone!!)
                         }
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
@@ -135,7 +135,7 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
                             return
                         }
                         Completable.fromAction {
-                            FormDatabase.getInstance(mContext).formItemValueDao.insert(
+                            FormDatabase.getInstance().formItemValueDao.insert(
                                     Value.newUser(
                                             data[position].formItemId!!,
                                             FormValueOfUser(

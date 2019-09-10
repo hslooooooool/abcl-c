@@ -24,7 +24,7 @@ object FormVerifyUtils {
 
     /**校验*/
     fun verify(form: FormEntity): Verify {
-        for (formItem in form.formItem!!) {
+        for (formItem in form.formItems!!) {
             /*表单项值类型，0：文本展示；1：输入；2：选项；3：时间；4：人员；5：附件；6：位置*/
             val verify = when (formItem.valueType) {
                 1 -> input(formItem)

@@ -1,82 +1,55 @@
 package qsos.core.form.data
 
-import android.annotation.SuppressLint
-import android.content.Context
-import androidx.lifecycle.MutableLiveData
-import com.google.gson.Gson
-import io.reactivex.Observable
+import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import qsos.core.form.db.FormDatabase
 import qsos.core.form.db.entity.FormEntity
-import qsos.core.form.db.entity.FormUserEntity
+import qsos.core.form.db.entity.FormItem
 import qsos.core.form.db.entity.Value
-import qsos.core.form.utils.FormVerifyUtils
-import timber.log.Timber
-import qsos.core.form.db.entity.FormItem as FormItem1
 
 /**
  * @author : 华清松
  * 表单数据获取
  */
-@SuppressLint("CheckResult")
-class FormRepository(
-        private val mContext: Context
-) : IFormModel {
+class FormRepository : IFormRepo {
 
-    /**NOTICE 数据库操作*/
-
-    override fun getFormByDB(formId: Long) {
-        FormDatabase.getInstance(mContext).formDao.getFormById(formId)
+    override fun getForm(formId: Long): Flowable<FormEntity> {
+        return FormDatabase.getInstance().formDao.getFormById(formId)
                 .subscribeOn(Schedulers.io())
                 .doOnNext {
-                    it.formItem = FormDatabase.getInstance(mContext).formItemDao.getFormItemByFormId(it.id!!)
-                    it.formItem?.forEach { formItem ->
-                        formItem.formItemValue?.values = arrayListOf()
-                        formItem.formItemValue?.values?.addAll(FormDatabase.getInstance(mContext).formItemValueDao.getValueByFormItemId(formItem.id!!))
-                        Timber.tag("数据库").i("查询formItem={formItem.id}下Value列表：${Gson().toJson(formItem.formItemValue!!.values)}")
+                    it.formItems = FormDatabase.getInstance().formItemDao.getFormItemByFormId(it.id!!)
+                    it.formItems?.forEach { formItem ->
+                        formItem.formItemValue?.values?.clear()
+                        formItem.formItemValue?.values?.addAll(
+                                FormDatabase.getInstance().formItemValueDao.getByFormItemId(formItem.id!!)
+                        )
                     }
                 }
                 .observeOn(Schedulers.io())
                 .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        {
-                            dbFormEntity.postValue(it)
-                        },
-                        {
-                            it.printStackTrace()
-                            dbFormEntity.postValue(null)
-                        }
-                )
     }
 
-    override fun insertForm(form: FormEntity, success: (form: FormEntity) -> Any?) {
-        Observable.create<FormEntity> {
-            val id = FormDatabase.getInstance(mContext).formDao.insert(form)
-            form.id = id
-            form.formItem?.forEach { formItem ->
-                formItem.formId = id
-                insertFormItem(formItem)
-            }
-            if (form.id != null) {
-                it.onNext(form)
-            } else {
-                it.onError(Exception("数据插入失败"))
-            }
-        }.subscribeOn(Schedulers.io())
+    override fun insertForm(form: FormEntity): Flowable<FormEntity> {
+        return Flowable.just(form)
+                .map {
+                    FormDatabase.getInstance().formDao.insert(it)
+                }
+                .subscribeOn(Schedulers.io())
+                .flatMap {
+                    form.id = it
+                    form.formItems?.forEach { formItem ->
+                        formItem.formId = it
+                        insertFormItem(formItem)
+                    }
+                    Flowable.just(form)
+                }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        {
-                            success(it)
-                        },
-                        {
-                            it.printStackTrace()
-                        }
-                )
     }
 
-    override fun insertFormItem(formItem: FormItem1) {
-        val formItemId = FormDatabase.getInstance(mContext).formItemDao.insert(formItem)
+    override fun insertFormItem(formItem: FormItem) {
+        val formItemId = FormDatabase.getInstance().formItemDao.insert(formItem)
         formItem.formItemValue!!.values?.forEach {
             it.formItemId = formItemId
             insertValue(it)
@@ -84,96 +57,53 @@ class FormRepository(
     }
 
     override fun insertValue(formItemValue: Value) {
-        FormDatabase.getInstance(mContext).formItemValueDao.insert(formItemValue)
+        FormDatabase.getInstance().formItemValueDao.insert(formItemValue)
     }
 
-    override fun addValueToFormItem(formItemValue: Value) {
-        Observable.create<Value> {
-            val id = FormDatabase.getInstance(mContext).formItemValueDao.insert(formItemValue)
-            formItemValue.id = id
-            it.onNext(formItemValue)
-        }.subscribeOn(Schedulers.io())
-                .subscribe(
-                        {
-                            addValueToFormItem.postValue(it)
-                        },
-                        {
-                            addValueToFormItem.postValue(null)
-                        }
-                )
-    }
-
-    override fun deleteForm(form: FormEntity) {
-        Observable.create<Boolean> {
-            FormDatabase.getInstance(mContext).formDao.delete(form)
-            it.onNext(true)
-        }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    dbDeleteForm.postValue(it)
-                }
-    }
-
-    override fun getFormItemByDB(formItemId: Long) {
-        FormDatabase.getInstance(mContext).formItemDao.getFormItemByIdF(formItemId)
-                .observeOn(Schedulers.io())
+    override fun addValueToFormItem(formItemValue: Value): Flowable<Value> {
+        return Flowable.just(formItemValue)
                 .map {
-                    it.formItemValue?.values = arrayListOf()
-                    it.formItemValue?.values?.addAll(FormDatabase.getInstance(mContext).formItemValueDao.getValueByFormItemId(formItemId))
-                    it
-                }.observeOn(Schedulers.io())
+                    FormDatabase.getInstance().formItemValueDao.insert(formItemValue)
+                }
+                .subscribeOn(Schedulers.io())
+                .flatMap {
+                    formItemValue.id = it
+                    Flowable.just(formItemValue)
+                }.observeOn(AndroidSchedulers.mainThread())
+    }
+
+    override fun deleteForm(form: FormEntity): Completable {
+        return FormDatabase.getInstance().formDao.delete(form)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    dbFormItem.postValue(it)
-                }
     }
 
-    override fun updateValue(value: Value) {
-        FormDatabase.getInstance(mContext).formItemValueDao.update(value)
+    override fun getFormItemByDB(formItemId: Long): Flowable<FormItem> {
+        return FormDatabase.getInstance().formItemDao.getFormItemByIdF(formItemId)
                 .subscribeOn(Schedulers.io())
-                .unsubscribeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    updateValueStatus.postValue(true)
-                }
+                .map {
+                    it.formItemValue?.values?.clear()
+                    it.formItemValue?.values?.addAll(FormDatabase.getInstance().formItemValueDao.getByFormItemId(formItemId))
+                    it
+                }.observeOn(AndroidSchedulers.mainThread())
     }
 
-    override fun postForm(formType: String, formId: Long) {
-        FormDatabase.getInstance(mContext).formDao.getFormById(formId)
+    override fun updateValue(value: Value): Completable {
+        return FormDatabase.getInstance().formItemValueDao.update(value)
                 .subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .subscribe(
-                        {
-                            // TODO 提交数据
-                        },
-                        {
-                            postFormStatus.postValue(FormVerifyUtils.Verify(false, "提交失败 $it"))
-                        }
-                )
-
+                .observeOn(AndroidSchedulers.mainThread())
     }
 
-    override fun getUsers(formItem: FormItem1, key: String?) {
-
+    override fun postForm(formType: String, formId: Long): Flowable<FormEntity> {
+        return FormDatabase.getInstance().formDao.getFormById(formId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
     }
 
-    // 获取表单数据结果
-    val dbFormEntity = MutableLiveData<FormEntity?>()
+    override fun getUsers(formItem: FormItem, key: String?): Flowable<List<Value>> {
+        return FormDatabase.getInstance().formItemValueDao.getUserByFormItemIdAndUserDesc(formItem.id!!, key)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+    }
 
-    // 获取表单项数据结果
-    val dbFormItem = MutableLiveData<FormItem1>()
-
-    // 删除表单数据结果
-    val dbDeleteForm = MutableLiveData<Boolean>()
-
-    // 用户列表数据结果
-    val userList = MutableLiveData<List<FormUserEntity>?>()
-
-    // 提交表单数据结果
-    val postFormStatus = MutableLiveData<FormVerifyUtils.Verify>()
-
-    // 更新列表项值数据结果
-    val updateValueStatus = MutableLiveData<Boolean>()
-
-    // 插入Value到FormItem后数据结果
-    val addValueToFormItem = MutableLiveData<Value?>()
 }

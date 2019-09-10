@@ -17,7 +17,7 @@ interface ApiTweet {
     @DELETE("/delete")
     fun delete(): Observable<BaseResponse<String>>
 
-    @DELETE("/clear")
+    @DELETE("/dispose")
     suspend fun clear(): BaseResponse<String>
 
     @GET("/one")

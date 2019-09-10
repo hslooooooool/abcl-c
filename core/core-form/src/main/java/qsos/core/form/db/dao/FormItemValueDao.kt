@@ -2,6 +2,7 @@ package qsos.core.form.db.dao
 
 import androidx.room.*
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import qsos.core.form.db.entity.Value
 
 /**
@@ -12,7 +13,10 @@ import qsos.core.form.db.entity.Value
 interface FormItemValueDao {
 
     @Query("SELECT * FROM formItemValue where formItemId=:formItemId")
-    fun getValueByFormItemId(formItemId: Long): List<Value>
+    fun getByFormItemId(formItemId: Long): List<Value>
+
+    @Query("SELECT * FROM formItemValue where formItemId=:formItemId AND userName like :key OR userDesc like :key")
+    fun getUserByFormItemIdAndUserDesc(formItemId: Long, key: String?): Flowable<List<Value>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(value: Value): Long
@@ -24,10 +28,10 @@ interface FormItemValueDao {
     fun update(value: List<Value>)
 
     @Delete
-    fun delete(value: Value)
+    fun delete(value: Value): Completable
 
     @Query("DELETE FROM formItemValue WHERE formItemId=:formItemId AND userDesc=:userDesc")
-    fun deleteUserByUserDesc(formItemId: Long?, userDesc: String)
+    fun deleteByFormItemIdAndUserDesc(formItemId: Long?, userDesc: String)
 
     @Query("DELETE FROM formItemValue where formItemId=:formItemId")
     fun deleteByFormItemId(formItemId: Long?)

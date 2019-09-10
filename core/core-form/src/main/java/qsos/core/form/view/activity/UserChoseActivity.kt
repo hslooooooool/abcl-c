@@ -7,10 +7,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.form_users.*
 import qsos.core.form.FormPath
 import qsos.core.form.R
@@ -23,14 +23,15 @@ import qsos.core.form.view.adapter.FormUsersAdapter
 import qsos.core.form.view.other.FormItemDecoration
 import qsos.lib.base.callback.OnTListener
 import qsos.lib.base.utils.BaseUtils
-import qsos.lib.base.utils.ToastUtils
 
 /**
  * @author : 华清松
  * 表单用户选择
  */
 @Route(group = FormPath.FORM, path = FormPath.FORM_ITEM_USERS)
-class UserChoseActivity : AbsFormActivity(), Toolbar.OnMenuItemClickListener {
+class UserChoseActivity(
+        override var mCompositeDisposable: CompositeDisposable? = CompositeDisposable()
+) : AbsFormActivity(), Toolbar.OnMenuItemClickListener {
 
     /**表单数据实现类*/
     private lateinit var formModelIml: FormModelIml
@@ -53,7 +54,7 @@ class UserChoseActivity : AbsFormActivity(), Toolbar.OnMenuItemClickListener {
     override val reload: Boolean = false
 
     override fun initData(savedInstanceState: Bundle?) {
-        formModelIml = FormModelIml(FormRepository(mContext))
+        formModelIml = FormModelIml(FormRepository())
     }
 
     override fun initView() {
@@ -98,36 +99,40 @@ class UserChoseActivity : AbsFormActivity(), Toolbar.OnMenuItemClickListener {
             return@OnKeyListener false
         })
 
-        formModelIml.formRepo.dbFormItem.observe(this, Observer {
-            item = it
-            formModelIml.getUsers(item!!, form_users_et.text.toString())
-        })
-
-        formModelIml.formRepo.userList.observe(this, Observer {
-            if (it == null) {
-                ToastUtils.showToast(this, "查询可选列表数据失败")
-            } else {
-                mList.clear()
-                mList.addAll(it)
-
-                chose = getValues().size
-                limitMin = item?.formItemValue?.limitMin
-                limitMax = item?.formItemValue?.limitMax
-
-                changeChoseUser()
-
-                mAdapter?.setLimit(chose, limitMin, limitMax)
-                mAdapter?.notifyDataSetChanged()
-            }
-        })
-
         getData()
 
     }
 
     override fun getData() {
         if (itemId != null) {
-            formModelIml.getFormItemByDB(itemId!!)
+            mCompositeDisposable?.add(formModelIml.getFormItemByDB(itemId!!)
+                    .subscribe {
+                        item = it
+                        formModelIml.getUsers(item!!, form_users_et.text.toString())
+                                .subscribe { values ->
+                                    mList.clear()
+                                    values.forEach { v ->
+                                        val sFormUserEntity = FormUserEntity()
+                                        sFormUserEntity.formItemId = v.formItemId
+                                        sFormUserEntity.id = v.id
+                                        sFormUserEntity.userName = v.user?.userName
+                                        sFormUserEntity.userPhone = v.user?.userDesc
+                                        sFormUserEntity.userAvatar = v.user?.userAvatar
+                                        sFormUserEntity.userLimit = v.limitEdit
+                                        mList.add(sFormUserEntity)
+                                    }
+
+                                    chose = getValues().size
+                                    limitMin = item?.formItemValue?.limitMin
+                                    limitMax = item?.formItemValue?.limitMax
+
+                                    changeChoseUser()
+
+                                    mAdapter?.setLimit(chose, limitMin, limitMax)
+                                    mAdapter?.notifyDataSetChanged()
+                                }
+                    }
+            )
         }
     }
 
@@ -156,4 +161,14 @@ class UserChoseActivity : AbsFormActivity(), Toolbar.OnMenuItemClickListener {
             ll_form_user_chose.visibility = View.GONE
         }
     }
+
+    override fun onDestroy() {
+        dispose()
+        super.onDestroy()
+    }
+
+    override fun dispose() {
+        mCompositeDisposable?.dispose()
+    }
+
 }

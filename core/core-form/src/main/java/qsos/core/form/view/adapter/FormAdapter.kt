@@ -147,7 +147,7 @@ class FormAdapter(formItems: ArrayList<FormItem>) : BaseAdapter<FormItem>(formIt
                         data[position].formItemValue!!.values!![0].time!!.timeStart = date.time
 
                         Completable.fromAction {
-                            FormDatabase.getInstance(mContext).formItemValueDao.update(data[position].formItemValue!!.values!!)
+                            FormDatabase.getInstance().formItemValueDao.update(data[position].formItemValue!!.values!!)
                         }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
                                 {
                                     notifyItemChanged(position)
@@ -194,7 +194,7 @@ class FormAdapter(formItems: ArrayList<FormItem>) : BaseAdapter<FormItem>(formIt
                                                 if (date != null) {
                                                     data[position].formItemValue!!.values!![1].time!!.timeStart = date.time
                                                     Completable.fromAction {
-                                                        FormDatabase.getInstance(mContext).formItemValueDao.update(data[position].formItemValue!!.values!!)
+                                                        FormDatabase.getInstance().formItemValueDao.update(data[position].formItemValue!!.values!!)
                                                     }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
                                                             {
                                                                 notifyItemChanged(position)
@@ -236,7 +236,7 @@ class FormAdapter(formItems: ArrayList<FormItem>) : BaseAdapter<FormItem>(formIt
                     }
                     if (data[position].formItemValue!!.values!!.isNotEmpty()) {
                         Completable.fromAction {
-                            FormDatabase.getInstance(mContext).formItemValueDao.update(data[position].formItemValue!!.values!!)
+                            FormDatabase.getInstance().formItemValueDao.update(data[position].formItemValue!!.values!!)
                         }.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(
@@ -277,7 +277,7 @@ class FormAdapter(formItems: ArrayList<FormItem>) : BaseAdapter<FormItem>(formIt
                     }
                     if (data[position].formItemValue!!.values!!.isNotEmpty()) {
                         Completable.fromAction {
-                            FormDatabase.getInstance(mContext).formItemValueDao.update(data[position].formItemValue!!.values!!)
+                            FormDatabase.getInstance().formItemValueDao.update(data[position].formItemValue!!.values!!)
                         }.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(

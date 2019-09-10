@@ -12,7 +12,7 @@ class FormUserEntity {
         this.userAvatar = avatar
     }
 
-    var id: Int? = null
+    var id: Long? = null
     var userName: String? = null
     var userPhone: String? = ""
     var userAvatar: String? = null

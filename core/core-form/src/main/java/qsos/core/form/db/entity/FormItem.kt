@@ -17,9 +17,8 @@ import androidx.room.ForeignKey.CASCADE
  * @param position 表单项顺序
  * @param visible 表单项是否显示
  * @param require 表单项是否必填
- * @param formItemValue 表单项值列表项
  */
-@Entity(tableName = "formItem",
+@Entity(tableName = "formItems",
         foreignKeys = [
             ForeignKey(entity = FormEntity::class, parentColumns = ["id"], childColumns = ["formId"], onDelete = CASCADE)
         ],
@@ -39,6 +38,7 @@ data class FormItem(
         var visible: Boolean = true,
         var require: Boolean = false
 ) {
+    /**表单项值列表项*/
     @Embedded
     var formItemValue: FormItemValue? = null
         get() = if (field == null) FormItemValue() else field

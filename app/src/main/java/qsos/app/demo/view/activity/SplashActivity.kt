@@ -27,7 +27,7 @@ class SplashActivity(
     private lateinit var mFormRepository: FormRepository
 
     override fun initData(savedInstanceState: Bundle?) {
-        mFormRepository = FormRepository(this)
+        mFormRepository = FormRepository()
     }
 
     override fun initView() {
@@ -43,18 +43,20 @@ class SplashActivity(
                                 ARouter.getInstance().build(TweetPath.TWEET).navigation()
                             }
                             "表单" -> {
-                                mFormRepository.insertForm(FormTransUtils.getTestOrderFeedbackData()) {
-                                    ARouter.getInstance().build(FormPath.MAIN)
-                                            .withLong(FormPath.FORM_ID, it.id!!)
-                                            .navigation()
-                                }
+                                mFormRepository.insertForm(FormTransUtils.getTestOrderFeedbackData())
+                                        .subscribe {
+                                            ARouter.getInstance().build(FormPath.MAIN)
+                                                    .withLong(FormPath.FORM_ID, it.id!!)
+                                                    .navigation()
+                                        }
                             }
                             "表单2" -> {
-                                mFormRepository.insertForm(FormTransUtils.getTestExecuteData()) {
-                                    ARouter.getInstance().build(FormPath.MAIN)
-                                            .withLong(FormPath.FORM_ID, it.id!!)
-                                            .navigation()
-                                }
+                                mFormRepository.insertForm(FormTransUtils.getTestExecuteData())
+                                        .subscribe {
+                                            ARouter.getInstance().build(FormPath.MAIN)
+                                                    .withLong(FormPath.FORM_ID, it.id!!)
+                                                    .navigation()
+                                        }
                             }
                         }
                     }
