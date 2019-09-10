@@ -37,10 +37,12 @@ data class FormItem(
         var editable: Boolean = true,
         var position: Int? = 0,
         var visible: Boolean = true,
-        var require: Boolean = false,
-        @Embedded
-        var formItemValue: FormItemValue? = null
-)
+        var require: Boolean = false
+) {
+    @Embedded
+    var formItemValue: FormItemValue? = null
+        get() = if (field == null) FormItemValue() else field
+}
 
 enum class FormItemType(val key: String, val tag: Int) {
     TEXT("文本展示", 0),

@@ -140,11 +140,11 @@ class FormAdapter(formItems: ArrayList<FormItem>) : BaseAdapter<FormItem>(formIt
             backListener?.back(false)
             BottomDialogUtils.showRealDateChoseView(view.context,
                     "yyyy-MM-dd HH:mm" == date, showDay,
-                    null, null, Date(values[0].time.timeStart), object : OnDateListener {
+                    null, null, Date(values[0].time!!.timeStart), object : OnDateListener {
                 override fun setDate(type: Int?, date: Date?) {
                     backListener?.back(true)
                     if (date != null) {
-                        data[position].formItemValue!!.values!![0].time.timeStart = date.time
+                        data[position].formItemValue!!.values!![0].time!!.timeStart = date.time
 
                         Completable.fromAction {
                             FormDatabase.getInstance(mContext).formItemValueDao.update(data[position].formItemValue!!.values!!)
@@ -180,19 +180,19 @@ class FormAdapter(formItems: ArrayList<FormItem>) : BaseAdapter<FormItem>(formIt
             backListener?.back(false)
             BottomDialogUtils.showRealDateChoseView(view.context,
                     "yyyy-MM-dd HH:mm" == date1, showDay1,
-                    null, null, Date(values[0].time.timeStart),
+                    null, null, Date(values[0].time!!.timeStart),
                     object : OnDateListener {
                         override fun setDate(type: Int?, date: Date?) {
                             if (date != null) {
-                                data[position].formItemValue!!.values!![0].time.timeStart = date.time
+                                data[position].formItemValue!!.values!![0].time!!.timeStart = date.time
                                 BottomDialogUtils.showRealDateChoseView(view.context, "yyyy-MM-dd HH:mm" == date2,
                                         showDay2,
-                                        Date(values[0].time.timeStart), null, Date(values[1].time.timeStart),
+                                        Date(values[0].time!!.timeStart), null, Date(values[1].time!!.timeStart),
                                         object : OnDateListener {
                                             override fun setDate(type: Int?, date: Date?) {
                                                 backListener?.back(true)
                                                 if (date != null) {
-                                                    data[position].formItemValue!!.values!![1].time.timeStart = date.time
+                                                    data[position].formItemValue!!.values!![1].time!!.timeStart = date.time
                                                     Completable.fromAction {
                                                         FormDatabase.getInstance(mContext).formItemValueDao.update(data[position].formItemValue!!.values!!)
                                                     }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
@@ -222,9 +222,9 @@ class FormAdapter(formItems: ArrayList<FormItem>) : BaseAdapter<FormItem>(formIt
             val values = data[position].formItemValue!!.values
             values!!.forEach {
                 val operation = Operation()
-                operation.key = it.check.ckName
+                operation.key = it.check!!.ckName
                 operation.value = it.id
-                operation.isCheck = it.check.ckChecked
+                operation.isCheck = it.check!!.ckChecked
                 operations.add(operation)
             }
             backListener?.back(false)
@@ -232,7 +232,7 @@ class FormAdapter(formItems: ArrayList<FormItem>) : BaseAdapter<FormItem>(formIt
                 override fun back(t: Operation) {
                     backListener?.back(true)
                     data[position].formItemValue!!.values!!.forEach {
-                        it.check.ckChecked = it.id == t.value
+                        it.check!!.ckChecked = it.id == t.value
                     }
                     if (data[position].formItemValue!!.values!!.isNotEmpty()) {
                         Completable.fromAction {
@@ -259,9 +259,9 @@ class FormAdapter(formItems: ArrayList<FormItem>) : BaseAdapter<FormItem>(formIt
             val values = data[position].formItemValue!!.values
             values!!.forEach {
                 val operation = Operation()
-                operation.key = it.check.ckName
+                operation.key = it.check!!.ckName
                 operation.value = it.id
-                operation.isCheck = it.check.ckChecked
+                operation.isCheck = it.check!!.ckChecked
                 operations.add(operation)
             }
             backListener?.back(false)
@@ -271,7 +271,7 @@ class FormAdapter(formItems: ArrayList<FormItem>) : BaseAdapter<FormItem>(formIt
                     data[position].formItemValue!!.values!!.forEach { value ->
                         t.forEach {
                             if (value.id == it.value) {
-                                value.check.ckChecked = it.isCheck
+                                value.check!!.ckChecked = it.isCheck
                             }
                         }
                     }

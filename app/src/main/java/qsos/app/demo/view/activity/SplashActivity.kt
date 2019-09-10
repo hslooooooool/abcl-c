@@ -8,6 +8,8 @@ import kotlinx.android.synthetic.main.app_item_component.view.*
 import qsos.app.demo.R
 import qsos.app.demo.router.TweetPath
 import qsos.core.form.FormPath
+import qsos.core.form.data.FormRepository
+import qsos.core.form.utils.FormTransUtils
 import qsos.lib.base.base.activity.BaseActivity
 import qsos.lib.base.base.adapter.BaseNormalAdapter
 import qsos.lib.base.utils.ActivityManager
@@ -21,9 +23,12 @@ class SplashActivity(
         override val reload: Boolean = false
 ) : BaseActivity() {
 
-    private val mList = arrayListOf("朋友圈", "表单")
+    private val mList = arrayListOf("朋友圈", "表单", "表单2")
+    private lateinit var mFormRepository: FormRepository
 
-    override fun initData(savedInstanceState: Bundle?) {}
+    override fun initData(savedInstanceState: Bundle?) {
+        mFormRepository = FormRepository(this)
+    }
 
     override fun initView() {
         ActivityManager.finishAllButNotMe(this)
@@ -38,9 +43,18 @@ class SplashActivity(
                                 ARouter.getInstance().build(TweetPath.TWEET).navigation()
                             }
                             "表单" -> {
-                                ARouter.getInstance().build(FormPath.MAIN)
-                                        .withString(FormPath.FORM_ID, "添加公告")
-                                        .navigation()
+                                mFormRepository.insertForm(FormTransUtils.getTestOrderFeedbackData()) {
+                                    ARouter.getInstance().build(FormPath.MAIN)
+                                            .withLong(FormPath.FORM_ID, it.id!!)
+                                            .navigation()
+                                }
+                            }
+                            "表单2" -> {
+                                mFormRepository.insertForm(FormTransUtils.getTestExecuteData()) {
+                                    ARouter.getInstance().build(FormPath.MAIN)
+                                            .withLong(FormPath.FORM_ID, it.id!!)
+                                            .navigation()
+                                }
                             }
                         }
                     }

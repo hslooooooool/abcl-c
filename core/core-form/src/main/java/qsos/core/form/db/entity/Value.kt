@@ -33,19 +33,19 @@ data class Value(
     var text: FormValueOfText? = null
     /**时间*/
     @Embedded
-    var time: FormValueOfTime = FormValueOfTime()
+    var time: FormValueOfTime? = FormValueOfTime()
     /**选择*/
     @Embedded
-    var check: FormValueOfCheck = FormValueOfCheck()
+    var check: FormValueOfCheck? = FormValueOfCheck()
     /**人员*/
     @Embedded
-    var user: FormValueOfUser = FormValueOfUser()
+    var user: FormValueOfUser? = FormValueOfUser()
     /**附件*/
     @Embedded
-    var file: FormValueOfFile = FormValueOfFile()
+    var file: FormValueOfFile? = FormValueOfFile()
     /**位置*/
     @Embedded
-    var location: FormValueOfLocation = FormValueOfLocation()
+    var location: FormValueOfLocation? = FormValueOfLocation()
 
     companion object {
         fun newCheck(check: FormValueOfCheck): Value {

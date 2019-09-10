@@ -30,7 +30,7 @@ import qsos.lib.base.utils.ToastUtils
  */
 @Route(group = FormPath.FORM, path = FormPath.MAIN)
 class FormActivity(
-        @JvmField @Autowired(name = FormPath.FORM_ID) var formId: Long? = null,
+        @JvmField @Autowired(name = FormPath.FORM_ID) var formId: Long? = -1L,
         @JvmField @Autowired(name = FormPath.FORM_EDIT) var formEdit: Boolean = true,
 
         override val layoutId: Int = R.layout.form_activity_main,
@@ -53,7 +53,7 @@ class FormActivity(
     @SuppressLint("CheckResult")
     override fun initView() {
 
-        if (formId == null) {
+        if (formId == null || formId == -1L) {
             ToastUtils.showToast(this, "没有此表单")
             finish()
             return

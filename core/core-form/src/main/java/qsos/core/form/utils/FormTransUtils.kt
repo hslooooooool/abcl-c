@@ -185,8 +185,8 @@ object FormTransUtils {
         var chose = ""
         val choseList = formItem.formItemValue!!.values!!
         choseList.forEach {
-            if (it.check.ckChecked) {
-                chose = it.check.ckValue!!
+            if (it.check!!.ckChecked) {
+                chose = it.check!!.ckValue!!
             }
         }
         return chose
@@ -197,8 +197,8 @@ object FormTransUtils {
         var chose = ""
         val choseList = formItem.formItemValue!!.values!!
         choseList.forEach {
-            if (it.check.ckChecked) {
-                chose += it.check.ckValue!! + ","
+            if (it.check!!.ckChecked) {
+                chose += it.check!!.ckValue!! + ","
             }
         }
         return chose
@@ -223,10 +223,10 @@ object FormTransUtils {
         formValues.forEachIndexed { index, value ->
             ids = when (index) {
                 0 -> {
-                    value.file.fileId ?: ""
+                    value.file!!.fileId ?: ""
                 }
                 else -> {
-                    ids + "," + value.file.fileId
+                    ids + "," + value.file!!.fileId
                 }
             }
         }

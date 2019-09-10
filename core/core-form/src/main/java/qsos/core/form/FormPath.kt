@@ -21,5 +21,4 @@ object FormPath {
     /**表单项ID key*/
     const val FORM_ITEM_ID = "/FORM_ITEM/FORM_ITEM_ID"
 
-    const val choseUserCode = 20001
 }

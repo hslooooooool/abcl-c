@@ -26,14 +26,14 @@ class ItemFormTimeHolder(
         var time = ""
         if (data.formItemValue!!.values != null) {
             if (data.formItemValue!!.values!!.size == 1) {
-                if (data.formItemValue!!.values!![0].time.timeStart > 0L) {
-                    time = FormUtils.date(data.formItemValue!!.values!![0].time.timeStart, data.formItemValue!!.values!![0].limitType)
+                if (data.formItemValue!!.values!![0].time!!.timeStart > 0L) {
+                    time = FormUtils.date(data.formItemValue!!.values!![0].time!!.timeStart, data.formItemValue!!.values!![0].limitType)
                 }
             } else if (data.formItemValue!!.values!!.size == 2) {
-                if (data.formItemValue!!.values!![0].time.timeStart > 0L && data.formItemValue!!.values!![1].time.timeStart > 0L) {
-                    time = FormUtils.date(data.formItemValue!!.values!![0].time.timeStart, data.formItemValue!!.values!![0].limitType) +
+                if (data.formItemValue!!.values!![0].time!!.timeStart > 0L && data.formItemValue!!.values!![1].time!!.timeStart > 0L) {
+                    time = FormUtils.date(data.formItemValue!!.values!![0].time!!.timeStart, data.formItemValue!!.values!![0].limitType) +
                             "\t至\t" +
-                            FormUtils.date(data.formItemValue!!.values!![1].time.timeStart, data.formItemValue!!.values!![1].limitType)
+                            FormUtils.date(data.formItemValue!!.values!![1].time!!.timeStart, data.formItemValue!!.values!![1].limitType)
 
                 }
             }

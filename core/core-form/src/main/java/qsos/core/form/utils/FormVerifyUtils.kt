@@ -90,7 +90,7 @@ object FormVerifyUtils {
                 /*必填，单选，判断是否选择*/
                 var chose = false
                 for (value in formItem.formItemValue?.values!!) {
-                    if (value.check.ckChecked) {
+                    if (value.check!!.ckChecked) {
                         chose = true
                     }
                 }
@@ -101,7 +101,7 @@ object FormVerifyUtils {
                 /*必填，多选，判断是否选择*/
                 var chose = 0
                 for (value in formItem.formItemValue?.values!!) {
-                    if (value.check.ckChecked) {
+                    if (value.check!!.ckChecked) {
                         chose++
                     }
                 }
@@ -126,12 +126,12 @@ object FormVerifyUtils {
         } else if (required && !nullValue) {
             if (formItem.formItemValue!!.values!!.size == 1) {
                 /*必填，已填，判断单个时间是否设置*/
-                if (formItem.formItemValue?.values!![0].time.timeStart == 0L) {
+                if (formItem.formItemValue?.values!![0].time!!.timeStart == 0L) {
                     return Verify(false, "请设置【${formItem.title}】")
                 }
             } else if (formItem.formItemValue!!.values!!.size == 2) {
-                val startTime = formItem.formItemValue?.values!![0].time.timeStart
-                val endTime = formItem.formItemValue?.values!![1].time.timeStart
+                val startTime = formItem.formItemValue?.values!![0].time!!.timeStart
+                val endTime = formItem.formItemValue?.values!![1].time!!.timeStart
                 /*必填，已填，判断区间时间是否设置*/
                 if (startTime == 0L) {
                     return Verify(false, "请设置【${formItem.title}】的开始")
@@ -208,7 +208,7 @@ object FormVerifyUtils {
             return Verify(false, "请设置【${formItem.title}】")
         } else if (required && !nullValue) {
             /*必填，已填，判断位置是否为空*/
-            if (TextUtils.isEmpty(formItem.formItemValue?.values!![0].location.locName)) {
+            if (TextUtils.isEmpty(formItem.formItemValue?.values!![0].location!!.locName)) {
                 return Verify(false, "请设置【${formItem.title}】")
             }
         }

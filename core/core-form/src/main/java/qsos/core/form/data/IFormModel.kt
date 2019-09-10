@@ -10,14 +10,12 @@ import qsos.core.form.db.entity.Value
  * 表单操作接口
  */
 interface IFormModel {
-    /**获取表单数据*/
-    fun getForm(formType: FormType)
 
     /**获取表单数据库*/
     fun getFormByDB(formId: Long)
 
     /**插入表单数据*/
-    fun insertForm(form: FormEntity)
+    fun insertForm(form: FormEntity, success: (form: FormEntity) -> Any?)
 
     /**插入表单项数据*/
     fun insertFormItem(formItem: FormItem)

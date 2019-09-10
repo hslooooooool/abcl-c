@@ -32,7 +32,7 @@ class ItemFormUserHolder(
             itemView.rv_item_form_users.layoutManager = GridLayoutManager(itemView.context, 5)
             val users = arrayListOf<FormUserEntity>()
             data.formItemValue?.values!!.forEach {
-                users.add(FormUserEntity(it.user.userName!!, "${it.user.userDesc}", it.user.userAvatar))
+                users.add(FormUserEntity(it.user!!.userName!!, "${it.user!!.userDesc}", it.user!!.userAvatar))
             }
             itemView.rv_item_form_users.adapter = BaseNormalAdapter(R.layout.form_item_user, users,
                     setHolder = { holder, user, _ ->

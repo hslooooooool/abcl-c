@@ -9,10 +9,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import qsos.core.form.db.FormDatabase
 import qsos.core.form.db.entity.FormEntity
-import qsos.core.form.db.entity.FormType
 import qsos.core.form.db.entity.FormUserEntity
 import qsos.core.form.db.entity.Value
-import qsos.core.form.utils.FormTransUtils
 import qsos.core.form.utils.FormVerifyUtils
 import timber.log.Timber
 import qsos.core.form.db.entity.FormItem as FormItem1
@@ -34,8 +32,8 @@ class FormRepository(
                 .doOnNext {
                     it.formItem = FormDatabase.getInstance(mContext).formItemDao.getFormItemByFormId(it.id!!)
                     it.formItem?.forEach { formItem ->
-                        formItem.formItemValue!!.values = arrayListOf()
-                        formItem.formItemValue!!.values!!.addAll(FormDatabase.getInstance(mContext).formItemValueDao.getValueByFormItemId(formItem.id!!))
+                        formItem.formItemValue?.values = arrayListOf()
+                        formItem.formItemValue?.values?.addAll(FormDatabase.getInstance(mContext).formItemValueDao.getValueByFormItemId(formItem.id!!))
                         Timber.tag("数据库").i("查询formItem={formItem.id}下Value列表：${Gson().toJson(formItem.formItemValue!!.values)}")
                     }
                 }
@@ -46,12 +44,13 @@ class FormRepository(
                             dbFormEntity.postValue(it)
                         },
                         {
+                            it.printStackTrace()
                             dbFormEntity.postValue(null)
                         }
                 )
     }
 
-    override fun insertForm(form: FormEntity) {
+    override fun insertForm(form: FormEntity, success: (form: FormEntity) -> Any?) {
         Observable.create<FormEntity> {
             val id = FormDatabase.getInstance(mContext).formDao.insert(form)
             form.id = id
@@ -65,13 +64,13 @@ class FormRepository(
                 it.onError(Exception("数据插入失败"))
             }
         }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         {
-                            getFormByDB(it.id!!)
+                            success(it)
                         },
                         {
                             it.printStackTrace()
-                            dbFormEntity.postValue(null)
                         }
                 )
     }
@@ -119,8 +118,8 @@ class FormRepository(
         FormDatabase.getInstance(mContext).formItemDao.getFormItemByIdF(formItemId)
                 .observeOn(Schedulers.io())
                 .map {
-                    it.formItemValue!!.values = arrayListOf()
-                    it.formItemValue!!.values?.addAll(FormDatabase.getInstance(mContext).formItemValueDao.getValueByFormItemId(formItemId))
+                    it.formItemValue?.values = arrayListOf()
+                    it.formItemValue?.values?.addAll(FormDatabase.getInstance(mContext).formItemValueDao.getValueByFormItemId(formItemId))
                     it
                 }.observeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -151,18 +150,6 @@ class FormRepository(
                         }
                 )
 
-    }
-
-    override fun getForm(formType: FormType) {
-        val form = when (formType) {
-            FormType.ADD_EXECUTE -> FormTransUtils.getTestExecuteData()
-            FormType.ADD_NOTICE -> FormTransUtils.getTestOrderFeedbackData()
-        }
-        if (form.formItem == null) {
-            dbFormEntity.postValue(null)
-        } else {
-            insertForm(form)
-        }
     }
 
     override fun getUsers(formItem: FormItem1, key: String?) {

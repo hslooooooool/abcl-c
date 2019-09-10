@@ -25,8 +25,8 @@ class ItemFormCheckHolder(
         if (data.formItemValue!!.values != null && !data.formItemValue!!.values!!.isEmpty()) {
             var text = ""
             data.formItemValue!!.values!!.forEach { v ->
-                if (v.check.ckChecked) {
-                    text += v.check.ckName + ";"
+                if (v.check!!.ckChecked) {
+                    text += v.check!!.ckName + ";"
                 }
             }
             itemView.form_item_check.text = text

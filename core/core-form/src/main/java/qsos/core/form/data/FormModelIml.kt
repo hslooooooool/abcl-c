@@ -2,7 +2,6 @@ package qsos.core.form.data
 
 import qsos.core.form.db.entity.FormEntity
 import qsos.core.form.db.entity.FormItem
-import qsos.core.form.db.entity.FormType
 import qsos.core.form.db.entity.Value
 
 /**
@@ -13,16 +12,12 @@ class FormModelIml(
         val formRepo: FormRepository
 ) : IFormModel {
 
-    override fun getForm(formType: FormType) {
-        formRepo.getForm(formType)
-    }
-
     override fun getFormByDB(formId: Long) {
         formRepo.getFormByDB(formId)
     }
 
-    override fun insertForm(form: FormEntity) {
-        formRepo.insertForm(form)
+    override fun insertForm(form: FormEntity, success: (form: FormEntity) -> Any?) {
+        formRepo.insertForm(form, success)
     }
 
     override fun insertFormItem(formItem: FormItem) {
