@@ -7,7 +7,6 @@ import android.text.TextUtils
 import android.view.View
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.form_input.*
 import qsos.core.form.FormPath
 import qsos.core.form.R
@@ -23,8 +22,7 @@ import qsos.lib.base.utils.ToastUtils
 @Route(group = FormPath.FORM, path = FormPath.FORM_ITEM_INPUT)
 class InputActivity(
         override val layoutId: Int = R.layout.form_input,
-        override val reload: Boolean = false,
-        override var mCompositeDisposable: CompositeDisposable? = CompositeDisposable()
+        override val reload: Boolean = false
 ) : AbsFormActivity() {
 
     @Autowired(name = "item_id")
@@ -65,10 +63,11 @@ class InputActivity(
 
     }
 
+    @SuppressLint("SetTextI18n")
     override fun getData() {
         if (itemId != null) {
-            mCompositeDisposable?.add(formModelIml.getFormItemByDB(itemId!!)
-                    .subscribe {
+            addDispose(
+                    formModelIml.getFormItemByDB(itemId!!).subscribe {
                         item = it
                         limitMin = item!!.formItemValue!!.limitMin ?: 0
                         limitMax = item!!.formItemValue!!.limitMax ?: 0
@@ -109,15 +108,6 @@ class InputActivity(
             ToastUtils.showToast(this, "无法获取数据")
             finish()
         }
-    }
-
-    override fun onDestroy() {
-        dispose()
-        super.onDestroy()
-    }
-
-    override fun dispose() {
-        mCompositeDisposable?.dispose()
     }
 
 }

@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.tbruyelle.rxpermissions2.RxPermissions
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.form_activity_main.*
 import qsos.core.form.FormPath
 import qsos.core.form.R
@@ -29,8 +28,7 @@ import qsos.lib.base.utils.ToastUtils
 class FormActivity(
         @JvmField @Autowired(name = FormPath.FORM_ID) var formId: Long? = -1L,
         override val layoutId: Int = R.layout.form_activity_main,
-        override val reload: Boolean = true,
-        override var mCompositeDisposable: CompositeDisposable? = CompositeDisposable()
+        override val reload: Boolean = true
 ) : AbsFormActivity() {
     /**渲染表单项容器*/
     private lateinit var mAdapter: FormAdapter
@@ -107,53 +105,48 @@ class FormActivity(
     }
 
     override fun getData() {
-        mCompositeDisposable?.add(mModel.getForm(formId!!).subscribe(
-                {
-                    mForm = it
+        addDispose(
+                mModel.getForm(formId!!).subscribe(
+                        {
+                            mForm = it
 
-                    form_main_btn?.text = mForm!!.submitName ?: "提交"
+                            form_main_btn?.text = mForm!!.submitName ?: "提交"
 
-                    val formItemList = arrayListOf<FormItem>()
-                    for (item in mForm!!.formItems!!) {
-                        if (item.visible) formItemList.add(item)
-                    }
-                    mFormList.clear()
-                    mFormList.addAll(formItemList)
-                    mAdapter.notifyDataSetChanged()
-                },
-                {
-                    it.printStackTrace()
-                    ToastUtils.showToastLong(this, "数据错误 ${it.message}")
-                }
-        ))
+                            val formItemList = arrayListOf<FormItem>()
+                            for (item in mForm!!.formItems!!) {
+                                if (item.visible) formItemList.add(item)
+                            }
+                            mFormList.clear()
+                            mFormList.addAll(formItemList)
+                            mAdapter.notifyDataSetChanged()
+                        },
+                        {
+                            it.printStackTrace()
+                            ToastUtils.showToastLong(this, "数据错误 ${it.message}")
+                        }
+                )
+        )
     }
 
     override fun onBackPressed() {
         if (mForm!!.editable) {
             // 编辑模式，删除后退出
-            mCompositeDisposable?.add(mModel.deleteForm(mForm!!).subscribe(
-                    {
-                        finish()
-                    },
-                    {
-                        it.printStackTrace()
-                        ToastUtils.showToast(this, "数据错误 ${it.message}")
-                        finish()
-                    }
-            ))
+            addDispose(
+                    mModel.deleteForm(mForm!!).subscribe(
+                            {
+                                finish()
+                            },
+                            {
+                                it.printStackTrace()
+                                ToastUtils.showToast(this, "数据错误 ${it.message}")
+                                finish()
+                            }
+                    )
+            )
         } else {
             // 预览模式，直接退出
             finish()
         }
-    }
-
-    override fun onDestroy() {
-        dispose()
-        super.onDestroy()
-    }
-
-    override fun dispose() {
-        mCompositeDisposable?.dispose()
     }
 
 }

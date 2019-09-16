@@ -11,7 +11,7 @@ import qsos.core.form.db.entity.Value
  * 表单数据实现
  */
 class FormModelIml(
-        val formRepo: IFormRepo = FormRepository()
+        private val formRepo: IFormRepo = FormRepository()
 ) : IFormModel {
 
     override fun getForm(formId: Long): Flowable<FormEntity> {

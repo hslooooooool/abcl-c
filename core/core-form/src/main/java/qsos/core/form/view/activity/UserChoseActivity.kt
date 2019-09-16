@@ -10,7 +10,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.form_users.*
 import qsos.core.form.FormPath
 import qsos.core.form.R
@@ -29,9 +28,7 @@ import qsos.lib.base.utils.BaseUtils
  * 表单用户选择
  */
 @Route(group = FormPath.FORM, path = FormPath.FORM_ITEM_USERS)
-class UserChoseActivity(
-        override var mCompositeDisposable: CompositeDisposable? = CompositeDisposable()
-) : AbsFormActivity(), Toolbar.OnMenuItemClickListener {
+class UserChoseActivity : AbsFormActivity(), Toolbar.OnMenuItemClickListener {
 
     /**表单数据实现类*/
     private lateinit var formModelIml: FormModelIml
@@ -105,7 +102,7 @@ class UserChoseActivity(
 
     override fun getData() {
         if (itemId != null) {
-            mCompositeDisposable?.add(formModelIml.getFormItemByDB(itemId!!)
+            addDispose(formModelIml.getFormItemByDB(itemId!!)
                     .subscribe {
                         item = it
                         formModelIml.getUsers(item!!, form_users_et.text.toString())
@@ -161,14 +158,4 @@ class UserChoseActivity(
             ll_form_user_chose.visibility = View.GONE
         }
     }
-
-    override fun onDestroy() {
-        dispose()
-        super.onDestroy()
-    }
-
-    override fun dispose() {
-        mCompositeDisposable?.dispose()
-    }
-
 }

@@ -27,16 +27,15 @@ class FormRepository : IFormRepo {
                         )
                     }
                 }
-                .observeOn(Schedulers.io())
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun insertForm(form: FormEntity): Flowable<FormEntity> {
         return Flowable.just(form)
+                .subscribeOn(Schedulers.io())
                 .map {
                     FormDatabase.getInstance().formDao.insert(it)
                 }
-                .subscribeOn(Schedulers.io())
                 .flatMap {
                     form.id = it
                     form.formItems?.forEach { formItem ->
@@ -44,8 +43,7 @@ class FormRepository : IFormRepo {
                         insertFormItem(formItem)
                     }
                     Flowable.just(form)
-                }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                }.observeOn(AndroidSchedulers.mainThread())
     }
 
     override fun insertFormItem(formItem: FormItem) {
@@ -62,10 +60,10 @@ class FormRepository : IFormRepo {
 
     override fun addValueToFormItem(formItemValue: Value): Flowable<Value> {
         return Flowable.just(formItemValue)
+                .subscribeOn(Schedulers.io())
                 .map {
                     FormDatabase.getInstance().formItemValueDao.insert(formItemValue)
                 }
-                .subscribeOn(Schedulers.io())
                 .flatMap {
                     formItemValue.id = it
                     Flowable.just(formItemValue)
