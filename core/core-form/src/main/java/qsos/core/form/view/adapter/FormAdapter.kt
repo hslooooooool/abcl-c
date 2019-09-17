@@ -89,7 +89,7 @@ class FormAdapter(formItems: ArrayList<FormItem>) : BaseAdapter<FormItem>(formIt
         }
         when (view.id) {
             /**表单项提示*/
-            R.id.item_form_key -> {
+            R.id.item_form_title -> {
                 //TODO
             }
             /**选择时间*/

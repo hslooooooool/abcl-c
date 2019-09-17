@@ -25,7 +25,7 @@ class ItemFormUserHolder(
 
     @SuppressLint("SetTextI18n")
     override fun setData(data: FormItem, position: Int) {
-        itemView.item_form_key.text = "${data.title}"
+        itemView.item_form_title.text = "${data.title}"
 
         if (data.formItemValue?.values != null) {
             itemView.tv_item_form_users_size.text = "${data.formItemValue!!.values?.size}\t人"
@@ -42,7 +42,7 @@ class ItemFormUserHolder(
         }
 
         /**监听*/
-        itemView.item_form_key.setOnClickListener {
+        itemView.item_form_title.setOnClickListener {
             itemClick.onItemClick(it, position, data)
         }
         itemView.tv_item_form_users_size.setOnClickListener {

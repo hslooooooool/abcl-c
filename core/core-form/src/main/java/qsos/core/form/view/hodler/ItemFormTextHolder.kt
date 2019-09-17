@@ -18,14 +18,12 @@ class ItemFormTextHolder(
 
     override fun setData(data: FormItem, position: Int) {
 
-        /*绑定数据*/
-        itemView.item_form_key.text = data.title
+        itemView.item_form_title.text = data.title
         if (data.formItemValue!!.values != null && data.formItemValue!!.values!!.isNotEmpty()) {
             itemView.item_form_text.text = data.formItemValue!!.values!![0].text?.content
         }
 
-        /*监听*/
-        itemView.item_form_key.setOnClickListener {
+        itemView.item_form_title.setOnClickListener {
             itemClick.onItemClick(it, position, data)
         }
         itemView.item_form_text.setOnClickListener {

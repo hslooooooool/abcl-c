@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
-	android:layout_height="60dp"
+	android:layout_height="wrap_content"
 	android:background="@color/white"
+	android:focusable="true"
+	android:focusableInTouchMode="true"
 	android:gravity="center_vertical"
-	android:orientation="horizontal">
+	android:orientation="vertical">
 	
 	<include layout="@layout/form_normal_title" />
 	
-	<TextView
+	<EditText
 		android:id="@+id/item_form_input"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:drawableEnd="@drawable/form_drawable_right"
+		android:layout_height="wrap_content"
+		android:background="@color/white_low"
 		android:ellipsize="end"
-		android:gravity="center_vertical|end"
-		android:maxLines="1"
-		android:paddingStart="50dp"
-		android:paddingLeft="50dp"
-		android:textSize="18sp" />
+		android:gravity="center_vertical"
+		android:maxHeight="200dp"
+		android:minHeight="60dp"
+		android:padding="10dp"
+		android:textSize="20sp" />
 
 </LinearLayout>

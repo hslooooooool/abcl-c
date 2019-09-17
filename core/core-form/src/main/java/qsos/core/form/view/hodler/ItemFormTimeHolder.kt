@@ -21,7 +21,7 @@ class ItemFormTimeHolder(
 
     override fun setData(data: FormItem, position: Int) {
 
-        itemView.item_form_key.text = data.title!!
+        itemView.item_form_title.text = data.title!!
 
         var time = ""
         if (data.formItemValue!!.values != null) {
