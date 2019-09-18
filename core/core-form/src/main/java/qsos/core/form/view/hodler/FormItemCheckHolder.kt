@@ -13,14 +13,14 @@ import qsos.lib.base.callback.OnListItemClickListener
  * @author : 华清松
  * 表单文本列表项视图
  */
-class ItemFormCheckHolder(
+class FormItemCheckHolder(
         itemView: View,
         private val itemClick: OnListItemClickListener
 ) : BaseHolder<FormItem>(itemView) {
 
     override fun setData(data: FormItem, position: Int) {
 
-        itemView.item_form_title.text = data.title
+        itemView.form_item_title.text = data.title
 
         if (data.formItemValue!!.values != null && !data.formItemValue!!.values!!.isEmpty()) {
             var text = ""
@@ -32,6 +32,9 @@ class ItemFormCheckHolder(
             itemView.form_item_check.text = text
         }
 
+        itemView.form_item_title.setOnClickListener {
+            itemClick.onItemClick(it, position, data)
+        }
         itemView.form_item_check.setOnClickListener {
             itemClick.onItemClick(it, position, data)
         }

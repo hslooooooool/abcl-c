@@ -12,7 +12,7 @@ import qsos.lib.base.callback.OnListItemClickListener
  * @author : 华清松
  * 表单用户列表项视图
  */
-class FormUsersHolder(
+class FormChoseUserItemHolder(
         itemView: View,
         private val itemClick: OnListItemClickListener
 ) : BaseHolder<FormUserEntity>(itemView) {

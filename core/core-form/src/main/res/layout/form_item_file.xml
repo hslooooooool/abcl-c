@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:layout_marginBottom="10dp"
@@ -19,19 +20,12 @@
 			android:gravity="center_vertical"
 			android:orientation="horizontal">
 			
-			<TextView
-				android:id="@+id/form_item_file_title"
+			<include layout="@layout/form_normal_title" />
+			
+			<View
 				android:layout_width="0dp"
-				android:layout_height="match_parent"
-				android:layout_weight="1"
-				android:ellipsize="end"
-				android:gravity="center_vertical"
-				android:maxLines="1"
-				android:paddingStart="10dp"
-				android:paddingLeft="10dp"
-				android:textColor="@color/grey"
-				android:textSize="16sp"
-				android:textStyle="bold" />
+				android:layout_height="1dp"
+				android:layout_weight="1" />
 			
 			<ImageView
 				android:id="@+id/form_item_file_take_photo"
@@ -76,6 +70,7 @@
 		android:id="@+id/rv_item_form_files"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:minHeight="100dp" />
+		android:minHeight="100dp"
+		tools:listitem="@layout/form_item_file_item" />
 
 </LinearLayout>

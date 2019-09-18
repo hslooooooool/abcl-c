@@ -18,31 +18,27 @@ import qsos.lib.base.callback.OnListItemClickListener
  * @author : 华清松
  * 表单用户列表项视图
  */
-class ItemFormUserHolder(
+class FormItemUserHolder(
         itemView: View,
         private val itemClick: OnListItemClickListener
 ) : BaseHolder<FormItem>(itemView) {
 
     @SuppressLint("SetTextI18n")
     override fun setData(data: FormItem, position: Int) {
-        itemView.item_form_title.text = "${data.title}"
-
-        if (data.formItemValue?.values != null) {
-            itemView.tv_item_form_users_size.text = "${data.formItemValue!!.values?.size}\t人"
-            itemView.rv_item_form_users.layoutManager = GridLayoutManager(itemView.context, 5)
-            val users = arrayListOf<FormUserEntity>()
-            data.formItemValue?.values!!.forEach {
-                users.add(FormUserEntity(it.user!!.userName!!, "${it.user!!.userDesc}", it.user!!.userAvatar))
-            }
-            itemView.rv_item_form_users.adapter = BaseNormalAdapter(R.layout.form_item_user, users,
-                    setHolder = { holder, user, _ ->
-                        ImageLoaderUtils.display(holder.itemView.context, itemView.iv_item_user, user.userAvatar)
-                        holder.itemView.tv_item_user.text = user.userName
-                    })
+        itemView.form_item_title.text = "${data.title}"
+        itemView.tv_item_form_users_size.text = "${data.formItemValue!!.values!!.size}\t人"
+        itemView.rv_item_form_users.layoutManager = GridLayoutManager(itemView.context, 5)
+        val users = arrayListOf<FormUserEntity>()
+        data.formItemValue?.values!!.forEach {
+            users.add(FormUserEntity(it.user!!.userName!!, "${it.user!!.userDesc}", it.user!!.userAvatar))
         }
+        itemView.rv_item_form_users.adapter = BaseNormalAdapter(R.layout.form_item_user, users,
+                setHolder = { holder, user, _ ->
+                    ImageLoaderUtils.display(holder.itemView.context, itemView.iv_item_user, user.userAvatar)
+                    holder.itemView.tv_item_user.text = user.userName
+                })
 
-        /**监听*/
-        itemView.item_form_title.setOnClickListener {
+        itemView.form_item_title.setOnClickListener {
             itemClick.onItemClick(it, position, data)
         }
         itemView.tv_item_form_users_size.setOnClickListener {

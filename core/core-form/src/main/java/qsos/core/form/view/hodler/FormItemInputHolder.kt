@@ -20,7 +20,7 @@ import timber.log.Timber
  * @author : 华清松
  * 表单文本列表项视图
  */
-class ItemFormInputHolder(
+class FormItemInputHolder(
         itemView: View,
         private val itemClick: OnListItemClickListener
 ) : BaseHolder<FormItem>(itemView) {
@@ -28,7 +28,7 @@ class ItemFormInputHolder(
 
     override fun setData(data: FormItem, position: Int) {
 
-        itemView.item_form_title.text = data.title
+        itemView.form_item_title.text = data.title
 
         if (!data.formItemValue!!.values!!.isNullOrEmpty()) {
             itemView.item_form_input.setText(data.formItemValue!!.values!![0].text!!.content)
@@ -61,7 +61,7 @@ class ItemFormInputHolder(
 
         })
 
-        itemView.item_form_title.setOnClickListener {
+        itemView.form_item_title.setOnClickListener {
             itemClick.onItemClick(it, position, data)
         }
     }

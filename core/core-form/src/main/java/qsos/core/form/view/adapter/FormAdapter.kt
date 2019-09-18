@@ -23,7 +23,7 @@ import java.util.*
 
 /**
  * @author : 华清松
- * @notice : 表单列表容器
+ * 表单列表容器
  */
 @SuppressLint("CheckResult")
 class FormAdapter(formItems: ArrayList<FormItem>) : BaseAdapter<FormItem>(formItems) {
@@ -43,19 +43,19 @@ class FormAdapter(formItems: ArrayList<FormItem>) : BaseAdapter<FormItem>(formIt
     override fun getHolder(view: View, viewType: Int): BaseHolder<FormItem> {
         when (viewType) {
             /*文本*/
-            R.layout.form_item_text -> return ItemFormTextHolder(view, this)
+            R.layout.form_item_text -> return FormItemTextHolder(view, this)
             /*输入*/
-            R.layout.form_item_input -> return ItemFormInputHolder(view, this)
+            R.layout.form_item_input -> return FormItemInputHolder(view, this)
             /*选项*/
-            R.layout.form_item_check -> return ItemFormCheckHolder(view, this)
+            R.layout.form_item_check -> return FormItemCheckHolder(view, this)
             /*时间*/
-            R.layout.form_item_time -> return ItemFormTimeHolder(view, this)
+            R.layout.form_item_time -> return FormItemTimeHolder(view, this)
             /*人员*/
-            R.layout.form_item_users -> return ItemFormUserHolder(view, this)
+            R.layout.form_item_users -> return FormItemUserHolder(view, this)
             /*附件*/
-            R.layout.form_item_file -> return ItemFormFileHolder(view, this)
+            R.layout.form_item_file -> return FormItemFileHolder(view, this)
             /*其它*/
-            else -> return ItemFormTextHolder(view, this)
+            else -> return FormItemTextHolder(view, this)
         }
     }
 
@@ -89,8 +89,8 @@ class FormAdapter(formItems: ArrayList<FormItem>) : BaseAdapter<FormItem>(formIt
         }
         when (view.id) {
             /**表单项提示*/
-            R.id.item_form_title -> {
-                //TODO
+            R.id.form_item_title -> {
+                data[position].notice?.let { ToastUtils.showToastLong(mContext, it) }
             }
             /**选择时间*/
             R.id.item_form_time -> {

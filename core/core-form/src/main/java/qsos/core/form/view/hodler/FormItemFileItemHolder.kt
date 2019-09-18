@@ -12,7 +12,7 @@ import qsos.lib.base.callback.OnListItemClickListener
  * @author : 华清松
  * 图片文件布局
  */
-class FormFileHolder(
+class FormItemFileItemHolder(
         itemView: View,
         private val itemClick: OnListItemClickListener
 ) : BaseHolder<Value>(itemView) {

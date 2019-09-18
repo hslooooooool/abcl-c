@@ -14,14 +14,14 @@ import qsos.lib.base.callback.OnListItemClickListener
  * @author : 华清松
  * 表单时间列表项视图
  */
-class ItemFormTimeHolder(
+class FormItemTimeHolder(
         itemView: View,
         private val itemClick: OnListItemClickListener
 ) : BaseHolder<FormItem>(itemView) {
 
     override fun setData(data: FormItem, position: Int) {
 
-        itemView.item_form_title.text = data.title!!
+        itemView.form_item_title.text = data.title!!
 
         var time = ""
         if (data.formItemValue!!.values != null) {
@@ -42,7 +42,9 @@ class ItemFormTimeHolder(
         itemView.item_form_time.hint = "请设置"
         itemView.item_form_time.text = time
 
-        /*监听*/
+        itemView.form_item_title.setOnClickListener {
+            itemClick.onItemClick(it, position, data)
+        }
         itemView.item_form_time.setOnClickListener {
             itemClick.onItemClick(it, position, data)
         }

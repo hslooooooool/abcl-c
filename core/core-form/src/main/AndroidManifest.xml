@@ -7,6 +7,6 @@
 		<!--输入界面-->
 		<activity android:name="qsos.core.form.view.activity.InputActivity" />
 		<!--用户选择界面-->
-		<activity android:name="qsos.core.form.view.activity.UserChoseActivity" />
+		<activity android:name="qsos.core.form.view.activity.FormUserChoseActivity" />
 	</application>
 </manifest>

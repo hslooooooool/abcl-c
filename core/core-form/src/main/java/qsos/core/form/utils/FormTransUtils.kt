@@ -7,48 +7,40 @@ object FormTransUtils {
 
     /**指令反馈表单*/
     fun getTestOrderFeedbackData(): FormEntity {
-        val form = FormEntity()
-        form.notice = "指令反馈表单"
-        form.submitName = "提交反馈"
-        form.title = "指令反馈"
+        val form = FormEntity(notice = "指令反馈表单", submitName = "提交反馈", title = "指令反馈")
         val formItemList = arrayListOf<FormItem>()
         /**反馈状态*/
-        val formItem1 = FormItem()
-        formItem1.valueType = FormItemType.CHOOSE.tag
-        formItem1.notice = "请选择指令状态"
-        formItem1.title = "反馈状态"
-        formItem1.require = true
-        val values1 = arrayListOf<Value>()
-        values1.add(Value.newCheck(FormValueOfCheck("1", "已抓捕", "已抓捕", true)))
-        values1.add(Value.newCheck(FormValueOfCheck("2", "已盘查", "已盘查", false)))
-        formItem1.formItemValue = FormItemValue(1, 1, null, values1)
-        formItemList.add(formItem1)
+        formItemList.add(FormItem.newFormItemValue(
+                item = FormItem(
+                        valueType = FormItemType.CHOOSE.tag, notice = "请选择指令状态",
+                        title = "反馈状态", require = true
+                ),
+                value = FormItemValue(limitMin = 1, limitMax = 1, values = arrayListOf(
+                        Value.newCheck(FormValueOfCheck("1", "已完结", "已完结", true)),
+                        Value.newCheck(FormValueOfCheck("2", "已放弃", "已放弃", false))
+                ))
+        ))
 
         /**反馈内容*/
-        val formItem2 = FormItem()
-        formItem2.valueType = FormItemType.INPUT.tag
-        formItem2.notice = "请输入您的反馈信息"
-        formItem2.title = "反馈内容"
-        formItem2.require = true
-        val itemValue2 = FormItemValue()
-        itemValue2.limitMin = 5
-        itemValue2.limitMax = 500
-        val values2 = arrayListOf<Value>()
-        val value2 = Value()
-        value2.text = FormValueOfText("")
-        values2.add(value2)
-        itemValue2.values = values2
-        formItem2.formItemValue = itemValue2
-        formItemList.add(formItem2)
+        formItemList.add(FormItem.newFormItemValue(
+                item = FormItem(
+                        valueType = FormItemType.INPUT.tag, notice = "请输入您的反馈信息",
+                        title = "反馈内容", require = true
+                ),
+                value = FormItemValue(limitMin = 5, limitMax = 500, values = arrayListOf(
+                        Value.newText(FormValueOfText(""))
+                ))
+        ))
 
         /**反馈附件*/
-        val formItem3 = FormItem()
-        formItem3.valueType = FormItemType.FILE.tag
-        formItem3.notice = "请上传指令附件"
-        formItem3.title = "反馈附件"
-        formItem3.require = false
-        formItem3.formItemValue = FormItemValue(null, 9, "image", null)
-        formItemList.add(formItem3)
+        formItemList.add(FormItem.newFormItemValue(
+                item = FormItem(
+                        valueType = FormItemType.FILE.tag, notice = "请上传指令附件",
+                        title = "反馈附件", require = false
+                ),
+                value = FormItemValue(limitMax = 9, limitType = "image", values = null)
+        ))
+
         form.formItems = formItemList
         return form
     }

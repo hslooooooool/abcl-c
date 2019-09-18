@@ -30,7 +30,7 @@ import qsos.lib.base.utils.BaseUtils
  * 表单用户选择
  */
 @Route(group = FormPath.FORM, path = FormPath.FORM_ITEM_USERS)
-class UserChoseActivity(
+class FormUserChoseActivity(
         override val layoutId: Int = R.layout.form_users,
         override val reload: Boolean = false
 ) : AbsFormActivity(), Toolbar.OnMenuItemClickListener {

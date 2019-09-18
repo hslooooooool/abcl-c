@@ -31,11 +31,12 @@
 	
 	<TextView
 		android:id="@+id/tv_item_form_file_name"
-		android:layout_width="80dp"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:ellipsize="end"
 		android:gravity="center"
 		android:maxLines="1"
+		android:textColor="#505050"
 		android:textSize="16sp"
-		tools:text="NAME" />
+		tools:text="文件" />
 </LinearLayout>

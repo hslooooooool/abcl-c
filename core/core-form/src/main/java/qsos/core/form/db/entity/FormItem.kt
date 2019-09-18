@@ -42,6 +42,13 @@ data class FormItem(
     @Embedded
     var formItemValue: FormItemValue? = null
         get() = if (field == null) FormItemValue() else field
+
+    companion object {
+        fun newFormItemValue(item: FormItem, value: FormItemValue): FormItem {
+            item.formItemValue = value
+            return item
+        }
+    }
 }
 
 enum class FormItemType(val key: String, val tag: Int) {

@@ -11,7 +11,7 @@ import qsos.core.form.db.FormDatabase
 import qsos.core.form.db.entity.FormUserEntity
 import qsos.core.form.db.entity.FormValueOfUser
 import qsos.core.form.db.entity.Value
-import qsos.core.form.view.hodler.FormUsersHolder
+import qsos.core.form.view.hodler.FormChoseUserItemHolder
 import qsos.lib.base.base.adapter.BaseAdapter
 import qsos.lib.base.base.holder.BaseHolder
 import qsos.lib.base.callback.OnTListener
@@ -49,10 +49,7 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
                         chose++
                         it.userCb = true
                         FormDatabase.getInstance().formItemValueDao.insert(
-                                Value.newUser(
-                                        it.formItemId!!,
-                                        FormValueOfUser(it.userName, it.userPhone, it.userAvatar, it.userId)
-                                )
+                                Value.newUser(FormValueOfUser(it.userName, it.userPhone, it.userAvatar, it.userId), it.formItemId!!)
                         )
                     }
                 }
@@ -75,7 +72,7 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
     }
 
     override fun getHolder(view: View, viewType: Int): BaseHolder<FormUserEntity> {
-        return FormUsersHolder(view, this)
+        return FormChoseUserItemHolder(view, this)
     }
 
     override fun getLayoutId(viewType: Int): Int {
@@ -93,13 +90,12 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
                         FormDatabase.getInstance().formItemValueDao.deleteByFormItemId(data[position].formItemId)
                         FormDatabase.getInstance().formItemValueDao.insert(
                                 Value.newUser(
-                                        data[position].formItemId!!,
                                         FormValueOfUser(
                                                 data[position].userName,
                                                 data[position].userPhone,
                                                 data[position].userAvatar,
                                                 data[position].userId
-                                        )
+                                        ), data[position].formItemId!!
                                 )
                         )
                     }
@@ -137,13 +133,12 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
                         Completable.fromAction {
                             FormDatabase.getInstance().formItemValueDao.insert(
                                     Value.newUser(
-                                            data[position].formItemId!!,
                                             FormValueOfUser(
                                                     data[position].userName,
                                                     data[position].userPhone,
                                                     data[position].userAvatar,
                                                     data[position].userId
-                                            )
+                                            ), data[position].formItemId!!
                                     )
                             )
                         }

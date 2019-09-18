@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.form_item_file.view.*
+import kotlinx.android.synthetic.main.form_normal_title.view.*
 import qsos.core.form.db.entity.FormItem
 import qsos.core.form.view.adapter.FormFileAdapter
 import qsos.lib.base.base.holder.BaseHolder
@@ -14,14 +15,14 @@ import qsos.lib.base.callback.OnListItemClickListener
  * @author : 华清松
  * 文件表单项
  */
-class ItemFormFileHolder(
+class FormItemFileHolder(
         itemView: View,
         private val itemClick: OnListItemClickListener
 ) : BaseHolder<FormItem>(itemView) {
 
     @SuppressLint("SetTextI18n")
     override fun setData(data: FormItem, position: Int) {
-        itemView.form_item_file_title.text = data.title
+        itemView.form_item_title.text = data.title
 
         if (data.formItemValue?.values != null) {
             val files = data.formItemValue?.values!!
@@ -57,6 +58,9 @@ class ItemFormFileHolder(
             }
         }
 
+        itemView.form_item_title.setOnClickListener {
+            itemClick.onItemClick(it, position, data)
+        }
         itemView.form_item_file_take_photo.setOnClickListener {
             itemClick.onItemClick(it, position, data)
         }

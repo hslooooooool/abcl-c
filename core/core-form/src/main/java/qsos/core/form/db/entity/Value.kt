@@ -48,18 +48,48 @@ data class Value(
     var location: FormValueOfLocation? = FormValueOfLocation()
 
     companion object {
-        fun newCheck(check: FormValueOfCheck): Value {
+        fun newText(text: FormValueOfText, formItemId: Long? = null): Value {
             val v = Value()
+            v.formItemId = formItemId
+            v.text = text
+            return v
+        }
+
+        fun newTime(time: FormValueOfTime, formItemId: Long? = null): Value {
+            val v = Value()
+            v.formItemId = formItemId
+            v.time = time
+            return v
+        }
+
+        fun newCheck(check: FormValueOfCheck, formItemId: Long? = null): Value {
+            val v = Value()
+            v.formItemId = formItemId
             v.check = check
             return v
         }
 
-        fun newUser(formItemId: Long, user: FormValueOfUser): Value {
+        fun newUser(user: FormValueOfUser, formItemId: Long? = null): Value {
             val v = Value()
             v.formItemId = formItemId
             v.user = user
             return v
         }
+
+        fun newFile(file: FormValueOfFile, formItemId: Long? = null): Value {
+            val v = Value()
+            v.formItemId = formItemId
+            v.file = file
+            return v
+        }
+
+        fun newLocation(location: FormValueOfLocation, formItemId: Long? = null): Value {
+            val v = Value()
+            v.formItemId = formItemId
+            v.location = location
+            return v
+        }
+
     }
 
 }

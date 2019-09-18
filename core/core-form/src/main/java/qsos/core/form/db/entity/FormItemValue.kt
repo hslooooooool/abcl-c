@@ -28,7 +28,7 @@ class FormItemValue {
      * @param limitMax 值的最大数量
      * @param limitType 值限制。选用户的时候，可能为角色,输入的时候是类型
      * */
-    constructor(limitMin: Int? = 0, limitMax: Int? = 0, limitType: String?, values: ArrayList<Value>? = null) {
+    constructor(limitMin: Int? = 0, limitMax: Int? = 0, limitType: String? = null, values: ArrayList<Value>? = null) {
         this.limitMin = limitMin
         this.limitMax = limitMax
         this.limitType = limitType

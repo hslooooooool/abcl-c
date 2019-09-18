@@ -8,7 +8,7 @@ import qsos.core.form.R
 import qsos.core.form.db.FormDatabase
 import qsos.core.form.db.entity.Value
 import qsos.core.form.dbComplete
-import qsos.core.form.view.hodler.FormFileHolder
+import qsos.core.form.view.hodler.FormItemFileItemHolder
 import qsos.lib.base.base.adapter.BaseAdapter
 import qsos.lib.base.base.holder.BaseHolder
 import qsos.lib.base.utils.ToastUtils
@@ -22,7 +22,7 @@ class FormFileAdapter(files: ArrayList<Value>)
     private val mJob = Dispatchers.Main + Job()
 
     override fun getHolder(view: View, viewType: Int): BaseHolder<Value> {
-        return FormFileHolder(view, this)
+        return FormItemFileItemHolder(view, this)
     }
 
     override fun getLayoutId(viewType: Int): Int {
