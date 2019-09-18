@@ -14,7 +14,7 @@ import qsos.core.form.FormPath
 import qsos.core.form.data.FormRepository
 import qsos.core.form.db
 import qsos.core.form.db.entity.FormEntity
-import qsos.core.form.utils.FormTransUtils
+import qsos.core.form.utils.FormHelper
 import qsos.lib.base.base.activity.BaseActivity
 import qsos.lib.base.base.adapter.BaseNormalAdapter
 import qsos.lib.base.utils.ActivityManager
@@ -49,7 +49,7 @@ class SplashActivity(
                     }
                     "表单" -> {
                         CoroutineScope(mJob).db<FormEntity> {
-                            db = { mFormRepository.insertForm(FormTransUtils.getTestOrderFeedbackData()) }
+                            db = { mFormRepository.insertForm(FormHelper.Create.feedbackForm()) }
                             onSuccess = {
                                 it?.let {
                                     ARouter.getInstance().build(FormPath.MAIN)
@@ -61,7 +61,7 @@ class SplashActivity(
                     }
                     "表单2" -> {
                         CoroutineScope(mJob).db<FormEntity> {
-                            db = { mFormRepository.insertForm(FormTransUtils.getTestExecuteData()) }
+                            db = { mFormRepository.insertForm(FormHelper.Create.userInfoForm()) }
                             onSuccess = {
                                 it?.let {
                                     ARouter.getInstance().build(FormPath.MAIN)

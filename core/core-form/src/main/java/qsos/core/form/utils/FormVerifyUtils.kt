@@ -10,7 +10,7 @@ import qsos.core.lib.utils.IDCardUtil
  * 表单填写结果校验 工具类
  */
 object FormVerifyUtils {
-    /*校验信息*/
+    /**校验信息*/
     class Verify {
         var pass = true
         var message: String = "校验通过"
@@ -22,7 +22,7 @@ object FormVerifyUtils {
         }
     }
 
-    /**校验*/
+    /**校验方法*/
     fun verify(form: FormEntity): Verify {
         for (formItem in form.formItems!!) {
             /*表单项值类型，0：文本展示；1：输入；2：选项；3：时间；4：人员；5：附件；6：位置*/

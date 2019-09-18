@@ -32,4 +32,11 @@ data class FormEntity(
     @Ignore
     var formItems: List<FormItem>? = arrayListOf()
         get() = if (field == null) arrayListOf() else field
+
+    companion object {
+        fun newFormItems(form: FormEntity, formItems: List<FormItem>): FormEntity {
+            form.formItems = formItems
+            return form
+        }
+    }
 }

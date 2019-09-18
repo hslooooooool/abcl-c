@@ -95,10 +95,10 @@ class BottomDialog : BaseBottomDialog() {
 
     companion object {
 
-        private val KEY_LAYOUT_RES = "bottom_layout_res"
-        private val KEY_HEIGHT = "bottom_height"
-        private val KEY_DIM = "bottom_dim"
-        private val KEY_CANCEL_OUTSIDE = "bottom_cancel_outside"
+        private const val KEY_LAYOUT_RES = "bottom_layout_res"
+        private const val KEY_HEIGHT = "bottom_height"
+        private const val KEY_DIM = "bottom_dim"
+        private const val KEY_CANCEL_OUTSIDE = "bottom_cancel_outside"
 
         fun create(manager: FragmentManager): BottomDialog {
             val dialog = BottomDialog()

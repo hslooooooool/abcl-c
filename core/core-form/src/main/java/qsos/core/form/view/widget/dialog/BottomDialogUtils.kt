@@ -20,9 +20,7 @@ object BottomDialogUtils {
 
     var imageOperation: MutableList<Operation> = ArrayList()
     var fileOperation: MutableList<Operation> = ArrayList()
-
     var headOperation: MutableList<Operation> = ArrayList()
-
     var sexOperation: MutableList<Operation> = ArrayList()
     var commonOperation: MutableList<Operation> = ArrayList()
     var CommonPhrases: MutableList<Operation> = ArrayList()
@@ -40,19 +38,19 @@ object BottomDialogUtils {
         imageOperation.add(Operation(R.drawable.take_photo, "拍照", 0, false, "PHOTO"))
         imageOperation.add(Operation(R.drawable.take_image, "图库", 1, false, "IMAGE"))
 
-        sexOperation.add(Operation(R.drawable.icon_checked, "男", 0, false, 1))
-        sexOperation.add(Operation(R.drawable.icon_checked, "女", 1, false, 2))
+        sexOperation.add(Operation(R.drawable.dot_black, "男", 0, false, 1))
+        sexOperation.add(Operation(R.drawable.dot_black, "女", 1, false, 2))
 
-        commonOperation.add(Operation(R.drawable.icon_checked, "性别不符", 0))
-        commonOperation.add(Operation(R.drawable.icon_checked, "年龄不符", 0))
-        commonOperation.add(Operation(R.drawable.icon_checked, "身体特征有差别", 0))
-        commonOperation.add(Operation(R.drawable.icon_checked, "误判", 0))
-        commonOperation.add(Operation(R.drawable.icon_checked, "其他", 0))
+        commonOperation.add(Operation(R.drawable.dot_black, "性别不符", 0))
+        commonOperation.add(Operation(R.drawable.dot_black, "年龄不符", 0))
+        commonOperation.add(Operation(R.drawable.dot_black, "身体特征有差别", 0))
+        commonOperation.add(Operation(R.drawable.dot_black, "误判", 0))
+        commonOperation.add(Operation(R.drawable.dot_black, "其他", 0))
 
-        CommonPhrases.add(Operation(R.drawable.icon_checked, "发现嫌疑人", 0))
-        CommonPhrases.add(Operation(R.drawable.icon_checked, "执行抓捕", 0))
-        CommonPhrases.add(Operation(R.drawable.icon_checked, "已抓到嫌疑人", 0))
-        CommonPhrases.add(Operation(R.drawable.icon_checked, "抓捕行动结束", 0))
+        CommonPhrases.add(Operation(R.drawable.dot_black, "发现嫌疑人", 0))
+        CommonPhrases.add(Operation(R.drawable.dot_black, "执行抓捕", 0))
+        CommonPhrases.add(Operation(R.drawable.dot_black, "已抓到嫌疑人", 0))
+        CommonPhrases.add(Operation(R.drawable.dot_black, "抓捕行动结束", 0))
 
     }
 

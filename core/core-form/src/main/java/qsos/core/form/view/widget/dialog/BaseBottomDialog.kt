@@ -11,7 +11,6 @@ import qsos.core.form.R
  * @author : 华清松
  * 自定义底部弹窗
  */
-
 abstract class BaseBottomDialog : DialogFragment() {
 
     var mParentView: View? = null
@@ -27,7 +26,6 @@ abstract class BaseBottomDialog : DialogFragment() {
     var cancelOutside: Boolean = true
 
     var fragmentTag: String = TAG
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +69,7 @@ abstract class BaseBottomDialog : DialogFragment() {
     }
 
     companion object {
-        private const val TAG = "base_bottom_dialog"
+        private const val TAG = "BaseBottomDialog"
 
         private const val DEFAULT_DIM = 0.2f
     }
