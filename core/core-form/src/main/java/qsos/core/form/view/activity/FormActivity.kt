@@ -57,11 +57,8 @@ class FormActivity(
         }
 
         RxPermissions(this).request(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_PHONE_STATE
+                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA, Manifest.permission.READ_PHONE_STATE
         ).subscribe {
             if (!it) {
                 ToastUtils.showToastLong(this, "请前往设置开启权限方可使用表单功能")
@@ -91,7 +88,7 @@ class FormActivity(
         }
 
         // 表单内操作文件监听
-        mAdapter.setOnFileListener(object : FormAdapter.OnFileListener {
+        mAdapter.fileListener = object : FormAdapter.OnFileListener {
 
             override fun getFile(type: String, position: Int) {
                 mAddPosition = position
@@ -100,7 +97,7 @@ class FormActivity(
                     // TODO
                 }
             }
-        })
+        }
 
     }
 

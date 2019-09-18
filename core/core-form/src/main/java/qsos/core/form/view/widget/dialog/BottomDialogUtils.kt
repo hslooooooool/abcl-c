@@ -26,17 +26,17 @@ object BottomDialogUtils {
     var CommonPhrases: MutableList<Operation> = ArrayList()
 
     init {
-        fileOperation.add(Operation(R.drawable.take_photo, "拍照", 0, false, "PHOTO"))
-        fileOperation.add(Operation(R.drawable.take_image, "图库", 1, false, "IMAGE"))
+        fileOperation.add(Operation(R.drawable.take_photo, "拍照", 0, false, "CAMERA"))
+        fileOperation.add(Operation(R.drawable.take_image, "图库", 1, false, "ALBUM"))
         fileOperation.add(Operation(R.drawable.take_video, "录制视频", 2, false, "VIDEO"))
         fileOperation.add(Operation(R.drawable.take_audio, "录制音频", 3, false, "AUDIO"))
         fileOperation.add(Operation(R.drawable.take_file, "文件", 3, false, "FILE"))
 
-        headOperation.add(Operation(R.drawable.take_photo, "拍照", 0, false, "PHOTO"))
-        headOperation.add(Operation(R.drawable.take_image, "图库", 1, false, "IMAGE"))
+        headOperation.add(Operation(R.drawable.take_photo, "拍照", 0, false, "CAMERA"))
+        headOperation.add(Operation(R.drawable.take_image, "图库", 1, false, "ALBUM"))
 
-        imageOperation.add(Operation(R.drawable.take_photo, "拍照", 0, false, "PHOTO"))
-        imageOperation.add(Operation(R.drawable.take_image, "图库", 1, false, "IMAGE"))
+        imageOperation.add(Operation(R.drawable.take_photo, "拍照", 0, false, "CAMERA"))
+        imageOperation.add(Operation(R.drawable.take_image, "图库", 1, false, "ALBUM"))
 
         sexOperation.add(Operation(R.drawable.dot_black, "男", 0, false, 1))
         sexOperation.add(Operation(R.drawable.dot_black, "女", 1, false, 2))

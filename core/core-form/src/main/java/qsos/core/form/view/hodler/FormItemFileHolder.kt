@@ -31,30 +31,45 @@ class FormItemFileHolder(
             itemView.rv_item_form_files.adapter = FormFileAdapter(files)
         }
 
+        data.formItemValue!!.limitTypeList?.forEach {
+
+
+        }
         when (data.formItemValue!!.limitType) {
             "image" -> {
                 itemView.form_item_file_take_photo.visibility = View.VISIBLE
                 itemView.form_item_file_take_album.visibility = View.VISIBLE
                 itemView.form_item_file_take_video.visibility = View.GONE
                 itemView.form_item_file_take_audio.visibility = View.GONE
+                itemView.form_item_file_take_file.visibility = View.GONE
             }
             "video" -> {
                 itemView.form_item_file_take_photo.visibility = View.GONE
                 itemView.form_item_file_take_album.visibility = View.GONE
                 itemView.form_item_file_take_video.visibility = View.VISIBLE
                 itemView.form_item_file_take_audio.visibility = View.GONE
+                itemView.form_item_file_take_file.visibility = View.GONE
             }
             "audio" -> {
                 itemView.form_item_file_take_photo.visibility = View.GONE
                 itemView.form_item_file_take_album.visibility = View.GONE
                 itemView.form_item_file_take_video.visibility = View.GONE
                 itemView.form_item_file_take_audio.visibility = View.VISIBLE
+                itemView.form_item_file_take_file.visibility = View.GONE
+            }
+            "file" -> {
+                itemView.form_item_file_take_photo.visibility = View.GONE
+                itemView.form_item_file_take_album.visibility = View.GONE
+                itemView.form_item_file_take_video.visibility = View.GONE
+                itemView.form_item_file_take_audio.visibility = View.GONE
+                itemView.form_item_file_take_file.visibility = View.VISIBLE
             }
             else -> {
                 itemView.form_item_file_take_photo.visibility = View.VISIBLE
                 itemView.form_item_file_take_album.visibility = View.VISIBLE
                 itemView.form_item_file_take_video.visibility = View.VISIBLE
                 itemView.form_item_file_take_audio.visibility = View.VISIBLE
+                itemView.form_item_file_take_file.visibility = View.VISIBLE
             }
         }
 

@@ -19,7 +19,7 @@ class FormItemFileItemHolder(
 
     override fun setData(data: Value, position: Int) {
         when (data.file!!.fileType) {
-            "IMAGE" -> {
+            "ALBUM" -> {
                 ImageLoaderUtils.display(itemView.context, itemView.iv_item_form_file_icon, data.file!!.fileUrl)
             }
             "VIDEO" -> {
