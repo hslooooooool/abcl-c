@@ -1,6 +1,7 @@
 package qsos.core.form.utils
 
 import qsos.core.form.db.entity.*
+import java.util.*
 
 /**表单转换帮助类*/
 object FormHelper {
@@ -100,6 +101,20 @@ object FormHelper {
                             Value.newCheck(FormValueOfCheck("2", "女", "woman"))
                     ))
             ))
+            /**出身日期*/
+            val c = Calendar.getInstance()
+            val now = Date()
+            c.time = now
+            c.add(Calendar.YEAR, -100)// 当前年往前100年
+            formItemList.add(FormItem.newFormItemValue(
+                    item = FormItem(
+                            valueType = FormItemType.TIME.tag, notice = "请设置出身日期",
+                            title = "出身日期", require = true
+                    ),
+                    value = FormItemValue(limitMin = 1, limitMax = 1, values = arrayListOf(
+                            Value.newTime(FormValueOfTime(timeLimitMin = c.time.time, timeLimitMax = now.time))
+                    ))
+            ))
             /**多选-爱好*/
             formItemList.add(FormItem.newFormItemValue(
                     item = FormItem(
@@ -122,12 +137,12 @@ object FormHelper {
     /**获取表单项的值*/
     object GetValue {
         /**输入值*/
-        private fun input(formItem: FormItem): String {
+        fun input(formItem: FormItem): String {
             return formItem.formItemValue!!.value?.text?.content ?: ""
         }
 
         /**单选值*/
-        private fun singleChose(formItem: FormItem): String? {
+        fun singleChose(formItem: FormItem): String? {
             var value: String? = null
             for (chose in formItem.formItemValue!!.values!!) {
                 if (chose.check!!.ckChecked) {
@@ -139,7 +154,7 @@ object FormHelper {
         }
 
         /**多选值*/
-        private fun multiChose(formItem: FormItem): List<String> {
+        fun multiChose(formItem: FormItem): List<String> {
             val values = arrayListOf<String>()
             formItem.formItemValue!!.values!!.forEach {
                 if (it.check!!.ckChecked) {
@@ -150,12 +165,12 @@ object FormHelper {
         }
 
         /**时间值*/
-        private fun time(formItem: FormItem): FormValueOfTime? {
+        fun time(formItem: FormItem): FormValueOfTime? {
             return formItem.formItemValue!!.value?.time
         }
 
         /**人员ID列表*/
-        private fun userIds(formItem: FormItem): List<String> {
+        fun userIds(formItem: FormItem): List<String> {
             val values = arrayListOf<String>()
             formItem.formItemValue!!.values!!.forEach {
                 values.add(it.user!!.userId!!)
@@ -164,7 +179,7 @@ object FormHelper {
         }
 
         /**文件ID列表*/
-        private fun fileIds(formItem: FormItem): List<String> {
+        fun fileIds(formItem: FormItem): List<String> {
             val values = arrayListOf<String>()
             formItem.formItemValue!!.values!!.forEach {
                 values.add(it.file!!.fileId!!)
@@ -173,7 +188,7 @@ object FormHelper {
         }
 
         /**位置值*/
-        private fun location(formItem: FormItem): FormValueOfLocation? {
+        fun location(formItem: FormItem): FormValueOfLocation? {
             return formItem.formItemValue!!.value?.location
         }
     }

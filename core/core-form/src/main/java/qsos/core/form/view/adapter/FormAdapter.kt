@@ -123,18 +123,26 @@ class FormAdapter(formItems: ArrayList<FormItem>) : BaseAdapter<FormItem>(formIt
         values = values ?: arrayListOf()
         val size = values.size
         if (size == 1) {
-            val date = values[0].limitType
+            val dateType = values[0].limitType
 
             var showDay = true
-            if ("yyyy-MM-dd HH:mm" == date) {
+            if ("yyyy-MM-dd HH:mm" == dateType) {
                 showDay = true
-            } else if ("yyyy-MM-dd" == date) {
+            } else if ("yyyy-MM-dd" == dateType) {
                 showDay = true
             }
             backListener?.back(false)
+            var timeLimitMin: Date? = null
+            data[position].formItemValue!!.value!!.time!!.timeLimitMin?.let {
+                timeLimitMin = Date(it)
+            }
+            var timeLimitMax: Date? = null
+            data[position].formItemValue!!.value!!.time!!.timeLimitMax?.let {
+                timeLimitMax = Date(it)
+            }
             BottomDialogUtils.showRealDateChoseView(view.context,
-                    "yyyy-MM-dd HH:mm" == date, showDay,
-                    null, null, Date(values[0].time!!.timeStart), object : OnDateListener {
+                    "yyyy-MM-dd HH:mm" == dateType, showDay,
+                    timeLimitMin, timeLimitMax, Date(values[0].time!!.timeStart), object : OnDateListener {
                 override fun setDate(type: Int?, date: Date?) {
                     backListener?.back(true)
                     if (date != null) {

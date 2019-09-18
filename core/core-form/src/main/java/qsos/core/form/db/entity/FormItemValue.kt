@@ -19,7 +19,8 @@ class FormItemValue {
         get() = if (field == null) arrayListOf() else field
 
     @Ignore
-    val value: Value? = if (values.isNullOrEmpty()) null else values!![0]
+    var value: Value? = null
+        get() = field ?: if (values.isNullOrEmpty()) null else values!![0]
 
     constructor()
     /**
