@@ -5,10 +5,15 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.alibaba.android.arouter.launcher.ARouter
 import kotlinx.android.synthetic.main.app_activity_splash.*
 import kotlinx.android.synthetic.main.app_item_component.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import qsos.app.demo.R
 import qsos.app.demo.router.TweetPath
 import qsos.core.form.FormPath
 import qsos.core.form.data.FormRepository
+import qsos.core.form.db
+import qsos.core.form.db.entity.FormEntity
 import qsos.core.form.utils.FormTransUtils
 import qsos.lib.base.base.activity.BaseActivity
 import qsos.lib.base.base.adapter.BaseNormalAdapter
@@ -25,6 +30,7 @@ class SplashActivity(
 
     private val mList = arrayListOf("朋友圈", "表单", "表单2")
     private lateinit var mFormRepository: FormRepository
+    private val mJob = Dispatchers.Main + Job()
 
     override fun initData(savedInstanceState: Bundle?) {
         mFormRepository = FormRepository()
@@ -34,33 +40,40 @@ class SplashActivity(
         ActivityManager.finishAllButNotMe(this)
 
         splash_rv.layoutManager = GridLayoutManager(this, 3)
-        splash_rv.adapter = BaseNormalAdapter(R.layout.app_item_component, mList,
-                setHolder = { holder, data, _ ->
-                    holder.itemView.tv_item_component.text = data
-                    holder.itemView.tv_item_component.setOnClickListener {
-                        when (data) {
-                            "朋友圈" -> {
-                                ARouter.getInstance().build(TweetPath.TWEET).navigation()
-                            }
-                            "表单" -> {
-                                mFormRepository.insertForm(FormTransUtils.getTestOrderFeedbackData())
-                                        .subscribe {
-                                            ARouter.getInstance().build(FormPath.MAIN)
-                                                    .withLong(FormPath.FORM_ID, it.id!!)
-                                                    .navigation()
-                                        }
-                            }
-                            "表单2" -> {
-                                mFormRepository.insertForm(FormTransUtils.getTestExecuteData())
-                                        .subscribe {
-                                            ARouter.getInstance().build(FormPath.MAIN)
-                                                    .withLong(FormPath.FORM_ID, it.id!!)
-                                                    .navigation()
-                                        }
+        splash_rv.adapter = BaseNormalAdapter(R.layout.app_item_component, mList, setHolder = { holder, data, _ ->
+            holder.itemView.tv_item_component.text = data
+            holder.itemView.tv_item_component.setOnClickListener {
+                when (data) {
+                    "朋友圈" -> {
+                        ARouter.getInstance().build(TweetPath.TWEET).navigation()
+                    }
+                    "表单" -> {
+                        CoroutineScope(mJob).db<FormEntity> {
+                            db = { mFormRepository.insertForm(FormTransUtils.getTestOrderFeedbackData()) }
+                            onSuccess = {
+                                it?.let {
+                                    ARouter.getInstance().build(FormPath.MAIN)
+                                            .withLong(FormPath.FORM_ID, it.id!!)
+                                            .navigation()
+                                }
                             }
                         }
                     }
-                })
+                    "表单2" -> {
+                        CoroutineScope(mJob).db<FormEntity> {
+                            db = { mFormRepository.insertForm(FormTransUtils.getTestExecuteData()) }
+                            onSuccess = {
+                                it?.let {
+                                    ARouter.getInstance().build(FormPath.MAIN)
+                                            .withLong(FormPath.FORM_ID, it.id!!)
+                                            .navigation()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
         splash_rv.adapter?.notifyDataSetChanged()
     }
 

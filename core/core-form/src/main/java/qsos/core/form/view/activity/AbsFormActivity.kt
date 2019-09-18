@@ -2,6 +2,9 @@ package qsos.core.form.view.activity
 
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import qsos.core.lib.base.IDisposable
 import qsos.lib.base.base.activity.BaseActivity
 
@@ -11,6 +14,7 @@ import qsos.lib.base.base.activity.BaseActivity
  */
 abstract class AbsFormActivity : BaseActivity(), IDisposable {
     override var mCompositeDisposable: CompositeDisposable? = CompositeDisposable()
+    val mJob = Dispatchers.Main + Job()
 
     override fun dispose() {
         mCompositeDisposable?.dispose()
@@ -22,6 +26,7 @@ abstract class AbsFormActivity : BaseActivity(), IDisposable {
 
     override fun onDestroy() {
         dispose()
+        mJob.cancel()
         super.onDestroy()
     }
 }

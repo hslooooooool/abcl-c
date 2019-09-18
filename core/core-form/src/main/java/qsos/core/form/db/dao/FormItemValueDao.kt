@@ -1,8 +1,6 @@
 package qsos.core.form.db.dao
 
 import androidx.room.*
-import io.reactivex.Completable
-import io.reactivex.Flowable
 import qsos.core.form.db.entity.Value
 
 /**
@@ -16,19 +14,19 @@ interface FormItemValueDao {
     fun getByFormItemId(formItemId: Long): List<Value>
 
     @Query("SELECT * FROM formItemValue where formItemId=:formItemId AND userName like :key OR userDesc like :key")
-    fun getUserByFormItemIdAndUserDesc(formItemId: Long, key: String?): Flowable<List<Value>>
+    fun getUserByFormItemIdAndUserDesc(formItemId: Long, key: String?): List<Value>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(value: Value): Long
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun update(value: Value): Completable
+    fun update(value: Value)
 
     @Update
     fun update(value: List<Value>)
 
     @Delete
-    fun delete(value: Value): Completable
+    fun delete(value: Value)
 
     @Query("DELETE FROM formItemValue WHERE formItemId=:formItemId AND userDesc=:userDesc")
     fun deleteByFormItemIdAndUserDesc(formItemId: Long?, userDesc: String)

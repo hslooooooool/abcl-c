@@ -11,10 +11,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import kotlinx.android.synthetic.main.form_users.*
+import kotlinx.coroutines.CoroutineScope
 import qsos.core.form.FormPath
 import qsos.core.form.R
 import qsos.core.form.data.FormModelIml
-import qsos.core.form.data.FormRepository
+import qsos.core.form.data.IFormModel
+import qsos.core.form.db
 import qsos.core.form.db.entity.FormItem
 import qsos.core.form.db.entity.FormUserEntity
 import qsos.core.form.db.entity.Value
@@ -28,31 +30,27 @@ import qsos.lib.base.utils.BaseUtils
  * 表单用户选择
  */
 @Route(group = FormPath.FORM, path = FormPath.FORM_ITEM_USERS)
-class UserChoseActivity : AbsFormActivity(), Toolbar.OnMenuItemClickListener {
+class UserChoseActivity(
+        override val layoutId: Int = R.layout.form_users,
+        override val reload: Boolean = false
+) : AbsFormActivity(), Toolbar.OnMenuItemClickListener {
 
-    /**表单数据实现类*/
-    private lateinit var formModelIml: FormModelIml
+    private val mModel: IFormModel = FormModelIml()
 
     @Autowired(name = FormPath.FORM_ITEM_ID)
     @JvmField
     var itemId: Long? = 0
 
-    private var item: FormItem? = null
-    private var mList = ArrayList<FormUserEntity>()
-
     private var chose = 0
     private var limitMin: Int? = 0
     private var limitMax: Int? = 0
 
+    private var item: FormItem? = null
     private var mAdapter: FormUsersAdapter? = null
+    private var mList = ArrayList<FormUserEntity>()
     private var manager: LinearLayoutManager? = null
 
-    override val layoutId: Int = R.layout.form_users
-    override val reload: Boolean = false
-
-    override fun initData(savedInstanceState: Bundle?) {
-        formModelIml = FormModelIml(FormRepository())
-    }
+    override fun initData(savedInstanceState: Bundle?) {}
 
     override fun initView() {
         mAdapter = FormUsersAdapter(mList)
@@ -90,46 +88,47 @@ class UserChoseActivity : AbsFormActivity(), Toolbar.OnMenuItemClickListener {
                 BaseUtils.hideKeyboard(this)
                 form_users_et.isFocusable = false
                 form_users_et.isFocusableInTouchMode = false
-                formModelIml.getUsers(item!!, form_users_et.text.toString())
+                mModel.getUsers(item!!, form_users_et.text.toString())
                 return@OnKeyListener true
             }
             return@OnKeyListener false
         })
 
         getData()
-
     }
 
     override fun getData() {
-        if (itemId != null) {
-            addDispose(formModelIml.getFormItemByDB(itemId!!)
-                    .subscribe {
-                        item = it
-                        formModelIml.getUsers(item!!, form_users_et.text.toString())
-                                .subscribe { values ->
-                                    mList.clear()
-                                    values.forEach { v ->
-                                        val sFormUserEntity = FormUserEntity()
-                                        sFormUserEntity.formItemId = v.formItemId
-                                        sFormUserEntity.id = v.id
-                                        sFormUserEntity.userName = v.user?.userName
-                                        sFormUserEntity.userPhone = v.user?.userDesc
-                                        sFormUserEntity.userAvatar = v.user?.userAvatar
-                                        sFormUserEntity.userLimit = v.limitEdit
-                                        mList.add(sFormUserEntity)
-                                    }
+        itemId?.let {
+            CoroutineScope(mJob).db<List<Value>> {
+                db = {
+                    item = mModel.getFormItem(it)
+                    mModel.getUsers(item!!, form_users_et.text.toString())
+                }
+                onSuccess = {
+                    it?.let {
+                        mList.clear()
+                        it.forEach { v ->
+                            val sFormUserEntity = FormUserEntity()
+                            sFormUserEntity.formItemId = v.formItemId
+                            sFormUserEntity.id = v.id
+                            sFormUserEntity.userName = v.user?.userName
+                            sFormUserEntity.userPhone = v.user?.userDesc
+                            sFormUserEntity.userAvatar = v.user?.userAvatar
+                            sFormUserEntity.userLimit = v.limitEdit
+                            mList.add(sFormUserEntity)
+                        }
 
-                                    chose = getValues().size
-                                    limitMin = item?.formItemValue?.limitMin
-                                    limitMax = item?.formItemValue?.limitMax
+                        chose = getValues().size
+                        limitMin = item?.formItemValue?.limitMin
+                        limitMax = item?.formItemValue?.limitMax
 
-                                    changeChoseUser()
+                        changeChoseUser()
 
-                                    mAdapter?.setLimit(chose, limitMin, limitMax)
-                                    mAdapter?.notifyDataSetChanged()
-                                }
+                        mAdapter?.setLimit(chose, limitMin, limitMax)
+                        mAdapter?.notifyDataSetChanged()
                     }
-            )
+                }
+            }
         }
     }
 

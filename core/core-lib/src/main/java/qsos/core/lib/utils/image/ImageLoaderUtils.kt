@@ -11,7 +11,7 @@ import com.bumptech.glide.request.RequestOptions
 
 /**
  * @author : 华清松
- * 图片加载工具类 使用glide框架封装
+ * 图片加载工具类 使用glide框架封装，已感知LifecycleListener
  */
 object ImageLoaderUtils {
 

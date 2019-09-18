@@ -18,7 +18,7 @@ import androidx.room.ForeignKey.CASCADE
  * @param visible 表单项是否显示
  * @param require 表单项是否必填
  */
-@Entity(tableName = "formItems",
+@Entity(tableName = "formItem",
         foreignKeys = [
             ForeignKey(entity = FormEntity::class, parentColumns = ["id"], childColumns = ["formId"], onDelete = CASCADE)
         ],

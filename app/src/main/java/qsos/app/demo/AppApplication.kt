@@ -18,7 +18,10 @@ import vip.qsos.exception.GlobalExceptionHelper
  * @author : 华清松
  * AppApplication
  */
-open class AppApplication : BaseApplication(), LifecycleOwner {
+open class AppApplication(
+        override var debugARouter: Boolean = true,
+        override var debugTimber: Boolean = true
+) : BaseApplication(), LifecycleOwner {
     init {
         // 设置全局的Header构建器
         SmartRefreshLayout.setDefaultRefreshHeaderCreator { context, layout ->

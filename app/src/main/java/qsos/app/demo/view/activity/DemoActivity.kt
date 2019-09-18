@@ -22,7 +22,7 @@ import qsos.app.demo.router.TweetPath
 import qsos.app.demo.utils.StatusBarUtil
 import qsos.core.lib.utils.image.ImageLoaderUtils
 import qsos.lib.base.base.activity.BaseActivity
-import qsos.lib.base.base.adapter.BaseLifeCycleAdapter
+import qsos.lib.base.base.adapter.BaseNormalAdapter
 import qsos.lib.base.base.holder.BaseHolder
 import qsos.lib.base.utils.BaseUtils
 import qsos.lib.base.utils.ToastUtils
@@ -40,7 +40,7 @@ class DemoActivity(
 ) : BaseActivity() {
 
     private lateinit var mTweetModel: TweetModelIml
-    private lateinit var mTweetAdapter: BaseLifeCycleAdapter<EmployeeBeen>
+    private lateinit var mTweetAdapter: BaseNormalAdapter<EmployeeBeen>
     private lateinit var mLinearLayoutManager: LinearLayoutManager
     private val mList = arrayListOf<EmployeeBeen>()
 
@@ -61,7 +61,7 @@ class DemoActivity(
         /**默认Toolbar背景透明*/
         tweet_list_head_tb.setBackgroundColor(0)
 
-        mTweetAdapter = BaseLifeCycleAdapter(lifecycle, R.layout.app_item_tweet, mList,
+        mTweetAdapter = BaseNormalAdapter(R.layout.app_item_tweet, mList,
                 setHolder = { holder, data, _ ->
                     setHolder(holder, data)
                 }

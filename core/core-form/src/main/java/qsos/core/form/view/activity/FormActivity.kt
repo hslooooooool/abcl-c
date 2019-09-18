@@ -10,11 +10,15 @@ import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.form_activity_main.*
+import kotlinx.coroutines.CoroutineScope
 import qsos.core.form.FormPath
 import qsos.core.form.R
 import qsos.core.form.data.FormModelIml
+import qsos.core.form.data.IFormModel
+import qsos.core.form.db
 import qsos.core.form.db.entity.FormEntity
 import qsos.core.form.db.entity.FormItem
+import qsos.core.form.dbComplete
 import qsos.core.form.utils.FormVerifyUtils
 import qsos.core.form.view.adapter.FormAdapter
 import qsos.core.form.view.other.FormItemDecoration
@@ -33,7 +37,8 @@ class FormActivity(
     /**渲染表单项容器*/
     private lateinit var mAdapter: FormAdapter
     /**表单数据实现类*/
-    private val mModel: FormModelIml = FormModelIml()
+    private val mModel: IFormModel = FormModelIml()
+
     private val mFormList = arrayListOf<FormItem>()
     private var mForm: FormEntity? = null
     /**待上传的表单项ID*/
@@ -65,16 +70,13 @@ class FormActivity(
         }
 
         form_main_rv.layoutManager = LinearLayoutManager(mContext)
-
         mAdapter = FormAdapter(mFormList)
-        // 添加装饰类
         form_main_rv.addItemDecoration(FormItemDecoration())
-        // 设置列表容器
         form_main_rv.adapter = mAdapter
 
         form_main_btn?.setOnClickListener {
             form_main_btn?.isClickable = false
-            if (mForm != null) {
+            mForm?.let {
                 val verify = FormVerifyUtils.verify(mForm!!)
                 if (verify.pass) {
                     val intent = Intent()
@@ -85,8 +87,6 @@ class FormActivity(
                     ToastUtils.showToast(this, verify.message)
                     form_main_btn?.isClickable = true
                 }
-            } else {
-                ToastUtils.showToastLong(this, "发生错误，数据已丢失！")
             }
         }
 
@@ -105,48 +105,47 @@ class FormActivity(
     }
 
     override fun getData() {
-        addDispose(
-                mModel.getForm(formId!!).subscribe(
-                        {
-                            mForm = it
-
-                            form_main_btn?.text = mForm!!.submitName ?: "提交"
-
-                            val formItemList = arrayListOf<FormItem>()
-                            for (item in mForm!!.formItems!!) {
-                                if (item.visible) formItemList.add(item)
-                            }
-                            mFormList.clear()
-                            mFormList.addAll(formItemList)
-                            mAdapter.notifyDataSetChanged()
-                        },
-                        {
-                            it.printStackTrace()
-                            ToastUtils.showToastLong(this, "数据错误 ${it.message}")
-                        }
-                )
-        )
+        CoroutineScope(mJob).db<FormEntity> {
+            db = { mModel.getForm(formId!!) }
+            onSuccess = {
+                it?.let {
+                    mForm = it
+                    form_main_btn?.text = mForm!!.submitName ?: "提交"
+                    val formItemList = arrayListOf<FormItem>()
+                    for (item in mForm!!.formItems!!) {
+                        if (item.visible) formItemList.add(item)
+                    }
+                    mFormList.clear()
+                    mFormList.addAll(formItemList)
+                    mAdapter.notifyDataSetChanged()
+                }
+            }
+            onFail = {
+                it.printStackTrace()
+                ToastUtils.showToastLong(mContext, "数据错误 ${it.message}")
+            }
+        }
     }
 
     override fun onBackPressed() {
-        if (mForm!!.editable) {
+        if (mForm?.editable == true) {
             // 编辑模式，删除后退出
-            addDispose(
-                    mModel.deleteForm(mForm!!).subscribe(
-                            {
-                                finish()
-                            },
-                            {
-                                it.printStackTrace()
-                                ToastUtils.showToast(this, "数据错误 ${it.message}")
-                                finish()
-                            }
-                    )
-            )
+            CoroutineScope(mJob).dbComplete {
+                db = {
+                    mModel.deleteForm(mForm!!)
+                }
+                onSuccess = {
+                    finish()
+                }
+                onFail = {
+                    it.printStackTrace()
+                    ToastUtils.showToast(mContext, "数据错误 ${it.message}")
+                    finish()
+                }
+            }
         } else {
             // 预览模式，直接退出
             finish()
         }
     }
-
 }

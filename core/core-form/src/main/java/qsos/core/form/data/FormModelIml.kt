@@ -1,7 +1,5 @@
 package qsos.core.form.data
 
-import io.reactivex.Completable
-import io.reactivex.Flowable
 import qsos.core.form.db.entity.FormEntity
 import qsos.core.form.db.entity.FormItem
 import qsos.core.form.db.entity.Value
@@ -14,11 +12,11 @@ class FormModelIml(
         private val formRepo: IFormRepo = FormRepository()
 ) : IFormModel {
 
-    override fun getForm(formId: Long): Flowable<FormEntity> {
+    override fun getForm(formId: Long): FormEntity? {
         return formRepo.getForm(formId)
     }
 
-    override fun insertForm(form: FormEntity): Flowable<FormEntity> {
+    override fun insertForm(form: FormEntity): FormEntity? {
         return formRepo.insertForm(form)
     }
 
@@ -26,31 +24,23 @@ class FormModelIml(
         formRepo.insertFormItem(formItem)
     }
 
-    override fun insertValue(formItemValue: Value) {
-        formRepo.insertValue(formItemValue)
+    override fun insertValue(formItemValue: Value): Value {
+        return formRepo.insertValue(formItemValue)
     }
 
-    override fun addValueToFormItem(formItemValue: Value): Flowable<Value> {
-        return formRepo.addValueToFormItem(formItemValue)
+    override fun deleteForm(form: FormEntity) {
+        formRepo.deleteForm(form)
     }
 
-    override fun deleteForm(form: FormEntity): Completable {
-        return formRepo.deleteForm(form)
+    override fun getFormItem(formItemId: Long): FormItem? {
+        return formRepo.getFormItem(formItemId)
     }
 
-    override fun postForm(formType: String, formId: Long): Flowable<FormEntity> {
-        return formRepo.postForm(formType, formId)
+    override fun updateValue(value: Value) {
+        formRepo.updateValue(value)
     }
 
-    override fun getFormItemByDB(formItemId: Long): Flowable<FormItem> {
-        return formRepo.getFormItemByDB(formItemId)
-    }
-
-    override fun updateValue(value: Value): Completable {
-        return formRepo.updateValue(value)
-    }
-
-    override fun getUsers(formItem: FormItem, key: String?): Flowable<List<Value>> {
+    override fun getUsers(formItem: FormItem, key: String?): List<Value> {
         return formRepo.getUsers(formItem, key)
     }
 }

@@ -1,7 +1,5 @@
 package qsos.core.form.data
 
-import io.reactivex.Completable
-import io.reactivex.Flowable
 import qsos.core.form.db.entity.FormEntity
 import qsos.core.form.db.entity.FormItem
 import qsos.core.form.db.entity.Value
@@ -19,32 +17,26 @@ interface IFormModel : IFormRepo
 interface IFormRepo {
 
     /**获取表单数据*/
-    fun getForm(formId: Long): Flowable<FormEntity>
+    fun getForm(formId: Long): FormEntity?
 
     /**插入表单数据*/
-    fun insertForm(form: FormEntity): Flowable<FormEntity>
+    fun insertForm(form: FormEntity): FormEntity?
 
     /**插入表单项数据*/
     fun insertFormItem(formItem: FormItem)
 
     /**插入表单项值数据*/
-    fun insertValue(formItemValue: Value)
-
-    /**插入Value到FormItem*/
-    fun addValueToFormItem(formItemValue: Value): Flowable<Value>
+    fun insertValue(formItemValue: Value): Value
 
     /**清除表单数据*/
-    fun deleteForm(form: FormEntity): Completable
-
-    /**提交表单数据*/
-    fun postForm(formType: String, formId: Long): Flowable<FormEntity>
+    fun deleteForm(form: FormEntity)
 
     /**获取表单项数据*/
-    fun getFormItemByDB(formItemId: Long): Flowable<FormItem>
+    fun getFormItem(formItemId: Long): FormItem?
 
     /**更新表单项数据*/
-    fun updateValue(value: Value): Completable
+    fun updateValue(value: Value)
 
     /**获取可选用户列表 key 可以是姓名、手机号*/
-    fun getUsers(formItem: FormItem, key: String?): Flowable<List<Value>>
+    fun getUsers(formItem: FormItem, key: String?): List<Value>
 }

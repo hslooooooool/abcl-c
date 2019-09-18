@@ -8,7 +8,6 @@ import android.view.View
 import kotlinx.android.synthetic.main.form_item_input.view.*
 import kotlinx.android.synthetic.main.form_normal_title.view.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import qsos.core.form.db
 import qsos.core.form.db.FormDatabase
@@ -25,6 +24,7 @@ class ItemFormInputHolder(
         itemView: View,
         private val itemClick: OnListItemClickListener
 ) : BaseHolder<FormItem>(itemView) {
+    private val mJob = Job()
 
     override fun setData(data: FormItem, position: Int) {
 
@@ -47,10 +47,10 @@ class ItemFormInputHolder(
             override fun afterTextChanged(p0: Editable) {
                 val content = itemView.item_form_input.text.toString()
                 data.formItemValue!!.values!![0].text!!.content = content
-                CoroutineScope(Dispatchers.Main + Job()).db<Long> {
+                CoroutineScope(mJob).db<Long> {
                     db = { FormDatabase.getInstance().formItemValueDao.insert(data.formItemValue!!.values!![0]) }
                     onSuccess = {
-                        Timber.tag("数据库插入").i("更新输入值$it")
+                        Timber.tag("数据库插入").i("更新输入值$it=$content")
                     }
                 }
             }
@@ -66,4 +66,8 @@ class ItemFormInputHolder(
         }
     }
 
+    override fun release() {
+        super.release()
+        mJob.cancel()
+    }
 }

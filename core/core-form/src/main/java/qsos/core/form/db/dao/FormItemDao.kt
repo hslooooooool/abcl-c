@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import io.reactivex.Flowable
 import qsos.core.form.db.entity.FormItem
 
 /**
@@ -14,12 +13,24 @@ import qsos.core.form.db.entity.FormItem
 @Dao
 interface FormItemDao {
 
-    @Query("SELECT * FROM formItems where formId=:formId")
+    /**
+     * 获取表单项下所以值列表
+     * @param formId 表单项ID
+     */
+    @Query("SELECT * FROM formItem where formId=:formId")
     fun getFormItemByFormId(formId: Long): List<FormItem>
 
-    @Query("SELECT * FROM formItems where id=:id")
-    fun getFormItemByIdF(id: Long): Flowable<FormItem>
+    /**
+     * 获取表单项
+     * @param id 表单项ID
+     */
+    @Query("SELECT * FROM formItem where id=:id")
+    fun getFormItem(id: Long): FormItem?
 
+    /**
+     * 插入表单项
+     * @param item 表单项
+     */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(item: FormItem): Long
 

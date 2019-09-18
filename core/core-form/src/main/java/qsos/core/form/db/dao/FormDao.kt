@@ -1,8 +1,6 @@
 package qsos.core.form.db.dao
 
 import androidx.room.*
-import io.reactivex.Completable
-import io.reactivex.Flowable
 import qsos.core.form.db.entity.FormEntity
 
 /**
@@ -15,12 +13,12 @@ import qsos.core.form.db.entity.FormEntity
 interface FormDao {
 
     @Query("SELECT * FROM form where id=:id")
-    fun getFormById(id: Long): Flowable<FormEntity>
+    fun getFormById(id: Long): FormEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(form: FormEntity): Long
 
     @Delete
-    fun delete(form: FormEntity): Completable
+    fun delete(form: FormEntity)
 
 }

@@ -96,12 +96,6 @@ class FormAdapter(formItems: ArrayList<FormItem>) : BaseAdapter<FormItem>(formIt
             R.id.item_form_time -> {
                 chooseTime(view, position)
             }
-            /**表单输入项*/
-            R.id.item_form_input -> {
-                ARouter.getInstance().build(FormPath.FORM_ITEM_INPUT)
-                        .withLong("item_id", data[position].id!!)
-                        .navigation()
-            }
             /**选择人员*/
             R.id.tv_item_form_users_size -> {
                 ARouter.getInstance().build(FormPath.FORM_ITEM_USERS)
