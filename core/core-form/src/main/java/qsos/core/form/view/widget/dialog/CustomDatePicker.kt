@@ -42,7 +42,7 @@ class CustomDatePicker(context: Context, private val sdf: SimpleDateFormat, star
     private var spanDay: Boolean = false
     private var spanHour: Boolean = false
     private var spanMin: Boolean = false
-    private val isStartTime = true
+    val isStartTime = true
 
     private var handler: OnDateListener? = null
     private var context: Context? = null
@@ -279,7 +279,7 @@ class CustomDatePicker(context: Context, private val sdf: SimpleDateFormat, star
      * 将“0-9”转换为“00-09”
      */
     private fun formatTimeUnit(unit: Int): String {
-        return if (unit < 10) "0" + unit.toString() else unit.toString()
+        return if (unit < 10) "0$unit" else unit.toString()
     }
 
     private fun initArrayList() {

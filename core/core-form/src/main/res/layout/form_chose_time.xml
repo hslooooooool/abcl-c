@@ -38,7 +38,7 @@
 			android:layout_centerVertical="true"
 			android:padding="10dp"
 			android:text="确认"
-			android:textColor="@android:color/darker_gray"
+			android:textColor="@color/colorPrimary"
 			android:textSize="16sp" />
 	
 	</RelativeLayout>

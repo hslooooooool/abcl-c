@@ -10,16 +10,8 @@
 	<color name="colorBack">#DBDBDB</color>
 	<!--自定义颜色-->
 	<color name="grey_low">#f4f4f4</color>
-	<color name="grey_white">#F5F5F5</color>
-	<color name="grey_tran">#b1e6e6e6</color>
 	<color name="blue_light">#FF6FA7FB</color>
 	<color name="black_light">#333333</color>
-	<color name="black_tran">#A6000000</color>
-	<color name="refuse">#fa5148</color>
-	
-	<color name="msg_tag_top">#FFB378</color>
-	<color name="msg_tag_read_back">#86BBFF</color>
-	
 	<!--常用颜色-->
 	<color name="white">#ffffff</color><!--白色 -->
 	<color name="white_tran">#ccffffff</color><!--白色 -->
