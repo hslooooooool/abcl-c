@@ -1,10 +1,10 @@
 package qsos.core.form.view.hodler
 
 import android.view.View
+import androidx.appcompat.content.res.AppCompatResources
 import kotlinx.android.synthetic.main.form_item_file_item.view.*
 import qsos.core.form.R
 import qsos.core.form.db.entity.Value
-import qsos.core.lib.utils.image.ImageLoaderUtils
 import qsos.lib.base.base.holder.BaseHolder
 import qsos.lib.base.callback.OnListItemClickListener
 
@@ -18,28 +18,32 @@ class FormItemFileItemHolder(
 ) : BaseHolder<Value>(itemView) {
 
     override fun setData(data: Value, position: Int) {
-        when (data.file!!.fileType) {
-            "ALBUM" -> {
-                ImageLoaderUtils.display(itemView.context, itemView.iv_item_form_file_icon, data.file!!.fileUrl)
+        //todo 显示具体缩略图
+        val drawable = when (data.file!!.getFileTypeByMime()) {
+            "IMAGE" -> {
+                AppCompatResources.getDrawable(itemView.context, R.drawable.take_image)
             }
             "VIDEO" -> {
-                ImageLoaderUtils.display(itemView.context, itemView.iv_item_form_file_icon, R.drawable.take_video)
+                AppCompatResources.getDrawable(itemView.context, R.drawable.take_video)
             }
             "AUDIO" -> {
-                ImageLoaderUtils.display(itemView.context, itemView.iv_item_form_file_icon, R.drawable.take_audio)
+                AppCompatResources.getDrawable(itemView.context, R.drawable.take_audio)
             }
             "FILE" -> {
-                ImageLoaderUtils.display(itemView.context, itemView.iv_item_form_file_icon, R.drawable.take_file)
+                AppCompatResources.getDrawable(itemView.context, R.drawable.take_file)
+            }
+            else -> {
+                AppCompatResources.getDrawable(itemView.context, R.drawable.take_file)
             }
         }
-
+        itemView.iv_item_form_file_icon.setImageDrawable(drawable)
         itemView.tv_item_form_file_name.text = data.file!!.fileName
 
         itemView.iv_item_form_file_icon.setOnClickListener {
-            itemClick.onItemClick(it, position, 1)
+            itemClick.onItemClick(it, position, data)
         }
         itemView.iv_item_form_file_delete.setOnClickListener {
-            itemClick.onItemClick(it, position, 2)
+            itemClick.onItemClick(it, position, data)
         }
     }
 }

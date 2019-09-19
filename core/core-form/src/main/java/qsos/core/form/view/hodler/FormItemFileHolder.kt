@@ -1,15 +1,15 @@
 package qsos.core.form.view.hodler
 
-import android.annotation.SuppressLint
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.form_item_file.view.*
 import kotlinx.android.synthetic.main.form_normal_title.view.*
+import qsos.core.form.db.entity.FormFileType
 import qsos.core.form.db.entity.FormItem
 import qsos.core.form.view.adapter.FormFileAdapter
 import qsos.lib.base.base.holder.BaseHolder
-
 import qsos.lib.base.callback.OnListItemClickListener
+import kotlin.coroutines.CoroutineContext
 
 /**
  * @author : 华清松
@@ -17,66 +17,36 @@ import qsos.lib.base.callback.OnListItemClickListener
  */
 class FormItemFileHolder(
         itemView: View,
+        private val mJob: CoroutineContext,
         private val itemClick: OnListItemClickListener
 ) : BaseHolder<FormItem>(itemView) {
 
-    @SuppressLint("SetTextI18n")
     override fun setData(data: FormItem, position: Int) {
         itemView.form_item_title.text = data.title
-
-        if (data.formItemValue?.values != null) {
-            val files = data.formItemValue?.values!!
-            itemView.rv_item_form_files.layoutManager = GridLayoutManager(itemView.context, 4)
-
-            itemView.rv_item_form_files.adapter = FormFileAdapter(files)
-        }
+        itemView.rv_item_form_files.layoutManager = GridLayoutManager(itemView.context, 3)
+        itemView.rv_item_form_files.adapter = FormFileAdapter(data.formItemValue?.values!!, mJob)
 
         data.formItemValue!!.limitTypeList?.forEach {
-
-
-        }
-        when (data.formItemValue!!.limitType) {
-            "image" -> {
-                itemView.form_item_file_take_photo.visibility = View.VISIBLE
-                itemView.form_item_file_take_album.visibility = View.VISIBLE
-                itemView.form_item_file_take_video.visibility = View.GONE
-                itemView.form_item_file_take_audio.visibility = View.GONE
-                itemView.form_item_file_take_file.visibility = View.GONE
-            }
-            "video" -> {
-                itemView.form_item_file_take_photo.visibility = View.GONE
-                itemView.form_item_file_take_album.visibility = View.GONE
-                itemView.form_item_file_take_video.visibility = View.VISIBLE
-                itemView.form_item_file_take_audio.visibility = View.GONE
-                itemView.form_item_file_take_file.visibility = View.GONE
-            }
-            "audio" -> {
-                itemView.form_item_file_take_photo.visibility = View.GONE
-                itemView.form_item_file_take_album.visibility = View.GONE
-                itemView.form_item_file_take_video.visibility = View.GONE
-                itemView.form_item_file_take_audio.visibility = View.VISIBLE
-                itemView.form_item_file_take_file.visibility = View.GONE
-            }
-            "file" -> {
-                itemView.form_item_file_take_photo.visibility = View.GONE
-                itemView.form_item_file_take_album.visibility = View.GONE
-                itemView.form_item_file_take_video.visibility = View.GONE
-                itemView.form_item_file_take_audio.visibility = View.GONE
-                itemView.form_item_file_take_file.visibility = View.VISIBLE
-            }
-            else -> {
-                itemView.form_item_file_take_photo.visibility = View.VISIBLE
-                itemView.form_item_file_take_album.visibility = View.VISIBLE
-                itemView.form_item_file_take_video.visibility = View.VISIBLE
-                itemView.form_item_file_take_audio.visibility = View.VISIBLE
-                itemView.form_item_file_take_file.visibility = View.VISIBLE
+            when (it) {
+                FormFileType.CAMERA.key -> itemView.form_item_file_take_camera.visibility = View.VISIBLE
+                FormFileType.ALBUM.key -> itemView.form_item_file_take_album.visibility = View.VISIBLE
+                FormFileType.VIDEO.key -> itemView.form_item_file_take_video.visibility = View.VISIBLE
+                FormFileType.AUDIO.key -> itemView.form_item_file_take_audio.visibility = View.VISIBLE
+                FormFileType.FILE.key -> itemView.form_item_file_take_file.visibility = View.VISIBLE
+                else -> {
+                    itemView.form_item_file_take_camera.visibility = View.VISIBLE
+                    itemView.form_item_file_take_album.visibility = View.VISIBLE
+                    itemView.form_item_file_take_video.visibility = View.VISIBLE
+                    itemView.form_item_file_take_audio.visibility = View.VISIBLE
+                    itemView.form_item_file_take_file.visibility = View.VISIBLE
+                }
             }
         }
 
         itemView.form_item_title.setOnClickListener {
             itemClick.onItemClick(it, position, data)
         }
-        itemView.form_item_file_take_photo.setOnClickListener {
+        itemView.form_item_file_take_camera.setOnClickListener {
             itemClick.onItemClick(it, position, data)
         }
         itemView.form_item_file_take_album.setOnClickListener {
@@ -86,6 +56,9 @@ class FormItemFileHolder(
             itemClick.onItemClick(it, position, data)
         }
         itemView.form_item_file_take_audio.setOnClickListener {
+            itemClick.onItemClick(it, position, data)
+        }
+        itemView.form_item_file_take_file.setOnClickListener {
             itemClick.onItemClick(it, position, data)
         }
     }

@@ -2,36 +2,38 @@ package qsos.core.form.view.adapter
 
 import android.view.View
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import qsos.core.form.R
 import qsos.core.form.db.FormDatabase
 import qsos.core.form.db.entity.Value
 import qsos.core.form.dbComplete
+import qsos.core.form.utils.FormConfigHelper
 import qsos.core.form.view.hodler.FormItemFileItemHolder
 import qsos.lib.base.base.adapter.BaseAdapter
 import qsos.lib.base.base.holder.BaseHolder
 import qsos.lib.base.utils.ToastUtils
+import kotlin.coroutines.CoroutineContext
 
 /**
  * @author : 华清松
  * 文件列表容器
  */
-class FormFileAdapter(files: ArrayList<Value>)
-    : BaseAdapter<Value>(files) {
-    private val mJob = Dispatchers.Main + Job()
+class FormFileAdapter(
+        files: ArrayList<Value>,
+        private val mJob: CoroutineContext
+) : BaseAdapter<Value>(files) {
 
-    override fun getHolder(view: View, viewType: Int): BaseHolder<Value> {
-        return FormItemFileItemHolder(view, this)
-    }
+    override fun getHolder(view: View, viewType: Int): BaseHolder<Value> = FormItemFileItemHolder(view, this)
 
-    override fun getLayoutId(viewType: Int): Int {
-        return R.layout.form_item_file_item
-    }
+    override fun getLayoutId(viewType: Int): Int = R.layout.form_item_file_item
 
     override fun onItemClick(view: View, position: Int, obj: Any?) {
         when (view.id) {
+            R.id.iv_item_form_file_icon -> {
+                /**预览*/
+                FormConfigHelper.previewFile(data[position].file!!)
+            }
             R.id.iv_item_form_file_delete -> {
+                /**删除*/
                 if (!data[position].limitEdit) {
                     CoroutineScope(mJob).dbComplete {
                         db = { FormDatabase.getInstance().formItemValueDao.delete(data[position]) }

@@ -18,7 +18,8 @@
 			android:layout_width="match_parent"
 			android:layout_height="60dp"
 			android:gravity="center_vertical"
-			android:orientation="horizontal">
+			android:orientation="horizontal"
+			android:paddingEnd="10dp">
 			
 			<include layout="@layout/form_normal_title" />
 			
@@ -28,48 +29,54 @@
 				android:layout_weight="1" />
 			
 			<ImageView
-				android:id="@+id/form_item_file_take_photo"
+				android:id="@+id/form_item_file_take_camera"
 				android:layout_width="42dp"
 				android:layout_height="42dp"
 				android:layout_margin="2dp"
-				android:padding="5dp"
-				app:srcCompat="@drawable/take_photo" />
+				android:padding="8dp"
+				android:visibility="gone"
+				app:srcCompat="@drawable/take_photo"
+				tools:visibility="visible" />
 			
 			<ImageView
 				android:id="@+id/form_item_file_take_album"
 				android:layout_width="42dp"
 				android:layout_height="42dp"
 				android:layout_margin="2dp"
-				android:padding="5dp"
-				app:srcCompat="@drawable/take_image" />
+				android:padding="8dp"
+				android:visibility="gone"
+				app:srcCompat="@drawable/take_image"
+				tools:visibility="visible" />
 			
 			<ImageView
 				android:id="@+id/form_item_file_take_video"
 				android:layout_width="42dp"
 				android:layout_height="42dp"
 				android:layout_margin="2dp"
-				android:padding="5dp"
-				app:srcCompat="@drawable/take_video" />
+				android:padding="8dp"
+				android:visibility="gone"
+				app:srcCompat="@drawable/take_video"
+				tools:visibility="visible" />
 			
 			<ImageView
 				android:id="@+id/form_item_file_take_audio"
 				android:layout_width="42dp"
 				android:layout_height="42dp"
 				android:layout_margin="2dp"
-				android:padding="5dp"
-				app:srcCompat="@drawable/take_audio" />
+				android:padding="8dp"
+				android:visibility="gone"
+				app:srcCompat="@drawable/take_audio"
+				tools:visibility="visible" />
 			
 			<ImageView
 				android:id="@+id/form_item_file_take_file"
 				android:layout_width="42dp"
 				android:layout_height="42dp"
 				android:layout_margin="2dp"
-				android:padding="5dp"
-				app:srcCompat="@drawable/take_file" />
-			
-			<View
-				android:layout_width="10dp"
-				android:layout_height="match_parent" />
+				android:padding="8dp"
+				android:visibility="gone"
+				app:srcCompat="@drawable/take_file"
+				tools:visibility="visible" />
 		</LinearLayout>
 	
 	</LinearLayout>
@@ -78,7 +85,7 @@
 		android:id="@+id/rv_item_form_files"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:minHeight="100dp"
+		android:minHeight="80dp"
 		tools:listitem="@layout/form_item_file_item" />
 
 </LinearLayout>

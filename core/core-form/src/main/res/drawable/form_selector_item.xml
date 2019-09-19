@@ -11,7 +11,7 @@
 	<!-- Button按下时的背景 -->
 	<item android:state_pressed="true">
 		<shape android:shape="rectangle">
-			<solid android:color="@color/grey_low" />
+			<solid android:color="@color/gray_low" />
 		</shape>
 	</item>
 </selector>

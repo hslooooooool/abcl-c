@@ -7,6 +7,8 @@ import androidx.lifecycle.LifecycleRegistry
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter
 import com.scwang.smartrefresh.layout.header.ClassicsHeader
+import qsos.app.demo.config.FormConfig
+import qsos.core.form.utils.FormConfigHelper
 import qsos.core.lib.config.BaseConfig
 import qsos.lib.base.base.BaseApplication
 import qsos.lib.base.utils.rx.RxBus
@@ -55,6 +57,9 @@ open class AppApplication(
                 .subscribe {
                     dealGlobalException(it.exception)
                 }
+
+        /**配置表单文件操作代理实现*/
+        FormConfigHelper.init(FormConfig())
     }
 
     /**TODO 统一处理异常，如重新登录、强制下线、异常反馈、网络检查*/

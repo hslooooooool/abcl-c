@@ -162,7 +162,7 @@ class DatePickerView(context: Context, attrs: AttributeSet) : View(context, attr
         nPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         nPaint!!.style = Style.FILL
         nPaint!!.textAlign = Align.CENTER
-        nPaint!!.color = ContextCompat.getColor(context, R.color.grey)
+        nPaint!!.color = ContextCompat.getColor(context, R.color.gray)
     }
 
     override fun onDraw(canvas: Canvas) {

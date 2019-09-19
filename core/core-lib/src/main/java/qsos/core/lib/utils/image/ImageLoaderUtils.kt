@@ -1,6 +1,8 @@
 package qsos.core.lib.utils.image
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.text.TextUtils
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
@@ -40,6 +42,35 @@ object ImageLoaderUtils {
         }
         GlideApp.with(context)
                 .load(url)
+                // 磁盘缓存
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
+                // 避免闪烁
+                .skipMemoryCache(false)
+                .dontAnimate()
+                .into(imageView)
+    }
+
+    /**加载资源图片*/
+    fun display(context: Context, imageView: ImageView?, drawable: Drawable) {
+        if (imageView == null) {
+            return
+        }
+        GlideApp.with(context)
+                .load(drawable)
+                // 磁盘缓存
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
+                // 避免闪烁
+                .skipMemoryCache(false)
+                .dontAnimate()
+                .into(imageView)
+    }
+    /**加载资源图片*/
+    fun display(context: Context, imageView: ImageView?, bitmap: Bitmap) {
+        if (imageView == null) {
+            return
+        }
+        GlideApp.with(context)
+                .load(bitmap)
                 // 磁盘缓存
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
                 // 避免闪烁

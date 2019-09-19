@@ -30,7 +30,7 @@ android {
         targetSdkVersion build_versions.SDK_TARGET
         versionCode 1
         versionName "1.0.0"
-        // 增加对svg的支持
+        // 增加对vector图片的支持
         vectorDrawables.useSupportLibrary = true
         ndk {
             abiFilters "armeabi", 'armeabi-v7a'

@@ -3,16 +3,17 @@ package qsos.core.form.view.adapter
 import android.annotation.SuppressLint
 import android.view.View
 import com.alibaba.android.arouter.launcher.ARouter
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import qsos.core.form.FormPath
 import qsos.core.form.R
+import qsos.core.form.db
 import qsos.core.form.db.FormDatabase
-import qsos.core.form.db.entity.FormFileType
 import qsos.core.form.db.entity.FormItem
 import qsos.core.form.db.entity.FormItemType
+import qsos.core.form.db.entity.Value
 import qsos.core.form.dbComplete
+import qsos.core.form.utils.FormConfigHelper
 import qsos.core.form.view.hodler.*
 import qsos.core.form.view.widget.dialog.BottomDialogUtils
 import qsos.core.form.view.widget.dialog.OnDateListener
@@ -21,6 +22,7 @@ import qsos.lib.base.base.adapter.BaseAdapter
 import qsos.lib.base.base.holder.BaseHolder
 import qsos.lib.base.callback.OnTListener
 import qsos.lib.base.utils.ToastUtils
+import timber.log.Timber
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
@@ -31,16 +33,8 @@ import kotlin.coroutines.CoroutineContext
 @SuppressLint("CheckResult")
 class FormAdapter(
         formItems: ArrayList<FormItem>,
-        private val mJob: CoroutineContext = Dispatchers.Main + Job()
+        private val mJob: CoroutineContext
 ) : BaseAdapter<FormItem>(formItems) {
-
-    interface OnFileListener {
-        fun getFile(type: FormFileType, position: Int)
-    }
-
-    var fileListener: OnFileListener? = null
-
-    private var backListener: OnTListener<Boolean>? = null
 
     override fun getHolder(view: View, viewType: Int): BaseHolder<FormItem> {
         when (viewType) {
@@ -55,7 +49,7 @@ class FormAdapter(
             /**人员*/
             R.layout.form_item_users -> return FormItemUserHolder(view, this)
             /**附件*/
-            R.layout.form_item_file -> return FormItemFileHolder(view, this)
+            R.layout.form_item_file -> return FormItemFileHolder(view, mJob, this)
             /**其它*/
             else -> return FormItemTextHolder(view, this)
         }
@@ -100,10 +94,10 @@ class FormAdapter(
                 chooseCheck(position)
             }
             /**选择附件*/
-            R.id.form_item_file_take_photo, R.id.form_item_file_take_album,
+            R.id.form_item_file_take_camera, R.id.form_item_file_take_album,
             R.id.form_item_file_take_video, R.id.form_item_file_take_audio,
             R.id.form_item_file_take_file -> {
-                checkTakeFileLimit(view, position)
+                takeFile(view, position)
             }
             else -> {
 
@@ -133,13 +127,11 @@ class FormAdapter(
             } else if ("yyyy-MM-dd" == dateType) {
                 showDay = true
             }
-            backListener?.back(false)
             BottomDialogUtils.showRealDateChoseView(
                     view.context, "yyyy-MM-dd HH:mm" == dateType, showDay,
                     timeLimitMin, timeLimitMax, Date(values[0].time!!.timeStart),
                     object : OnDateListener {
                         override fun setDate(type: Int?, date: Date?) {
-                            backListener?.back(true)
                             if (date != null) {
                                 data[position].formItemValue!!.values!![0].time!!.timeStart = date.time
                                 updateFormItemValueByPosition(position)
@@ -161,7 +153,6 @@ class FormAdapter(
             } else if ("yyyy-MM-dd" == dateType1) {
                 showDay2 = true
             }
-            backListener?.back(false)
             BottomDialogUtils.showRealDateChoseView(view.context,
                     "yyyy-MM-dd HH:mm" == dateType1, showDay1,
                     timeLimitMin, timeLimitMax, Date(values[0].time!!.timeStart),
@@ -174,7 +165,6 @@ class FormAdapter(
                                         Date(values[0].time!!.timeStart), null, Date(values[1].time!!.timeStart),
                                         object : OnDateListener {
                                             override fun setDate(type: Int?, date: Date?) {
-                                                backListener?.back(true)
                                                 if (date != null) {
                                                     data[position].formItemValue!!.values!![1].time!!.timeStart = date.time
                                                     updateFormItemValueByPosition(position)
@@ -200,10 +190,8 @@ class FormAdapter(
                 operation.isCheck = it.check!!.ckChecked
                 operations.add(operation)
             }
-            backListener?.back(false)
             BottomDialogUtils.setBottomChoseListView(mContext, operations, object : OnTListener<Operation> {
                 override fun back(t: Operation) {
-                    backListener?.back(true)
                     data[position].formItemValue!!.values!!.forEach {
                         it.check!!.ckChecked = it.id == t.value
                     }
@@ -225,10 +213,8 @@ class FormAdapter(
                 operation.isCheck = it.check!!.ckChecked
                 operations.add(operation)
             }
-            backListener?.back(false)
             BottomDialogUtils.setBottomSelectListView(mContext, data[position].title, operations, object : OnTListener<List<Operation>> {
                 override fun back(t: List<Operation>) {
-                    backListener?.back(true)
                     data[position].formItemValue!!.values!!.forEach { value ->
                         t.forEach {
                             if (value.id == it.value) {
@@ -246,27 +232,59 @@ class FormAdapter(
         }
     }
 
-    private fun checkTakeFileLimit(view: View, position: Int) {
+    /**文件选取*/
+    private fun takeFile(view: View, position: Int) {
         val limitMax = data[position].formItemValue!!.limitMax
         val valueSize: Int? = data[position].formItemValue!!.values?.size ?: 0
         if (limitMax != null && valueSize ?: 0 >= limitMax) {
             ToastUtils.showToast(view.context, "已达到添加数量限制")
         } else {
-            fileListener?.getFile(when (view.id) {
-                /**拍照*/
-                R.id.form_item_file_take_photo -> FormFileType.CAMERA
-                /**相册*/
-                R.id.form_item_file_take_album -> FormFileType.ALBUM
-                /**视频*/
-                R.id.form_item_file_take_video -> FormFileType.VIDEO
-                /**语音*/
-                R.id.form_item_file_take_audio -> FormFileType.AUDIO
-                /**文件*/
-                else -> FormFileType.FILE
-            }, position)
+            when (view.id) {
+                R.id.form_item_file_take_camera -> FormConfigHelper.takeCamera {
+                    Timber.tag("表单拍照获取结果").i(Gson().toJson(it))
+                    addFormItemValueByPosition(position, Value.newFile(it, formItemId = data[position].id))
+                }
+                R.id.form_item_file_take_album -> FormConfigHelper.takeGallery {
+                    Timber.tag("表单图库获取结果").i(Gson().toJson(it))
+                    addFormItemValueByPosition(position, Value.newFile(it, formItemId = data[position].id))
+                }
+                R.id.form_item_file_take_video -> FormConfigHelper.takeVideo {
+                    Timber.tag("表单视频获取结果").i(Gson().toJson(it))
+                    addFormItemValueByPosition(position, Value.newFile(it, formItemId = data[position].id))
+                }
+                R.id.form_item_file_take_audio -> FormConfigHelper.takeAudio {
+                    Timber.tag("表单音频获取结果").i(Gson().toJson(it))
+                    addFormItemValueByPosition(position, Value.newFile(it, formItemId = data[position].id))
+                }
+                R.id.form_item_file_take_file -> {
+                    FormConfigHelper.takeFile(arrayListOf()) {
+                        Timber.tag("表单文件获取结果").i(Gson().toJson(it))
+                        addFormItemValueByPosition(position, Value.newFile(it, formItemId = data[position].id))
+                    }
+                }
+            }
         }
     }
 
+    /**添加表单列表项值到对应列表项*/
+    private fun addFormItemValueByPosition(position: Int, value: Value) {
+        CoroutineScope(mJob).db<Long> {
+            db = { FormDatabase.getInstance().formItemValueDao.insert(value) }
+            onSuccess = {
+                it?.let {
+                    value.id = it
+                    data[position].formItemValue!!.values!!.add(value)
+                    notifyItemChanged(position)
+                }
+            }
+            onFail = {
+                ToastUtils.showToast(mContext, "更新失败")
+                notifyItemChanged(position)
+            }
+        }
+    }
+
+    /**更新对应表单列表项的所有值*/
     private fun updateFormItemValueByPosition(position: Int) {
         CoroutineScope(mJob).dbComplete {
             db = { FormDatabase.getInstance().formItemValueDao.update(data[position].formItemValue!!.values!!) }

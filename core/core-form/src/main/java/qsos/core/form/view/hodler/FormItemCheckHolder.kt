@@ -5,7 +5,6 @@ import kotlinx.android.synthetic.main.form_item_check.view.*
 import kotlinx.android.synthetic.main.form_normal_title.view.*
 import qsos.core.form.db.entity.FormItem
 import qsos.lib.base.base.holder.BaseHolder
-
 import qsos.lib.base.callback.OnListItemClickListener
 
 
@@ -19,19 +18,30 @@ class FormItemCheckHolder(
 ) : BaseHolder<FormItem>(itemView) {
 
     override fun setData(data: FormItem, position: Int) {
-
         itemView.form_item_title.text = data.title
-
-        if (data.formItemValue!!.values != null && !data.formItemValue!!.values!!.isEmpty()) {
-            var text = ""
-            data.formItemValue!!.values!!.forEach { v ->
-                if (v.check!!.ckChecked) {
-                    text += v.check!!.ckName + ";"
+        var text = ""
+        when {
+            data.formItemValue!!.values!!.size == 1 -> {
+                text = data.formItemValue!!.value!!.check!!.ckName ?: ""
+            }
+            data.formItemValue!!.limitMax == 1 -> {
+                for (v in data.formItemValue!!.values!!) {
+                    if (v.check!!.ckChecked) {
+                        text = v.check!!.ckName ?: ""
+                        break
+                    }
                 }
             }
-            itemView.form_item_check.text = text
+            else -> {
+                data.formItemValue!!.values!!.forEach { v ->
+                    if (v.check!!.ckChecked) {
+                        text += v.check!!.ckName + ";"
+                    }
+                }
+            }
         }
-
+        itemView.form_item_check.hint = data.notice
+        itemView.form_item_check.text = text
         itemView.form_item_title.setOnClickListener {
             itemClick.onItemClick(it, position, data)
         }

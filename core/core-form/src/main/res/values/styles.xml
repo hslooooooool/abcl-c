@@ -10,7 +10,7 @@
 		<item name="android:layout_marginTop">10dp</item>
 		<item name="android:background">@drawable/form_selector_button</item>
 		<item name="android:gravity">center</item>
-		<item name="android:textColor">@android:color/white</item>
+		<item name="android:textColor">@color/white</item>
 		<item name="android:textSize">24sp</item>
 		<item name="android:text">确认</item>
 	</style>
@@ -31,7 +31,7 @@
 		<item name="android:windowIsFloating">true</item>
 		<item name="android:windowContentOverlay">@null</item>
 		<item name="android:windowAnimationStyle">@style/FormBottomDialog.AnimationStyle</item>
-		<item name="android:windowBackground">@color/grey_low</item>
+		<item name="android:windowBackground">@color/gray_low</item>
 	</style>
 	
 	<!--底部弹窗动画样式-->

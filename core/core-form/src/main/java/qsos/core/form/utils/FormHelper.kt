@@ -41,7 +41,7 @@ object FormHelper {
                             valueType = FormItemType.FILE.tag, notice = "请上传指令附件",
                             title = "反馈附件", require = false
                     ),
-                    value = FormItemValue(limitMax = 9, limitType = "image", values = null)
+                    value = FormItemValue(limitMax = 9, limitType = "", values = null)
             ))
 
             return FormEntity.newFormItems(form = form, formItems = formItemList)
