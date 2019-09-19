@@ -30,7 +30,6 @@ import qsos.lib.base.utils.ToastUtils
 @SuppressLint("CheckResult")
 class FormFragment(
         var formId: Long? = -1L,
-        override val isOrientation: Boolean = true,
         override val layoutId: Int? = R.layout.form_main,
         override val reload: Boolean = true
 ) : AbsFormFragment() {
