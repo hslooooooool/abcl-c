@@ -11,8 +11,10 @@ interface IFormPreviewConfig {
 
     /**
      * 文件预览
+     * @param index 当前预览文件下标
+     * @param formValueOfFiles 可预览的图片集合
      */
-    fun previewFile(formValueOfFile: FormValueOfFile)
+    fun previewFile(index: Int, formValueOfFiles: List<FormValueOfFile>)
 
     /**
      * 位置预览

@@ -18,13 +18,13 @@ interface IFormTakeConfig {
      * 打开相册选择
      * @param onSuccess 选择成功调用回传
      */
-    fun takeGallery(onSuccess: (FormValueOfFile) -> Any)
+    fun takeGallery(onSuccess: (List<FormValueOfFile>) -> Any)
 
     /**
      * 进行视频录制或视频选择，录制后通过以下方法回传录音文件
      * @param onSuccess 选择成功调用回传
      */
-    fun takeVideo(onSuccess: (FormValueOfFile) -> Any)
+    fun takeVideo(onSuccess: (List<FormValueOfFile>) -> Any)
 
     /**
      * 进行音频录制，推荐方法调用后直接启动录音，类似输入法录音交互，录制后通过以下方法回传录音文件
@@ -37,7 +37,7 @@ interface IFormTakeConfig {
      * @param mimeTypes 可选文档类型
      * @param onSuccess 选择成功调用回传
      */
-    fun takeFile(mimeTypes: ArrayList<String>, onSuccess: (FormValueOfFile) -> Any)
+    fun takeFile(mimeTypes: List<String>, onSuccess: (List<FormValueOfFile>) -> Any)
 
     /**
      * 进行位置选择

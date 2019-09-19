@@ -24,7 +24,7 @@ class FormConfig : IFormConfig {
         }
     }
 
-    override fun takeGallery(onSuccess: (FormValueOfFile) -> Any) {
+    override fun takeGallery(onSuccess: (List<FormValueOfFile>) -> Any) {
         Timber.tag("表单文件代理").i("图库")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeFile = async(Dispatchers.IO) {
@@ -32,11 +32,11 @@ class FormConfig : IFormConfig {
                 file
             }
             val file = takeFile.await()
-            onSuccess.invoke(file)
+            onSuccess.invoke(arrayListOf(file))
         }
     }
 
-    override fun takeVideo(onSuccess: (FormValueOfFile) -> Any) {
+    override fun takeVideo(onSuccess: (List<FormValueOfFile>) -> Any) {
         Timber.tag("表单文件代理").i("视频")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeFile = async(Dispatchers.IO) {
@@ -44,7 +44,7 @@ class FormConfig : IFormConfig {
                 file
             }
             val file = takeFile.await()
-            onSuccess.invoke(file)
+            onSuccess.invoke(arrayListOf(file))
         }
     }
 
@@ -60,15 +60,19 @@ class FormConfig : IFormConfig {
         }
     }
 
-    override fun takeFile(mimeTypes: ArrayList<String>, onSuccess: (FormValueOfFile) -> Any) {
+    override fun takeFile(mimeTypes: List<String>, onSuccess: (List<FormValueOfFile>) -> Any) {
         Timber.tag("表单文件代理").i("文件")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeFile = async(Dispatchers.IO) {
-                val file = FormValueOfFile(fileId = "0004", fileName = "文件", filePath = "/0/data/vip.qsos.demo/temp/logo.pdf", fileType = ".pdf", fileUrl = "http://www.qsos.vip/resource/logo.pdf")
-                file
+                val files = arrayListOf<FormValueOfFile>()
+                for (i in 0..2) {
+                    val file = FormValueOfFile(fileId = "0004$i", fileName = "文件$i", filePath = "/0/data/vip.qsos.demo/temp/logo$i.pdf", fileType = ".pdf", fileUrl = "http://www.qsos.vip/resource/logo$i.pdf")
+                    files.add(file)
+                }
+                files
             }
-            val file = takeFile.await()
-            onSuccess.invoke(file)
+            val files = takeFile.await()
+            onSuccess.invoke(files)
         }
     }
 
@@ -84,8 +88,8 @@ class FormConfig : IFormConfig {
         }
     }
 
-    override fun previewFile(formValueOfFile: FormValueOfFile) {
-        Timber.tag("表单文件预览代理").i("文件")
+    override fun previewFile(index: Int, formValueOfFiles: List<FormValueOfFile>) {
+        Timber.tag("表单文件预览代理").i("文件$index")
     }
 
     override fun previewLocation(formValueOfLocation: FormValueOfLocation) {

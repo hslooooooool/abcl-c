@@ -246,20 +246,26 @@ class FormAdapter(
                 }
                 R.id.form_item_file_take_album -> FormConfigHelper.takeGallery {
                     Timber.tag("表单图库获取结果").i(Gson().toJson(it))
-                    addFormItemValueByPosition(position, Value.newFile(it, formItemId = data[position].id))
+                    it.forEach { file ->
+                        addFormItemValueByPosition(position, Value.newFile(file, formItemId = data[position].id))
+                    }
                 }
                 R.id.form_item_file_take_video -> FormConfigHelper.takeVideo {
                     Timber.tag("表单视频获取结果").i(Gson().toJson(it))
-                    addFormItemValueByPosition(position, Value.newFile(it, formItemId = data[position].id))
+                    it.forEach { file ->
+                        addFormItemValueByPosition(position, Value.newFile(file, formItemId = data[position].id))
+                    }
                 }
                 R.id.form_item_file_take_audio -> FormConfigHelper.takeAudio {
                     Timber.tag("表单音频获取结果").i(Gson().toJson(it))
                     addFormItemValueByPosition(position, Value.newFile(it, formItemId = data[position].id))
                 }
                 R.id.form_item_file_take_file -> {
-                    FormConfigHelper.takeFile(arrayListOf()) {
+                    FormConfigHelper.takeFile(data[position].formItemValue!!.limitTypeList!!) {
                         Timber.tag("表单文件获取结果").i(Gson().toJson(it))
-                        addFormItemValueByPosition(position, Value.newFile(it, formItemId = data[position].id))
+                        it.forEach { file ->
+                            addFormItemValueByPosition(position, Value.newFile(file, formItemId = data[position].id))
+                        }
                     }
                 }
             }
