@@ -1,6 +1,7 @@
 package qsos.core.form.db.entity
 
 import androidx.room.Ignore
+import java.util.*
 
 /**
  * @author : 华清松
@@ -11,22 +12,14 @@ class FormItemValue {
     var limitMin: Int? = 0
     /**值的最大数量*/
     var limitMax: Int? = 0
-    /**值限制。选用户的时候，可能为角色,输入的时候是类型，
-     * 附件规定为:
-     * @see FormFileType.CAMERA.key
-     * @see FormFileType.ALBUM.key
-     * @see FormFileType.VIDEO.key
-     * @see FormFileType.AUDIO.key
-     * @see FormFileType.FILE.key
-     * 多种类型 ; 分割，不传则不限制
-     */
+    /**值限制。选用户的时候，可能为角色,输入的时候是类型，多种类型 ; 分割，不传则不限制*/
     var limitType: String? = ""
 
     @Ignore
     var limitTypeList: List<String>? = null
         get() {
             if (field != null) return field
-            return limitType?.split(";") ?: arrayListOf()
+            return limitType?.toLowerCase(Locale.ENGLISH)?.split(";") ?: arrayListOf()
         }
 
     @Ignore

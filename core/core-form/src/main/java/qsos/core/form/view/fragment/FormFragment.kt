@@ -17,7 +17,6 @@ import qsos.core.form.data.IFormModel
 import qsos.core.form.db
 import qsos.core.form.db.entity.FormEntity
 import qsos.core.form.db.entity.FormItem
-import qsos.core.form.dbComplete
 import qsos.core.form.utils.FormVerifyUtils
 import qsos.core.form.view.adapter.FormAdapter
 import qsos.core.form.view.other.FormItemDecoration
@@ -88,7 +87,8 @@ class FormFragment(
             onSuccess = {
                 it?.let {
                     mForm = it
-                    form_main_btn?.text = mForm!!.submitName ?: "提交"
+                    form_main_btn.visibility = if (it.editable) View.VISIBLE else View.GONE
+                    form_main_btn.text = mForm!!.submitName ?: "提交"
                     val formItemList = arrayListOf<FormItem>()
                     for (item in mForm!!.formItems!!) {
                         if (item.visible) formItemList.add(item)
@@ -101,23 +101,6 @@ class FormFragment(
             onFail = {
                 it.printStackTrace()
                 ToastUtils.showToastLong(mContext, "数据错误 ${it.message}")
-            }
-        }
-    }
-
-    /**删除数据并退出*/
-    fun deleteAndFinish() {
-        CoroutineScope(mJob).dbComplete {
-            db = {
-                mModel.deleteForm(mForm!!)
-            }
-            onSuccess = {
-                activity?.finish()
-            }
-            onFail = {
-                it.printStackTrace()
-                ToastUtils.showToast(mContext, "数据错误 ${it.message}")
-                activity?.finish()
             }
         }
     }

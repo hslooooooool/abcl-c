@@ -4,7 +4,6 @@ import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.form_item_file.view.*
 import kotlinx.android.synthetic.main.form_normal_title.view.*
-import qsos.core.form.db.entity.FormFileType
 import qsos.core.form.db.entity.FormItem
 import qsos.core.form.view.adapter.FormFileAdapter
 import qsos.lib.base.base.holder.BaseHolder
@@ -28,11 +27,12 @@ class FormItemFileHolder(
 
         data.formItemValue!!.limitTypeList?.forEach {
             when (it) {
-                FormFileType.CAMERA.key -> itemView.form_item_file_take_camera.visibility = View.VISIBLE
-                FormFileType.ALBUM.key -> itemView.form_item_file_take_album.visibility = View.VISIBLE
-                FormFileType.VIDEO.key -> itemView.form_item_file_take_video.visibility = View.VISIBLE
-                FormFileType.AUDIO.key -> itemView.form_item_file_take_audio.visibility = View.VISIBLE
-                FormFileType.FILE.key -> itemView.form_item_file_take_file.visibility = View.VISIBLE
+                ".png", ".jpg", ".jpeg" -> {
+                    itemView.form_item_file_take_camera.visibility = View.VISIBLE
+                    itemView.form_item_file_take_album.visibility = View.VISIBLE
+                }
+                ".mp4", ".avi" -> itemView.form_item_file_take_video.visibility = View.VISIBLE
+                ".amr", ".wav", ".raw" -> itemView.form_item_file_take_audio.visibility = View.VISIBLE
                 else -> {
                     itemView.form_item_file_take_camera.visibility = View.VISIBLE
                     itemView.form_item_file_take_album.visibility = View.VISIBLE

@@ -58,7 +58,7 @@ object FormHelper {
                             valueType = FormItemType.FILE.tag, notice = "请上传头像图片",
                             title = "用户头像", require = true
                     ),
-                    value = FormItemValue(limitMin = 1, limitMax = 1, limitType = "image", values = arrayListOf())
+                    value = FormItemValue(limitMin = 1, limitMax = 1, limitType = ".png;.jpg;.jpeg", values = arrayListOf())
             ))
             /**输入姓名*/
             formItemList.add(FormItem.newFormItemValue(

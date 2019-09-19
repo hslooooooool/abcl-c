@@ -3,10 +3,16 @@ package qsos.core.form.view.activity
 import android.os.Bundle
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import qsos.core.form.FormPath
 import qsos.core.form.R
+import qsos.core.form.data.FormModelIml
+import qsos.core.form.db.entity.FormEntity
+import qsos.core.form.dbComplete
 import qsos.core.form.view.fragment.FormFragment
 import qsos.lib.base.base.activity.BaseActivity
+import qsos.lib.base.utils.ToastUtils
 
 /**
  * @author : 华清松
@@ -36,7 +42,18 @@ class FormActivity(
     override fun getData() {}
 
     override fun onBackPressed() {
-        mFormFragment.deleteAndFinish()
-        super.onBackPressed()
+        CoroutineScope(Dispatchers.Main).dbComplete {
+            db = {
+                FormModelIml().deleteForm(FormEntity(id = formId))
+            }
+            onSuccess = {
+                super.onBackPressed()
+            }
+            onFail = {
+                it.printStackTrace()
+                ToastUtils.showToast(mContext, "数据错误 ${it.message}")
+                super.onBackPressed()
+            }
+        }
     }
 }
