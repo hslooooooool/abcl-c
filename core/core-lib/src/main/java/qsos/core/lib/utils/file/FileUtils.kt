@@ -153,7 +153,8 @@ object FileUtils {
     }
 
     /**创建文件夹或文件*/
-    private fun createFileHolder(fileHolder: String) {
+    @JvmStatic
+    fun createFileHolder(fileHolder: String) {
         val file = File(fileHolder)
         if (!file.exists()) {
             file.mkdirs()
@@ -161,7 +162,8 @@ object FileUtils {
     }
 
     /**根据文件后缀名获得对应的 MIME 类型*/
-    private fun getMIMEType(file: File): String {
+    @JvmStatic
+    fun getMIMEType(file: File): String {
         var type = "*/*"
         val fName = file.name
         // 获取后缀名前的分隔符"."在fName中的位置。

@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.form_item_file.view.*
 import kotlinx.android.synthetic.main.form_normal_title.view.*
 import qsos.core.form.db.entity.FormItem
+import qsos.core.form.db.entity.FormValueOfFile
 import qsos.core.form.view.adapter.FormFileAdapter
 import qsos.lib.base.base.holder.BaseHolder
 import qsos.lib.base.callback.OnListItemClickListener
@@ -26,13 +27,13 @@ class FormItemFileHolder(
         itemView.rv_item_form_files.adapter = FormFileAdapter(data.formItemValue?.values!!, mJob)
 
         data.formItemValue!!.limitTypeList?.forEach {
-            when (it) {
-                ".png", ".jpg", ".jpeg" -> {
+            when (FormValueOfFile.getFileTypeByMime(it)) {
+                "IMAGE" -> {
                     itemView.form_item_file_take_camera.visibility = View.VISIBLE
                     itemView.form_item_file_take_album.visibility = View.VISIBLE
                 }
-                ".mp4", ".avi" -> itemView.form_item_file_take_video.visibility = View.VISIBLE
-                ".amr", ".wav", ".raw" -> itemView.form_item_file_take_audio.visibility = View.VISIBLE
+                "VIDEO" -> itemView.form_item_file_take_video.visibility = View.VISIBLE
+                "AUDIO" -> itemView.form_item_file_take_audio.visibility = View.VISIBLE
                 else -> {
                     itemView.form_item_file_take_camera.visibility = View.VISIBLE
                     itemView.form_item_file_take_album.visibility = View.VISIBLE

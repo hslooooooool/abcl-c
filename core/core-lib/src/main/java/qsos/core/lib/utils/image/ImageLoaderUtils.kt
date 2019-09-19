@@ -35,6 +35,25 @@ object ImageLoaderUtils {
                 .into(imageView)
     }
 
+    /**加载url图片*/
+    fun display(context: Context, imageView: ImageView?, url: String?, placeholder: Drawable?) {
+        if (imageView == null) {
+            return
+        }
+        if (TextUtils.isEmpty(url)) {
+            return
+        }
+        GlideApp.with(context)
+                .load(url)
+                // 磁盘缓存
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
+                // 避免闪烁
+                .skipMemoryCache(false)
+                .dontAnimate()
+                .placeholder(placeholder)
+                .into(imageView)
+    }
+
     /**加载资源图片*/
     fun display(context: Context, imageView: ImageView?, @DrawableRes url: Int) {
         if (imageView == null) {
@@ -64,6 +83,7 @@ object ImageLoaderUtils {
                 .dontAnimate()
                 .into(imageView)
     }
+
     /**加载资源图片*/
     fun display(context: Context, imageView: ImageView?, bitmap: Bitmap) {
         if (imageView == null) {
