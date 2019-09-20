@@ -1,5 +1,6 @@
 package qsos.app.demo.config
 
+import com.google.gson.Gson
 import kotlinx.coroutines.*
 import qsos.core.form.config.IFormConfig
 import qsos.core.form.db.entity.FormValueOfFile
@@ -76,23 +77,18 @@ class FormConfig : IFormConfig {
         }
     }
 
-    override fun takeLocation(onSuccess: (FormValueOfLocation) -> Any) {
-        Timber.tag("表单位置代理").i("位置")
+    override fun takeLocation(location: FormValueOfLocation?, onSuccess: (FormValueOfLocation) -> Any) {
+        Timber.tag("表单位置代理").i("位置，已有位置${Gson().toJson(location)}")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeLocation = async(Dispatchers.IO) {
-                val location = FormValueOfLocation(locName = "位置", locX = 30.0000, locY = 104.000000)
-                location
+                FormValueOfLocation(locName = "测试位置成都市高新区孵化园A区B栋", locX = 30.0000, locY = 104.000000)
             }
-            val location = takeLocation.await()
-            onSuccess.invoke(location)
+            val l = takeLocation.await()
+            onSuccess.invoke(l)
         }
     }
 
     override fun previewFile(index: Int, formValueOfFiles: List<FormValueOfFile>) {
         Timber.tag("表单文件预览代理").i("文件$index")
-    }
-
-    override fun previewLocation(formValueOfLocation: FormValueOfLocation) {
-        Timber.tag("表单位置预览代理").i("位置")
     }
 }

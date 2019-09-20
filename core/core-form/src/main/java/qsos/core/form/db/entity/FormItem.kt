@@ -60,11 +60,3 @@ enum class FormItemType(val key: String, val tag: Int) {
     FILE("附件", 5),
     LOCATION("位置", 6)
 }
-
-enum class FormFileType(val key: String) {
-    CAMERA("拍照"),
-    ALBUM("相册"),
-    VIDEO("视频"),
-    AUDIO("语音"),
-    FILE("文件")
-}

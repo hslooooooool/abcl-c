@@ -64,6 +64,7 @@ class FormFragment(
         mAdapter = FormAdapter(mFormList, mJob)
         form_main_rv.addItemDecoration(FormItemDecoration())
         form_main_rv.adapter = mAdapter
+
         form_main_btn?.setOnClickListener {
             form_main_btn?.isClickable = false
             mForm?.let {

@@ -90,6 +90,16 @@ object FormHelper {
                             Value.newText(FormValueOfText())
                     ))
             ))
+            /**居住地址位置*/
+            formItemList.add(FormItem.newFormItemValue(
+                    item = FormItem(
+                            valueType = FormItemType.LOCATION.tag, notice = "请设置居住定位",
+                            title = "居住定位", require = false
+                    ),
+                    value = FormItemValue(limitMin = 1, limitMax = 1, values = arrayListOf(
+                            Value.newLocation(FormValueOfLocation())
+                    ))
+            ))
             /**单选-性别*/
             formItemList.add(FormItem.newFormItemValue(
                     item = FormItem(

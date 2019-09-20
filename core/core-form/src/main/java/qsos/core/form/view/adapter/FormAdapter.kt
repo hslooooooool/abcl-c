@@ -50,6 +50,8 @@ class FormAdapter(
             R.layout.form_item_users -> return FormItemUserHolder(view, this)
             /**附件*/
             R.layout.form_item_file -> return FormItemFileHolder(view, mJob, this)
+            /**位置*/
+            R.layout.form_item_location -> return FormItemLocationHolder(view, this)
             /**其它*/
             else -> return FormItemTextHolder(view, this)
         }
@@ -98,6 +100,14 @@ class FormAdapter(
             R.id.form_item_file_take_video, R.id.form_item_file_take_audio,
             R.id.form_item_file_take_file -> {
                 takeFile(view, position)
+            }
+            /**选择位置*/
+            R.id.item_form_location -> {
+                FormConfigHelper.takeLocation(data[position].formItemValue?.value?.location) {
+                    Timber.tag("表单位置获取结果").i(Gson().toJson(it))
+                    data[position].formItemValue!!.value!!.location = it
+                    updateFormItemValueByPosition(position)
+                }
             }
             else -> {
             }

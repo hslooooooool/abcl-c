@@ -27,8 +27,7 @@ data class Value(
         var formItemId: Long? = null,
         var limitType: String? = null,
         var limitEdit: Boolean = false,
-        var position: Int = 0
-
+        var position: Int = 1
 ) {
     /**输入*/
     @Embedded

@@ -44,7 +44,8 @@ interface IFormTakeConfig {
 
     /**
      * 进行位置选择
+     * @param location 已有位置，可用于展示
      * @param onSuccess 选择成功调用回传
      */
-    fun takeLocation(onSuccess: (FormValueOfLocation) -> Any)
+    fun takeLocation(location: FormValueOfLocation?, onSuccess: (FormValueOfLocation) -> Any)
 }

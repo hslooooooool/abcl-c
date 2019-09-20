@@ -13,10 +13,6 @@ object FormConfigHelper : IFormConfig {
         mFormConfig?.previewFile(index, formValueOfFiles)
     }
 
-    override fun previewLocation(formValueOfLocation: FormValueOfLocation) {
-        mFormConfig?.previewLocation(formValueOfLocation)
-    }
-
     override fun takeCamera(onSuccess: (FormValueOfFile) -> Any) {
         mFormConfig?.takeCamera(onSuccess)
     }
@@ -37,8 +33,8 @@ object FormConfigHelper : IFormConfig {
         mFormConfig?.takeFile(canTakeSize, mimeTypes, onSuccess)
     }
 
-    override fun takeLocation(onSuccess: (FormValueOfLocation) -> Any) {
-        mFormConfig?.takeLocation(onSuccess)
+    override fun takeLocation(location: FormValueOfLocation?, onSuccess: (FormValueOfLocation) -> Any) {
+        mFormConfig?.takeLocation(location, onSuccess)
     }
 
     private var mFormConfig: IFormConfig? = null

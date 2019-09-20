@@ -15,9 +15,4 @@ interface IFormPreviewConfig {
      * @param formValueOfFiles 可预览的图片集合
      */
     fun previewFile(index: Int, formValueOfFiles: List<FormValueOfFile>)
-
-    /**
-     * 位置预览
-     */
-    fun previewLocation(formValueOfLocation: FormValueOfLocation)
 }
