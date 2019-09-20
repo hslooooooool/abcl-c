@@ -26,31 +26,31 @@ object BottomDialogUtils {
     var CommonPhrases: MutableList<Operation> = ArrayList()
 
     init {
-        fileOperation.add(Operation(R.drawable.take_photo, "拍照", 0, false, "CAMERA"))
-        fileOperation.add(Operation(R.drawable.take_image, "图库", 1, false, "ALBUM"))
-        fileOperation.add(Operation(R.drawable.take_video, "录制视频", 2, false, "VIDEO"))
-        fileOperation.add(Operation(R.drawable.take_audio, "录制音频", 3, false, "AUDIO"))
-        fileOperation.add(Operation(R.drawable.take_file, "文件", 3, false, "FILE"))
+        fileOperation.add(Operation(R.drawable.form_take_photo, "拍照", 0, false, "CAMERA"))
+        fileOperation.add(Operation(R.drawable.form_take_image, "图库", 1, false, "ALBUM"))
+        fileOperation.add(Operation(R.drawable.form_take_video, "录制视频", 2, false, "VIDEO"))
+        fileOperation.add(Operation(R.drawable.form_take_audio, "录制音频", 3, false, "AUDIO"))
+        fileOperation.add(Operation(R.drawable.form_take_file, "文件", 3, false, "FILE"))
 
-        headOperation.add(Operation(R.drawable.take_photo, "拍照", 0, false, "CAMERA"))
-        headOperation.add(Operation(R.drawable.take_image, "图库", 1, false, "ALBUM"))
+        headOperation.add(Operation(R.drawable.form_take_photo, "拍照", 0, false, "CAMERA"))
+        headOperation.add(Operation(R.drawable.form_take_image, "图库", 1, false, "ALBUM"))
 
-        imageOperation.add(Operation(R.drawable.take_photo, "拍照", 0, false, "CAMERA"))
-        imageOperation.add(Operation(R.drawable.take_image, "图库", 1, false, "ALBUM"))
+        imageOperation.add(Operation(R.drawable.form_take_photo, "拍照", 0, false, "CAMERA"))
+        imageOperation.add(Operation(R.drawable.form_take_image, "图库", 1, false, "ALBUM"))
 
-        sexOperation.add(Operation(R.drawable.dot_black, "男", 0, false, 1))
-        sexOperation.add(Operation(R.drawable.dot_black, "女", 1, false, 2))
+        sexOperation.add(Operation(R.drawable.form_dot_black, "男", 0, false, 1))
+        sexOperation.add(Operation(R.drawable.form_dot_black, "女", 1, false, 2))
 
-        commonOperation.add(Operation(R.drawable.dot_black, "性别不符", 0))
-        commonOperation.add(Operation(R.drawable.dot_black, "年龄不符", 0))
-        commonOperation.add(Operation(R.drawable.dot_black, "身体特征有差别", 0))
-        commonOperation.add(Operation(R.drawable.dot_black, "误判", 0))
-        commonOperation.add(Operation(R.drawable.dot_black, "其他", 0))
+        commonOperation.add(Operation(R.drawable.form_dot_black, "性别不符", 0))
+        commonOperation.add(Operation(R.drawable.form_dot_black, "年龄不符", 0))
+        commonOperation.add(Operation(R.drawable.form_dot_black, "身体特征有差别", 0))
+        commonOperation.add(Operation(R.drawable.form_dot_black, "误判", 0))
+        commonOperation.add(Operation(R.drawable.form_dot_black, "其他", 0))
 
-        CommonPhrases.add(Operation(R.drawable.dot_black, "发现嫌疑人", 0))
-        CommonPhrases.add(Operation(R.drawable.dot_black, "执行抓捕", 0))
-        CommonPhrases.add(Operation(R.drawable.dot_black, "已抓到嫌疑人", 0))
-        CommonPhrases.add(Operation(R.drawable.dot_black, "抓捕行动结束", 0))
+        CommonPhrases.add(Operation(R.drawable.form_dot_black, "发现嫌疑人", 0))
+        CommonPhrases.add(Operation(R.drawable.form_dot_black, "执行抓捕", 0))
+        CommonPhrases.add(Operation(R.drawable.form_dot_black, "已抓到嫌疑人", 0))
+        CommonPhrases.add(Operation(R.drawable.form_dot_black, "抓捕行动结束", 0))
 
     }
 
@@ -68,7 +68,6 @@ object BottomDialogUtils {
     fun showRealDateChoseView(context: Context, showSpecificTime: Boolean, showDayTime: Boolean, start: Date?, finish: Date?, select: Date?, onDateListener: OnDateListener?) {
         var selectDate = select
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA)
-
         // 设置可选年范围
         val span = 3L
         // 获取当前可选时间

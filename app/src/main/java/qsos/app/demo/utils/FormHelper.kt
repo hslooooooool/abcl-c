@@ -1,4 +1,4 @@
-package qsos.core.form.utils
+package qsos.app.demo.utils
 
 import qsos.core.form.db.entity.*
 import java.util.*
@@ -6,7 +6,7 @@ import java.util.*
 /**表单转换帮助类*/
 object FormHelper {
 
-    /**创建一个表单*/
+    /**创建一个表单Demo*/
     object Create {
         /**反馈表单*/
         fun feedbackForm(): FormEntity {
@@ -23,7 +23,6 @@ object FormHelper {
                             Value.newCheck(FormValueOfCheck("2", "做得差", "NO", false))
                     ))
             ))
-
             /**反馈内容*/
             formItemList.add(FormItem.newFormItemValue(
                     item = FormItem(
@@ -139,67 +138,18 @@ object FormHelper {
                             Value.newCheck(FormValueOfCheck("5", "排球", "E"))
                     ))
             ))
+            /**人员-推荐人*/
+            formItemList.add(FormItem.newFormItemValue(
+                    item = FormItem(
+                            valueType = FormItemType.USER.tag, notice = "请选择推荐人",
+                            title = "推荐人", require = false
+                    ),
+                    value = FormItemValue(limitMin = 1, limitMax = 1, values = arrayListOf(
+                            Value.newUser(FormValueOfUser(userId = "0001", userName = "测试用户", userDesc = "18227555555", userAvatar = "http://www.qsos.vip/upload/2018/11/ic_launcher20181225044818498.png"))
+                    ))
+            ))
 
             return FormEntity.newFormItems(form = form, formItems = formItemList)
-        }
-    }
-
-    /**获取表单项的值*/
-    object GetValue {
-        /**输入值*/
-        fun input(formItem: FormItem): String {
-            return formItem.formItemValue!!.value?.text?.content ?: ""
-        }
-
-        /**单选值*/
-        fun singleChose(formItem: FormItem): String? {
-            var value: String? = null
-            for (chose in formItem.formItemValue!!.values!!) {
-                if (chose.check!!.ckChecked) {
-                    value = chose.check!!.ckValue!!
-                    break
-                }
-            }
-            return value
-        }
-
-        /**多选值*/
-        fun multiChose(formItem: FormItem): List<String> {
-            val values = arrayListOf<String>()
-            formItem.formItemValue!!.values!!.forEach {
-                if (it.check!!.ckChecked) {
-                    values.add(it.check!!.ckValue!!)
-                }
-            }
-            return values
-        }
-
-        /**时间值*/
-        fun time(formItem: FormItem): FormValueOfTime? {
-            return formItem.formItemValue!!.value?.time
-        }
-
-        /**人员ID列表*/
-        fun userIds(formItem: FormItem): List<String> {
-            val values = arrayListOf<String>()
-            formItem.formItemValue!!.values!!.forEach {
-                values.add(it.user!!.userId!!)
-            }
-            return values
-        }
-
-        /**文件ID列表*/
-        fun fileIds(formItem: FormItem): List<String> {
-            val values = arrayListOf<String>()
-            formItem.formItemValue!!.values!!.forEach {
-                values.add(it.file!!.fileId!!)
-            }
-            return values
-        }
-
-        /**位置值*/
-        fun location(formItem: FormItem): FormValueOfLocation? {
-            return formItem.formItemValue!!.value?.location
         }
     }
 

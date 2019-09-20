@@ -11,7 +11,7 @@ import java.util.*
 class Operation {
 
     @DrawableRes
-    var iconId = R.drawable.dot_black
+    var iconId = R.drawable.form_dot_black
 
     var key: String? = null
     var position: Int = 0

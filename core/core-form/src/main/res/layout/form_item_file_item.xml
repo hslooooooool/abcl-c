@@ -19,7 +19,7 @@
 			android:layout_margin="10dp"
 			android:scaleType="fitXY"
 			android:transitionName="transition_image"
-			app:srcCompat="@drawable/take_file" />
+			app:srcCompat="@drawable/form_take_file" />
 		
 		<ImageView
 			android:id="@+id/iv_item_form_file_delete"
@@ -27,7 +27,7 @@
 			android:layout_height="20dp"
 			android:layout_alignParentEnd="true"
 			android:padding="3dp"
-			app:srcCompat="@drawable/icon_close_red" />
+			app:srcCompat="@drawable/form_close_red" />
 	</RelativeLayout>
 	
 	<TextView

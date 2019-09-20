@@ -14,7 +14,7 @@ import qsos.core.form.FormPath
 import qsos.core.form.data.FormRepository
 import qsos.core.form.db
 import qsos.core.form.db.entity.FormEntity
-import qsos.core.form.utils.FormHelper
+import qsos.app.demo.utils.FormHelper
 import qsos.lib.base.base.activity.BaseActivity
 import qsos.lib.base.base.adapter.BaseNormalAdapter
 import qsos.lib.base.utils.ActivityManager

@@ -13,7 +13,7 @@
 	
 	<Button
 		android:id="@+id/form_main_btn"
-		style="@style/MainButtonStyle"
+		style="@style/FormMainButtonStyle"
 		android:visibility="gone"
 		tools:text="保存"
 		tools:visibility="visible" />

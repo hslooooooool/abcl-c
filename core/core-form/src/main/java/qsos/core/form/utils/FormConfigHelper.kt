@@ -42,6 +42,4 @@ object FormConfigHelper : IFormConfig {
     fun init(formConfig: IFormConfig) {
         this.mFormConfig = formConfig
     }
-
-
 }

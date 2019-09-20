@@ -47,7 +47,7 @@ class FormAdapter(
             /**时间*/
             R.layout.form_item_time -> return FormItemTimeHolder(view, this)
             /**人员*/
-            R.layout.form_item_users -> return FormItemUserHolder(view, this)
+            R.layout.form_item_user -> return FormItemUserHolder(view, this)
             /**附件*/
             R.layout.form_item_file -> return FormItemFileHolder(view, mJob, this)
             /**位置*/
@@ -63,7 +63,7 @@ class FormAdapter(
             FormItemType.INPUT.tag -> return R.layout.form_item_input
             FormItemType.CHOOSE.tag -> return R.layout.form_item_check
             FormItemType.TIME.tag -> return R.layout.form_item_time
-            FormItemType.USER.tag -> return R.layout.form_item_users
+            FormItemType.USER.tag -> return R.layout.form_item_user
             FormItemType.FILE.tag -> return R.layout.form_item_file
             FormItemType.LOCATION.tag -> return R.layout.form_item_location
         }
@@ -86,7 +86,7 @@ class FormAdapter(
                 chooseTime(view, position)
             }
             /**选择人员*/
-            R.id.tv_item_form_users_size -> {
+            R.id.item_form_users_size -> {
                 ARouter.getInstance().build(FormPath.FORM_ITEM_USERS)
                         .withLong(FormPath.FORM_ITEM_ID, data[position].id!!)
                         .navigation()

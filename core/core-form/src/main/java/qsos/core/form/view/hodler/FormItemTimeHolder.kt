@@ -4,7 +4,7 @@ import android.view.View
 import kotlinx.android.synthetic.main.form_item_time.view.*
 import kotlinx.android.synthetic.main.form_normal_title.view.*
 import qsos.core.form.db.entity.FormItem
-import qsos.core.form.utils.FormUtils
+import qsos.core.form.utils.DateUtils
 import qsos.lib.base.base.holder.BaseHolder
 
 import qsos.lib.base.callback.OnListItemClickListener
@@ -27,13 +27,13 @@ class FormItemTimeHolder(
         if (data.formItemValue!!.values != null) {
             if (data.formItemValue!!.values!!.size == 1) {
                 if (data.formItemValue!!.values!![0].time!!.timeStart > 0L) {
-                    time = FormUtils.date(data.formItemValue!!.values!![0].time!!.timeStart, data.formItemValue!!.values!![0].limitType)
+                    time = DateUtils.date(data.formItemValue!!.values!![0].time!!.timeStart, data.formItemValue!!.values!![0].limitType)
                 }
             } else if (data.formItemValue!!.values!!.size == 2) {
                 if (data.formItemValue!!.values!![0].time!!.timeStart > 0L && data.formItemValue!!.values!![1].time!!.timeStart > 0L) {
-                    time = FormUtils.date(data.formItemValue!!.values!![0].time!!.timeStart, data.formItemValue!!.values!![0].limitType) +
+                    time = DateUtils.date(data.formItemValue!!.values!![0].time!!.timeStart, data.formItemValue!!.values!![0].limitType) +
                             "\t至\t" +
-                            FormUtils.date(data.formItemValue!!.values!![1].time!!.timeStart, data.formItemValue!!.values!![1].limitType)
+                            DateUtils.date(data.formItemValue!!.values!![1].time!!.timeStart, data.formItemValue!!.values!![1].limitType)
 
                 }
             }

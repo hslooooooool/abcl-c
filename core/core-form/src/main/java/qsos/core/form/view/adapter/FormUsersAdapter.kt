@@ -49,7 +49,7 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
                         chose++
                         it.userCb = true
                         FormDatabase.getInstance().formItemValueDao.insert(
-                                Value.newUser(FormValueOfUser(it.userName, it.userPhone, it.userAvatar, it.userId), it.formItemId!!)
+                                Value.newUser(FormValueOfUser(it.userName, it.userDesc, it.userAvatar, it.userId), it.formItemId!!)
                         )
                     }
                 }
@@ -58,12 +58,11 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
                     if (it.userCb) {
                         chose--
                         it.userCb = false
-                        FormDatabase.getInstance().formItemValueDao.deleteByFormItemIdAndUserDesc(it.formItemId!!, it.userPhone!!)
+                        FormDatabase.getInstance().formItemValueDao.deleteByFormItemIdAndUserDesc(it.formItemId!!, it.userDesc!!)
                     }
                 }
             }
-        }
-                .subscribeOn(Schedulers.io())
+        }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     mOnChoseUserNum?.back(chose)
@@ -89,14 +88,12 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
                     Completable.fromAction {
                         FormDatabase.getInstance().formItemValueDao.deleteByFormItemId(data[position].formItemId)
                         FormDatabase.getInstance().formItemValueDao.insert(
-                                Value.newUser(
-                                        FormValueOfUser(
-                                                data[position].userName,
-                                                data[position].userPhone,
-                                                data[position].userAvatar,
-                                                data[position].userId
-                                        ), data[position].formItemId!!
-                                )
+                                Value.newUser(FormValueOfUser(
+                                        data[position].userName,
+                                        data[position].userDesc,
+                                        data[position].userAvatar,
+                                        data[position].userId
+                                ), data[position].formItemId!!)
                         )
                     }
                             .subscribeOn(Schedulers.io())
@@ -115,7 +112,7 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
                     /*多选*/
                     if (data[position].userCb) {
                         Completable.fromAction {
-                            FormDatabase.getInstance().formItemValueDao.deleteByFormItemIdAndUserDesc(data[position].formItemId!!, data[position].userPhone!!)
+                            FormDatabase.getInstance().formItemValueDao.deleteByFormItemIdAndUserDesc(data[position].formItemId!!, data[position].userDesc!!)
                         }
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
@@ -132,17 +129,14 @@ class FormUsersAdapter(users: ArrayList<FormUserEntity>) : BaseAdapter<FormUserE
                         }
                         Completable.fromAction {
                             FormDatabase.getInstance().formItemValueDao.insert(
-                                    Value.newUser(
-                                            FormValueOfUser(
-                                                    data[position].userName,
-                                                    data[position].userPhone,
-                                                    data[position].userAvatar,
-                                                    data[position].userId
-                                            ), data[position].formItemId!!
-                                    )
+                                    Value.newUser(FormValueOfUser(
+                                            data[position].userName,
+                                            data[position].userDesc,
+                                            data[position].userAvatar,
+                                            data[position].userId
+                                    ), data[position].formItemId!!)
                             )
-                        }
-                                .subscribeOn(Schedulers.io())
+                        }.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe {
                                     chose++

@@ -6,22 +6,33 @@
 	android:layout_marginBottom="10dp"
 	android:background="@color/white"
 	android:gravity="center_vertical"
-	android:orientation="horizontal">
+	android:orientation="vertical">
 	
-	<include layout="@layout/form_normal_title" />
-	
-	<TextView
-		android:id="@+id/item_form_location"
+	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="60dp"
-		android:drawableEnd="@drawable/form_drawable_right"
-		android:ellipsize="end"
-		android:gravity="center_vertical|end"
-		android:maxLines="1"
-		android:paddingStart="50dp"
-		android:paddingLeft="50dp"
-		android:textColor="#505050"
-		android:textSize="18sp"
-		tools:text="请设置位置" />
-
+		android:orientation="horizontal">
+		
+		<include layout="@layout/form_normal_title" />
+		
+		<TextView
+			android:id="@+id/item_form_location"
+			android:layout_width="match_parent"
+			android:layout_height="60dp"
+			android:drawableEnd="@drawable/form_drawable_right"
+			android:ellipsize="end"
+			android:gravity="center_vertical|end"
+			android:maxLines="1"
+			android:paddingStart="50dp"
+			android:paddingLeft="50dp"
+			android:textColor="#505050"
+			android:textSize="18sp"
+			tools:text="请设置位置" />
+	</LinearLayout>
+	
+	<LinearLayout
+		android:id="@+id/item_form_location_expand"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical" />
 </LinearLayout>

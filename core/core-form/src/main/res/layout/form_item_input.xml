@@ -21,6 +21,6 @@
 		android:minHeight="60dp"
 		android:padding="10dp"
 		android:textColor="#505050"
-		android:textSize="20sp" />
+		android:textSize="18sp" />
 
 </LinearLayout>

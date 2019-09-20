@@ -25,25 +25,25 @@ class FormItemFileItemHolder(
             "IMAGE" -> {
                 ImageLoaderUtils.display(
                         itemView.context, itemView.iv_item_form_file_icon, data.file!!.fileCover,
-                        AppCompatResources.getDrawable(itemView.context, R.drawable.take_image)
+                        AppCompatResources.getDrawable(itemView.context, R.drawable.form_take_image)
                 )
             }
             "VIDEO" -> {
                 ImageLoaderUtils.display(
                         itemView.context, itemView.iv_item_form_file_icon, data.file!!.fileCover,
-                        AppCompatResources.getDrawable(itemView.context, R.drawable.take_video)
+                        AppCompatResources.getDrawable(itemView.context, R.drawable.form_take_video)
                 )
             }
             "AUDIO" -> {
                 ImageLoaderUtils.display(
                         itemView.context, itemView.iv_item_form_file_icon, data.file!!.fileCover,
-                        AppCompatResources.getDrawable(itemView.context, R.drawable.take_audio)
+                        AppCompatResources.getDrawable(itemView.context, R.drawable.form_take_audio)
                 )
             }
             else -> {
                 ImageLoaderUtils.display(
                         itemView.context, itemView.iv_item_form_file_icon, data.file!!.fileCover,
-                        AppCompatResources.getDrawable(itemView.context, R.drawable.take_file)
+                        AppCompatResources.getDrawable(itemView.context, R.drawable.form_take_file)
                 )
             }
         }

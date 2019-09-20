@@ -19,7 +19,7 @@
 		android:minHeight="100dp"
 		android:padding="10dp"
 		android:textColor="#505050"
-		android:textSize="20sp"
+		android:textSize="18sp"
 		tools:text="测试测试测试测试测试测试测试测试测试测试测试测试" />
 
 </LinearLayout>

@@ -109,12 +109,12 @@ class FormUserChoseActivity(
                         mList.clear()
                         it.forEach { v ->
                             val sFormUserEntity = FormUserEntity()
-                            sFormUserEntity.formItemId = v.formItemId
                             sFormUserEntity.id = v.id
+                            sFormUserEntity.formItemId = v.formItemId
                             sFormUserEntity.userName = v.user?.userName
-                            sFormUserEntity.userPhone = v.user?.userDesc
+                            sFormUserEntity.userDesc = v.user?.userDesc
                             sFormUserEntity.userAvatar = v.user?.userAvatar
-                            sFormUserEntity.userLimit = v.limitEdit
+                            sFormUserEntity.limitEdit = v.limitEdit
                             mList.add(sFormUserEntity)
                         }
 

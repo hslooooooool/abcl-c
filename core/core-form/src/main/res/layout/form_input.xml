@@ -31,5 +31,5 @@
 	
 	<Button
 		android:id="@+id/btn_form_input_btn"
-		style="@style/MainButtonStyle" />
+		style="@style/FormMainButtonStyle" />
 </LinearLayout>
