@@ -11,6 +11,7 @@ import androidx.room.*
  *
  * @param limitType 此值类型限制
  * @param limitEdit 此值是否可编辑
+ * @param position 此值下标位置，用于排序
  */
 @Entity(tableName = "formItemValue",
         foreignKeys = [
@@ -25,7 +26,8 @@ data class Value(
         var id: Long? = null,
         var formItemId: Long? = null,
         var limitType: String? = null,
-        var limitEdit: Boolean = false
+        var limitEdit: Boolean = false,
+        var position: Int = 0
 
 ) {
     /**输入*/

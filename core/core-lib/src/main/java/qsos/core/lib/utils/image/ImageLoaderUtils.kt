@@ -40,9 +40,6 @@ object ImageLoaderUtils {
         if (imageView == null) {
             return
         }
-        if (TextUtils.isEmpty(url)) {
-            return
-        }
         GlideApp.with(context)
                 .load(url)
                 // 磁盘缓存

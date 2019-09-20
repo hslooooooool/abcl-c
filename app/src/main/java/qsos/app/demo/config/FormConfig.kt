@@ -16,7 +16,7 @@ class FormConfig : IFormConfig {
         Timber.tag("表单文件代理").i("拍照")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeFile = async(Dispatchers.IO) {
-                val file = FormValueOfFile(fileId = "0001", fileName = "拍照", filePath = "/0/data/vip.qsos.demo/temp/logo.png", fileType = ".png", fileUrl = "http://www.qsos.vip/resource/logo.png")
+                val file = FormValueOfFile(fileId = "0001", fileName = "拍照", filePath = "/0/data/vip.qsos.demo/temp/logo.png", fileType = ".png", fileUrl = "http://www.qsos.vip/resource/logo.png", fileCover = "http://www.qsos.vip/resource/logo.png")
                 file
             }
             val file = takeFile.await()
@@ -24,11 +24,11 @@ class FormConfig : IFormConfig {
         }
     }
 
-    override fun takeGallery(onSuccess: (List<FormValueOfFile>) -> Any) {
+    override fun takeGallery(canTakeSize: Int, onSuccess: (List<FormValueOfFile>) -> Any) {
         Timber.tag("表单文件代理").i("图库")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeFile = async(Dispatchers.IO) {
-                val file = FormValueOfFile(fileId = "0002", fileName = "图库", filePath = "/0/data/vip.qsos.demo/temp/logo.jpg", fileType = ".jpg", fileUrl = "http://www.qsos.vip/resource/logo.jpg")
+                val file = FormValueOfFile(fileId = "0002", fileName = "图库", filePath = "/0/data/vip.qsos.demo/temp/logo.jpg", fileType = ".jpg", fileUrl = "http://www.qsos.vip/resource/logo.jpg", fileCover = "http://www.qsos.vip/resource/logo.jpg")
                 file
             }
             val file = takeFile.await()
@@ -36,11 +36,11 @@ class FormConfig : IFormConfig {
         }
     }
 
-    override fun takeVideo(onSuccess: (List<FormValueOfFile>) -> Any) {
+    override fun takeVideo(canTakeSize: Int, onSuccess: (List<FormValueOfFile>) -> Any) {
         Timber.tag("表单文件代理").i("视频")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeFile = async(Dispatchers.IO) {
-                val file = FormValueOfFile(fileId = "0003", fileName = "视频", filePath = "/0/data/vip.qsos.demo/temp/logo.mp4", fileType = ".mp4", fileUrl = "http://www.qsos.vip/resource/logo.mp4")
+                val file = FormValueOfFile(fileId = "0003", fileName = "视频", filePath = "/0/data/vip.qsos.demo/temp/logo.mp4", fileType = ".mp4", fileUrl = "http://www.qsos.vip/resource/logo.mp4", fileCover = "http://www.qsos.vip/resource/logo.jpg")
                 file
             }
             val file = takeFile.await()
@@ -52,7 +52,7 @@ class FormConfig : IFormConfig {
         Timber.tag("表单文件代理").i("音频")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeFile = async(Dispatchers.IO) {
-                val file = FormValueOfFile(fileId = "0004", fileName = "音频", filePath = "/0/data/vip.qsos.demo/temp/logo.aar", fileType = ".aar", fileUrl = "http://www.qsos.vip/resource/logo.aar")
+                val file = FormValueOfFile(fileId = "0004", fileName = "音频", filePath = "/0/data/vip.qsos.demo/temp/logo.amr", fileType = ".amr", fileUrl = "http://www.qsos.vip/resource/logo.amr")
                 file
             }
             val file = takeFile.await()
@@ -60,12 +60,12 @@ class FormConfig : IFormConfig {
         }
     }
 
-    override fun takeFile(mimeTypes: List<String>, onSuccess: (List<FormValueOfFile>) -> Any) {
+    override fun takeFile(canTakeSize: Int, mimeTypes: List<String>, onSuccess: (List<FormValueOfFile>) -> Any) {
         Timber.tag("表单文件代理").i("文件")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeFile = async(Dispatchers.IO) {
                 val files = arrayListOf<FormValueOfFile>()
-                for (i in 0..2) {
+                for (i in 1..canTakeSize) {
                     val file = FormValueOfFile(fileId = "0004$i", fileName = "文件$i", filePath = "/0/data/vip.qsos.demo/temp/logo$i.pdf", fileType = ".pdf", fileUrl = "http://www.qsos.vip/resource/logo$i.pdf")
                     files.add(file)
                 }

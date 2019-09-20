@@ -100,7 +100,6 @@ class FormAdapter(
                 takeFile(view, position)
             }
             else -> {
-
             }
         }
     }
@@ -120,7 +119,6 @@ class FormAdapter(
         }
         if (size == 1) {
             val dateType = values[0].limitType
-
             var showDay = true
             if ("yyyy-MM-dd HH:mm" == dateType) {
                 showDay = true
@@ -235,36 +233,50 @@ class FormAdapter(
     /**文件选取*/
     private fun takeFile(view: View, position: Int) {
         val limitMax = data[position].formItemValue!!.limitMax
-        val valueSize: Int? = data[position].formItemValue!!.values?.size ?: 0
-        if (limitMax != null && valueSize ?: 0 >= limitMax) {
+        val valueSize: Int = data[position].formItemValue!!.values?.size ?: 0
+        /**可选文件数*/
+        var canTakeSize = 0
+        limitMax?.let { canTakeSize = limitMax - valueSize }
+        if (canTakeSize < 1) {
             ToastUtils.showToast(view.context, "已达到添加数量限制")
         } else {
+            var size: Int = valueSize
             when (view.id) {
                 R.id.form_item_file_take_camera -> FormConfigHelper.takeCamera {
                     Timber.tag("表单拍照获取结果").i(Gson().toJson(it))
-                    addFormItemValueByPosition(position, Value.newFile(it, formItemId = data[position].id))
+                    val v = Value.newFile(it, formItemId = data[position].id)
+                    v.position = size++
+                    addFormItemValueByPosition(position, v)
                 }
-                R.id.form_item_file_take_album -> FormConfigHelper.takeGallery {
+                R.id.form_item_file_take_album -> FormConfigHelper.takeGallery(canTakeSize) {
                     Timber.tag("表单图库获取结果").i(Gson().toJson(it))
                     it.forEach { file ->
-                        addFormItemValueByPosition(position, Value.newFile(file, formItemId = data[position].id))
+                        val v = Value.newFile(file, formItemId = data[position].id)
+                        v.position = size++
+                        addFormItemValueByPosition(position, v)
                     }
                 }
-                R.id.form_item_file_take_video -> FormConfigHelper.takeVideo {
+                R.id.form_item_file_take_video -> FormConfigHelper.takeVideo(canTakeSize) {
                     Timber.tag("表单视频获取结果").i(Gson().toJson(it))
                     it.forEach { file ->
-                        addFormItemValueByPosition(position, Value.newFile(file, formItemId = data[position].id))
+                        val v = Value.newFile(file, formItemId = data[position].id)
+                        v.position = size++
+                        addFormItemValueByPosition(position, v)
                     }
                 }
                 R.id.form_item_file_take_audio -> FormConfigHelper.takeAudio {
                     Timber.tag("表单音频获取结果").i(Gson().toJson(it))
-                    addFormItemValueByPosition(position, Value.newFile(it, formItemId = data[position].id))
+                    val v = Value.newFile(it, formItemId = data[position].id)
+                    v.position = size++
+                    addFormItemValueByPosition(position, v)
                 }
                 R.id.form_item_file_take_file -> {
-                    FormConfigHelper.takeFile(data[position].formItemValue!!.limitTypeList!!) {
+                    FormConfigHelper.takeFile(canTakeSize, data[position].formItemValue!!.limitTypeList!!) {
                         Timber.tag("表单文件获取结果").i(Gson().toJson(it))
                         it.forEach { file ->
-                            addFormItemValueByPosition(position, Value.newFile(file, formItemId = data[position].id))
+                            val v = Value.newFile(file, formItemId = data[position].id)
+                            v.position = size++
+                            addFormItemValueByPosition(position, v)
                         }
                     }
                 }
@@ -280,6 +292,7 @@ class FormAdapter(
                 it?.let {
                     value.id = it
                     data[position].formItemValue!!.values!!.add(value)
+                    data[position].formItemValue!!.values!!.sortBy { v -> v.position }
                     notifyItemChanged(position)
                 }
             }

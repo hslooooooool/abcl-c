@@ -10,7 +10,7 @@ import qsos.core.form.db.entity.Value
 @Dao
 interface FormItemValueDao {
 
-    @Query("SELECT * FROM formItemValue where formItemId=:formItemId")
+    @Query("SELECT * FROM formItemValue where formItemId=:formItemId ORDER BY position")
     fun getByFormItemId(formItemId: Long): List<Value>
 
     @Query("SELECT * FROM formItemValue where formItemId=:formItemId AND userName like :key OR userDesc like :key")

@@ -34,9 +34,7 @@ class FormActivity(
             return
         }
         mFormFragment = FormFragment(formId)
-        supportFragmentManager.beginTransaction()
-                .add(R.id.form_demo_frg, FormFragment(formId), "$formId")
-                .commit()
+        supportFragmentManager.beginTransaction().add(R.id.form_demo_frg, FormFragment(formId), "$formId").commit()
     }
 
     override fun getData() {}

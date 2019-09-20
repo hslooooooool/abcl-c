@@ -13,7 +13,6 @@ import qsos.lib.base.base.fragment.BaseFragment
  * 表单界面Fragment
  */
 abstract class AbsFormFragment : BaseFragment(), IDisposable {
-    override val isOrientation: Boolean = true
     override var mCompositeDisposable: CompositeDisposable? = CompositeDisposable()
     val mJob = Dispatchers.Main + Job()
 

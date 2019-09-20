@@ -21,20 +21,20 @@ object FormConfigHelper : IFormConfig {
         mFormConfig?.takeCamera(onSuccess)
     }
 
-    override fun takeGallery(onSuccess: (List<FormValueOfFile>) -> Any) {
-        mFormConfig?.takeGallery(onSuccess)
+    override fun takeGallery(canTakeSize: Int, onSuccess: (List<FormValueOfFile>) -> Any) {
+        mFormConfig?.takeGallery(canTakeSize, onSuccess)
     }
 
-    override fun takeVideo(onSuccess: (List<FormValueOfFile>) -> Any) {
-        mFormConfig?.takeVideo(onSuccess)
+    override fun takeVideo(canTakeSize: Int, onSuccess: (List<FormValueOfFile>) -> Any) {
+        mFormConfig?.takeVideo(canTakeSize, onSuccess)
     }
 
     override fun takeAudio(onSuccess: (FormValueOfFile) -> Any) {
         mFormConfig?.takeAudio(onSuccess)
     }
 
-    override fun takeFile(mimeTypes: List<String>, onSuccess: (List<FormValueOfFile>) -> Any) {
-        mFormConfig?.takeFile(mimeTypes, onSuccess)
+    override fun takeFile(canTakeSize: Int, mimeTypes: List<String>, onSuccess: (List<FormValueOfFile>) -> Any) {
+        mFormConfig?.takeFile(canTakeSize, mimeTypes, onSuccess)
     }
 
     override fun takeLocation(onSuccess: (FormValueOfLocation) -> Any) {
