@@ -1,17 +1,15 @@
-package qsos.app.demo.view.widget.image
+package qsos.app.demo.view.widget
 
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
-import androidx.core.content.ContextCompat
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.noober.menu.FloatMenu
-import qsos.app.demo.R
 import qsos.core.lib.utils.image.GlideApp
 import qsos.core.lib.utils.image.ImageLoaderUtils
 

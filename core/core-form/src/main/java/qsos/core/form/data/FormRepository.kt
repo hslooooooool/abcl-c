@@ -66,8 +66,8 @@ class FormRepository : IFormRepo {
         FormDatabase.getInstance().formItemValueDao.update(value)
     }
 
-    override fun getUsers(formItem: FormItem, key: String?): List<Value> {
-        return FormDatabase.getInstance().formItemValueDao.getUserByFormItemIdAndUserDesc(formItem.id!!, key)
+    override fun getUsers(formItemId: Long, key: String?): List<Value> {
+        return FormDatabase.getInstance().formItemValueDao.getUserByFormItemIdAndUserDesc(formItemId, key)
     }
 
 }

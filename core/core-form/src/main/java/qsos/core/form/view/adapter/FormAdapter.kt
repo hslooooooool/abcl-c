@@ -1,11 +1,10 @@
 package qsos.core.form.view.adapter
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.view.View
-import com.alibaba.android.arouter.launcher.ARouter
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
-import qsos.core.form.FormPath
 import qsos.core.form.R
 import qsos.core.form.db
 import qsos.core.form.db.FormDatabase
@@ -47,7 +46,7 @@ class FormAdapter(
             /**时间*/
             R.layout.form_item_time -> return FormItemTimeHolder(view, this)
             /**人员*/
-            R.layout.form_item_user -> return FormItemUserHolder(view, this)
+            R.layout.form_item_user -> return FormItemUserHolder(view, mJob, this)
             /**附件*/
             R.layout.form_item_file -> return FormItemFileHolder(view, mJob, this)
             /**位置*/
@@ -76,6 +75,11 @@ class FormAdapter(
         if (!data[position].editable) {
             return
         }
+        val limitMax = data[position].formItemValue!!.limitMax
+        val valueSize: Int = data[position].formItemValue!!.values?.size ?: 0
+        /**可选数*/
+        var canTakeSize = 0
+        limitMax?.let { canTakeSize = limitMax - valueSize }
         when (view.id) {
             /**表单项提示*/
             R.id.form_item_title -> {
@@ -87,9 +91,24 @@ class FormAdapter(
             }
             /**选择人员*/
             R.id.item_form_users_size -> {
-                ARouter.getInstance().build(FormPath.FORM_ITEM_USERS)
-                        .withLong(FormPath.FORM_ITEM_ID, data[position].id!!)
-                        .navigation()
+                FormConfigHelper.takeUser(data[position].id!!, canTakeSize, data[position].formItemValue!!.values!!.map { v -> v.user!! }) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        data[position].formItemValue!!.values!!.removeIf { v -> !v.limitEdit }
+                    } else {
+                        val tempList = arrayListOf<Value>()
+                        data[position].formItemValue!!.values!!.forEach { v ->
+                            if (v.limitEdit) tempList.add(v.copy())
+                        }
+                        data[position].formItemValue!!.values!!.clear()
+                        data[position].formItemValue!!.values!!.addAll(tempList)
+                    }
+                    it.forEachIndexed { index, user ->
+                        val v = Value(formItemId = data[position].id, position = index)
+                        v.user = user
+                        data[position].formItemValue!!.values!!.add(v)
+                    }
+                    overFormItemValueByPosition(position)
+                }
             }
             /**选择选项*/
             R.id.form_item_check -> {
@@ -99,11 +118,11 @@ class FormAdapter(
             R.id.form_item_file_take_camera, R.id.form_item_file_take_album,
             R.id.form_item_file_take_video, R.id.form_item_file_take_audio,
             R.id.form_item_file_take_file -> {
-                takeFile(view, position)
+                takeFile(canTakeSize, view, position)
             }
             /**选择位置*/
             R.id.item_form_location -> {
-                FormConfigHelper.takeLocation(data[position].formItemValue?.value?.location) {
+                FormConfigHelper.takeLocation(data[position].id!!, data[position].formItemValue?.value?.location) {
                     Timber.tag("表单位置获取结果").i(Gson().toJson(it))
                     data[position].formItemValue!!.value!!.location = it
                     updateFormItemValueByPosition(position)
@@ -116,6 +135,7 @@ class FormAdapter(
 
     override fun onItemLongClick(view: View, position: Int, obj: Any?) {}
 
+    /**时间选择*/
     private fun chooseTime(view: View, position: Int) {
         val values = data[position].formItemValue!!.values!!
         val size = values.size
@@ -186,6 +206,7 @@ class FormAdapter(
         }
     }
 
+    /**选项选择*/
     private fun chooseCheck(position: Int) {
         /**单选*/
         if (data[position].formItemValue!!.limitMax == 1) {
@@ -241,51 +262,41 @@ class FormAdapter(
     }
 
     /**文件选取*/
-    private fun takeFile(view: View, position: Int) {
-        val limitMax = data[position].formItemValue!!.limitMax
-        val valueSize: Int = data[position].formItemValue!!.values?.size ?: 0
-        /**可选文件数*/
-        var canTakeSize = 0
-        limitMax?.let { canTakeSize = limitMax - valueSize }
+    private fun takeFile(canTakeSize: Int, view: View, position: Int) {
         if (canTakeSize < 1) {
             ToastUtils.showToast(view.context, "已达到添加数量限制")
         } else {
-            var size: Int = valueSize
+            var size: Int = data[position].formItemValue!!.values?.size ?: 0
             when (view.id) {
-                R.id.form_item_file_take_camera -> FormConfigHelper.takeCamera {
+                R.id.form_item_file_take_camera -> FormConfigHelper.takeCamera(data[position].id!!) {
                     Timber.tag("表单拍照获取结果").i(Gson().toJson(it))
-                    val v = Value.newFile(it, formItemId = data[position].id)
-                    v.position = size++
+                    val v = Value(position = size++).newFile(it, formItemId = data[position].id)
                     addFormItemValueByPosition(position, v)
                 }
-                R.id.form_item_file_take_album -> FormConfigHelper.takeGallery(canTakeSize) {
+                R.id.form_item_file_take_album -> FormConfigHelper.takeGallery(data[position].id!!, canTakeSize) {
                     Timber.tag("表单图库获取结果").i(Gson().toJson(it))
                     it.forEach { file ->
-                        val v = Value.newFile(file, formItemId = data[position].id)
-                        v.position = size++
+                        val v = Value(position = size++).newFile(file, formItemId = data[position].id)
                         addFormItemValueByPosition(position, v)
                     }
                 }
-                R.id.form_item_file_take_video -> FormConfigHelper.takeVideo(canTakeSize) {
+                R.id.form_item_file_take_video -> FormConfigHelper.takeVideo(data[position].id!!, canTakeSize) {
                     Timber.tag("表单视频获取结果").i(Gson().toJson(it))
                     it.forEach { file ->
-                        val v = Value.newFile(file, formItemId = data[position].id)
-                        v.position = size++
+                        val v = Value(position = size++).newFile(file, formItemId = data[position].id)
                         addFormItemValueByPosition(position, v)
                     }
                 }
-                R.id.form_item_file_take_audio -> FormConfigHelper.takeAudio {
+                R.id.form_item_file_take_audio -> FormConfigHelper.takeAudio(data[position].id!!) {
                     Timber.tag("表单音频获取结果").i(Gson().toJson(it))
-                    val v = Value.newFile(it, formItemId = data[position].id)
-                    v.position = size++
+                    val v = Value(position = size++).newFile(it, formItemId = data[position].id)
                     addFormItemValueByPosition(position, v)
                 }
                 R.id.form_item_file_take_file -> {
-                    FormConfigHelper.takeFile(canTakeSize, data[position].formItemValue!!.limitTypeList!!) {
+                    FormConfigHelper.takeFile(data[position].id!!, canTakeSize, data[position].formItemValue!!.limitTypeList!!) {
                         Timber.tag("表单文件获取结果").i(Gson().toJson(it))
                         it.forEach { file ->
-                            val v = Value.newFile(file, formItemId = data[position].id)
-                            v.position = size++
+                            val v = Value(position = size++).newFile(file, formItemId = data[position].id)
                             addFormItemValueByPosition(position, v)
                         }
                     }
@@ -317,6 +328,23 @@ class FormAdapter(
     private fun updateFormItemValueByPosition(position: Int) {
         CoroutineScope(mJob).dbComplete {
             db = { FormDatabase.getInstance().formItemValueDao.update(data[position].formItemValue!!.values!!) }
+            onSuccess = { notifyItemChanged(position) }
+            onFail = {
+                ToastUtils.showToast(mContext, "更新失败")
+                notifyItemChanged(position)
+            }
+        }
+    }
+
+    /**覆盖对应表单列表项的所有值*/
+    private fun overFormItemValueByPosition(position: Int) {
+        CoroutineScope(mJob).dbComplete {
+            db = {
+                FormDatabase.getInstance().formItemValueDao.deleteByFormItemId(data[position].id)
+                data[position].formItemValue!!.values!!.forEach {
+                    it.id = FormDatabase.getInstance().formItemValueDao.insert(it)
+                }
+            }
             onSuccess = { notifyItemChanged(position) }
             onFail = {
                 ToastUtils.showToast(mContext, "更新失败")

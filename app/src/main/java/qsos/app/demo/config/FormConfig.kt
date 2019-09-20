@@ -1,10 +1,13 @@
 package qsos.app.demo.config
 
+import com.alibaba.android.arouter.launcher.ARouter
 import com.google.gson.Gson
 import kotlinx.coroutines.*
+import qsos.app.demo.router.AppPath
 import qsos.core.form.config.IFormConfig
 import qsos.core.form.db.entity.FormValueOfFile
 import qsos.core.form.db.entity.FormValueOfLocation
+import qsos.core.form.db.entity.FormValueOfUser
 import timber.log.Timber
 
 /**
@@ -13,7 +16,7 @@ import timber.log.Timber
  */
 class FormConfig : IFormConfig {
 
-    override fun takeCamera(onSuccess: (FormValueOfFile) -> Any) {
+    override fun takeCamera(formItemId: Long, onSuccess: (FormValueOfFile) -> Any) {
         Timber.tag("表单文件代理").i("拍照")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeFile = async(Dispatchers.IO) {
@@ -25,7 +28,7 @@ class FormConfig : IFormConfig {
         }
     }
 
-    override fun takeGallery(canTakeSize: Int, onSuccess: (List<FormValueOfFile>) -> Any) {
+    override fun takeGallery(formItemId: Long, canTakeSize: Int, onSuccess: (List<FormValueOfFile>) -> Any) {
         Timber.tag("表单文件代理").i("图库")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeFile = async(Dispatchers.IO) {
@@ -37,7 +40,7 @@ class FormConfig : IFormConfig {
         }
     }
 
-    override fun takeVideo(canTakeSize: Int, onSuccess: (List<FormValueOfFile>) -> Any) {
+    override fun takeVideo(formItemId: Long, canTakeSize: Int, onSuccess: (List<FormValueOfFile>) -> Any) {
         Timber.tag("表单文件代理").i("视频")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeFile = async(Dispatchers.IO) {
@@ -49,7 +52,7 @@ class FormConfig : IFormConfig {
         }
     }
 
-    override fun takeAudio(onSuccess: (FormValueOfFile) -> Any) {
+    override fun takeAudio(formItemId: Long, onSuccess: (FormValueOfFile) -> Any) {
         Timber.tag("表单文件代理").i("音频")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeFile = async(Dispatchers.IO) {
@@ -61,7 +64,7 @@ class FormConfig : IFormConfig {
         }
     }
 
-    override fun takeFile(canTakeSize: Int, mimeTypes: List<String>, onSuccess: (List<FormValueOfFile>) -> Any) {
+    override fun takeFile(formItemId: Long, canTakeSize: Int, mimeTypes: List<String>, onSuccess: (List<FormValueOfFile>) -> Any) {
         Timber.tag("表单文件代理").i("文件")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeFile = async(Dispatchers.IO) {
@@ -77,7 +80,7 @@ class FormConfig : IFormConfig {
         }
     }
 
-    override fun takeLocation(location: FormValueOfLocation?, onSuccess: (FormValueOfLocation) -> Any) {
+    override fun takeLocation(formItemId: Long, location: FormValueOfLocation?, onSuccess: (FormValueOfLocation) -> Any) {
         Timber.tag("表单位置代理").i("位置，已有位置${Gson().toJson(location)}")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeLocation = async(Dispatchers.IO) {
@@ -86,6 +89,26 @@ class FormConfig : IFormConfig {
             val l = takeLocation.await()
             onSuccess.invoke(l)
         }
+    }
+
+    override fun takeUser(formItemId: Long, canTakeSize: Int, checkedUsers: List<FormValueOfUser>, onSuccess: (List<FormValueOfUser>) -> Any) {
+        Timber.tag("表单用户代理").i("用户，已有用户${Gson().toJson(checkedUsers)}")
+        ARouter.getInstance().build(AppPath.FORM_ITEM_USERS)
+                .withLong(AppPath.FORM_ITEM_ID, formItemId)
+                .navigation()
+        // or
+//        CoroutineScope(Job()).launch(Dispatchers.Main) {
+//            val takeUser = async(Dispatchers.IO) {
+//                val users = arrayListOf<FormValueOfUser>()
+//                users.addAll(checkedUsers)
+//                for (i in checkedUsers.size..canTakeSize + checkedUsers.size) {
+//                    users.add(FormValueOfUser(userId = "000$i", userName = "用户$i", userDesc = "1822755555$i", userAvatar = "http://www.qsos.vip/upload/2018/11/ic_launcher20181225044818498.png"))
+//                }
+//                users
+//            }
+//            val users = takeUser.await()
+//            onSuccess.invoke(users)
+//        }
     }
 
     override fun previewFile(index: Int, formValueOfFiles: List<FormValueOfFile>) {

@@ -6,13 +6,18 @@ import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.form_item_user.view.*
 import kotlinx.android.synthetic.main.form_item_user_item.view.*
 import kotlinx.android.synthetic.main.form_normal_title.view.*
+import kotlinx.coroutines.CoroutineScope
 import qsos.core.form.R
+import qsos.core.form.db.FormDatabase
 import qsos.core.form.db.entity.FormItem
-import qsos.core.form.db.entity.FormUserEntity
+import qsos.core.form.db.entity.Value
+import qsos.core.form.dbComplete
 import qsos.core.lib.utils.image.ImageLoaderUtils
 import qsos.lib.base.base.adapter.BaseNormalAdapter
 import qsos.lib.base.base.holder.BaseHolder
 import qsos.lib.base.callback.OnListItemClickListener
+import qsos.lib.base.utils.ToastUtils
+import kotlin.coroutines.CoroutineContext
 
 /**
  * @author : 华清松
@@ -21,6 +26,7 @@ import qsos.lib.base.callback.OnListItemClickListener
 @SuppressLint("SetTextI18n")
 class FormItemUserHolder(
         itemView: View,
+        private val mJob: CoroutineContext,
         private val itemClick: OnListItemClickListener
 ) : BaseHolder<FormItem>(itemView) {
 
@@ -28,11 +34,25 @@ class FormItemUserHolder(
         itemView.form_item_title.text = "${data.title}"
         itemView.item_form_users_size.text = "${data.formItemValue!!.values!!.size}\t人"
         itemView.item_form_users_rv.layoutManager = GridLayoutManager(itemView.context, 5)
-        val users: ArrayList<FormUserEntity> = data.formItemValue?.values!!.map { FormUserEntity().transValueToThis(it) } as ArrayList<FormUserEntity>
-        itemView.item_form_users_rv.adapter = BaseNormalAdapter(R.layout.form_item_user_item, users,
-                setHolder = { holder, user, _ ->
-                    ImageLoaderUtils.display(holder.itemView.context, itemView.iv_item_user, user.userAvatar)
-                    holder.itemView.tv_item_user.text = user.userName
+        val values: ArrayList<Value> = data.formItemValue?.values!!
+        itemView.item_form_users_rv.adapter = BaseNormalAdapter(R.layout.form_item_user_item, values,
+                setHolder = { holder, value, _ ->
+                    val user = value.user!!
+                    ImageLoaderUtils.display(holder.itemView.context, holder.itemView.item_form_user_icon, user.userAvatar)
+                    holder.itemView.item_form_user_name.text = user.userName
+                    holder.itemView.item_form_user_delete.visibility = if (!value.limitEdit) View.VISIBLE else View.INVISIBLE
+                    holder.itemView.item_form_user_delete.setOnClickListener {
+                        CoroutineScope(mJob).dbComplete {
+                            db = { FormDatabase.getInstance().formItemValueDao.delete(data.formItemValue!!.values!![position]) }
+                            onSuccess = {
+                                data.formItemValue!!.values!!.removeAt(position)
+                                holder.itemView.item_form_users_rv.adapter?.notifyDataSetChanged()
+                            }
+                            onFail = {
+                                ToastUtils.showToastLong(holder.itemView.context, "删除失败 ${it.message}")
+                            }
+                        }
+                    }
                 })
 
         itemView.form_item_title.setOnClickListener {

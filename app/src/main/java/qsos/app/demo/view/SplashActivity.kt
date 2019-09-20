@@ -1,4 +1,4 @@
-package qsos.app.demo.view.activity
+package qsos.app.demo.view
 
 import android.os.Bundle
 import androidx.recyclerview.widget.GridLayoutManager
@@ -9,12 +9,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import qsos.app.demo.R
-import qsos.app.demo.router.TweetPath
+import qsos.app.demo.router.AppPath
+import qsos.app.demo.utils.FormHelper
 import qsos.core.form.FormPath
 import qsos.core.form.data.FormRepository
 import qsos.core.form.db
 import qsos.core.form.db.entity.FormEntity
-import qsos.app.demo.utils.FormHelper
 import qsos.lib.base.base.activity.BaseActivity
 import qsos.lib.base.base.adapter.BaseNormalAdapter
 import qsos.lib.base.utils.ActivityManager
@@ -45,7 +45,7 @@ class SplashActivity(
             holder.itemView.tv_item_component.setOnClickListener {
                 when (data) {
                     "朋友圈" -> {
-                        ARouter.getInstance().build(TweetPath.TWEET).navigation()
+                        ARouter.getInstance().build(AppPath.TWEET).navigation()
                     }
                     "表单" -> {
                         CoroutineScope(mJob).db<FormEntity> {

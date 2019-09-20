@@ -38,5 +38,5 @@ interface IFormRepo {
     fun updateValue(value: Value)
 
     /**获取可选用户列表 key 可以是姓名、手机号*/
-    fun getUsers(formItem: FormItem, key: String?): List<Value>
+    fun getUsers(formItemId: Long, key: String?): List<Value>
 }

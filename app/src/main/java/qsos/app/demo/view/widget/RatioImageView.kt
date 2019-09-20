@@ -1,4 +1,4 @@
-package qsos.app.demo.view.widget.image
+package qsos.app.demo.view.widget
 
 import android.annotation.SuppressLint
 import android.content.Context

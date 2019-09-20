@@ -1,4 +1,4 @@
-package qsos.core.form.view.activity
+package qsos.app.demo.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -10,17 +10,18 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
-import kotlinx.android.synthetic.main.form_users.*
+import kotlinx.android.synthetic.main.app_form_users.*
 import kotlinx.coroutines.CoroutineScope
-import qsos.core.form.FormPath
-import qsos.core.form.R
+import qsos.app.demo.R
+import qsos.app.demo.router.AppPath
 import qsos.core.form.data.FormModelIml
 import qsos.core.form.data.IFormModel
 import qsos.core.form.db
 import qsos.core.form.db.entity.FormItem
-import qsos.core.form.db.entity.FormUserEntity
+import qsos.core.form.db.entity.FormValueOfUser
+import qsos.core.form.db.entity.UserEntity
 import qsos.core.form.db.entity.Value
-import qsos.core.form.view.adapter.FormUsersAdapter
+import qsos.core.form.view.activity.AbsFormActivity
 import qsos.core.form.view.other.FormItemDecoration
 import qsos.lib.base.callback.OnTListener
 import qsos.lib.base.utils.BaseUtils
@@ -29,17 +30,17 @@ import qsos.lib.base.utils.BaseUtils
  * @author : 华清松
  * 表单用户选择
  */
-@Route(group = FormPath.FORM, path = FormPath.FORM_ITEM_USERS)
+@Route(group = AppPath.GROUP, path = AppPath.FORM_ITEM_USERS)
 class FormUserChoseActivity(
-        override val layoutId: Int = R.layout.form_users,
+        override val layoutId: Int = R.layout.app_form_users,
         override val reload: Boolean = false
 ) : AbsFormActivity(), Toolbar.OnMenuItemClickListener {
 
     private val mModel: IFormModel = FormModelIml()
 
-    @Autowired(name = FormPath.FORM_ITEM_ID)
+    @Autowired(name = AppPath.FORM_ITEM_ID)
     @JvmField
-    var itemId: Long? = 0
+    var formItemId: Long? = 0
 
     private var chose = 0
     private var limitMin: Int? = 0
@@ -47,13 +48,13 @@ class FormUserChoseActivity(
 
     private var item: FormItem? = null
     private var mAdapter: FormUsersAdapter? = null
-    private var mList = ArrayList<FormUserEntity>()
+    private var mList = ArrayList<UserEntity>()
     private var manager: LinearLayoutManager? = null
 
     override fun initData(savedInstanceState: Bundle?) {}
 
     override fun initView() {
-        mAdapter = FormUsersAdapter(mList)
+        mAdapter = FormUsersAdapter(mJob, mList)
         mAdapter?.setOnChoseListener(object : OnTListener<Int> {
             override fun back(t: Int) {
                 chose = t
@@ -65,15 +66,10 @@ class FormUserChoseActivity(
         form_user_rv.addItemDecoration(FormItemDecoration())
         form_user_rv.adapter = mAdapter
 
-        form_user_search.setOnClickListener {
-            BaseUtils.hideKeyboard(this)
-            getData()
-        }
-
         tv_form_user_chose_all.setOnClickListener {
             mAdapter?.changeAllChose(true)
         }
-        tv_form_user_chose_cancel.setOnClickListener {
+        form_user_chose_cancel.setOnClickListener {
             mAdapter?.changeAllChose(false)
         }
 
@@ -88,52 +84,69 @@ class FormUserChoseActivity(
                 BaseUtils.hideKeyboard(this)
                 form_users_et.isFocusable = false
                 form_users_et.isFocusableInTouchMode = false
-                mModel.getUsers(item!!, form_users_et.text.toString())
+                getData()
                 return@OnKeyListener true
             }
             return@OnKeyListener false
         })
 
-        getData()
+        initUser()
     }
 
     override fun getData() {
-        itemId?.let {
+        formItemId?.let {
             CoroutineScope(mJob).db<List<Value>> {
                 db = {
-                    item = mModel.getFormItem(it)
-                    mModel.getUsers(item!!, form_users_et.text.toString())
+                    mModel.getUsers(item!!.id!!, form_users_et.text.toString())
                 }
                 onSuccess = {
                     it?.let {
-                        mList.clear()
-                        it.forEach { v ->
-                            val sFormUserEntity = FormUserEntity()
-                            sFormUserEntity.id = v.id
-                            sFormUserEntity.formItemId = v.formItemId
-                            sFormUserEntity.userName = v.user?.userName
-                            sFormUserEntity.userDesc = v.user?.userDesc
-                            sFormUserEntity.userAvatar = v.user?.userAvatar
-                            sFormUserEntity.limitEdit = v.limitEdit
-                            mList.add(sFormUserEntity)
-                        }
-
-                        chose = getValues().size
-                        limitMin = item?.formItemValue?.limitMin
-                        limitMax = item?.formItemValue?.limitMax
-
-                        changeChoseUser()
-
-                        mAdapter?.setLimit(chose, limitMin, limitMax)
-                        mAdapter?.notifyDataSetChanged()
+                        setDate(it)
                     }
                 }
             }
         }
     }
 
-    private fun getValues(): List<Value> {
-        return item?.formItemValue?.values!!
+    private fun initUser() {
+        formItemId?.let {
+            CoroutineScope(mJob).db<List<Value>> {
+                db = {
+                    item = mModel.getFormItem(it)
+                    val users = arrayListOf<Value>()
+                    for (i in 0..20) {
+                        users.add(mModel.insertValue(
+                                Value(id = null, formItemId = formItemId, limitEdit = (i == 0 || i == 1), limitType = "role-manager", position = i)
+                                        .newUser(FormValueOfUser(userId = "000$i", userName = "用户$i", userDesc = "1822755555$i", userAvatar = "http://www.qsos.vip/upload/2018/11/ic_launcher20181225044818498.png"))))
+                    }
+                    users
+                }
+                onSuccess = {
+                    it?.let {
+                        setDate(it)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setDate(it: List<Value>) {
+        mList.clear()
+        it.forEach { v ->
+            mList.add(UserEntity(
+                    userId = v.user?.userId, userName = v.user?.userName, userDesc = v.user?.userDesc,
+                    userAvatar = v.user?.userAvatar, limitEdit = v.limitEdit
+            ))
+        }
+
+        chose = 0
+        limitMin = item?.formItemValue?.limitMin
+        limitMax = item?.formItemValue?.limitMax
+
+        changeChoseUser()
+
+        mAdapter?.setLimit(chose, limitMin, limitMax)
+        mAdapter?.notifyDataSetChanged()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -152,7 +165,7 @@ class FormUserChoseActivity(
             ll_form_user_chose.visibility = View.VISIBLE
             tv_form_user_chose_all.visibility = if (limitMax == -1) View.VISIBLE else View.GONE
             val limitMaxUser = if (limitMax == null || limitMax == -1) "可选人数不限" else "可选 $limitMax 人"
-            tv_form_user_chose_num.text = "已选 $chose 人，$limitMaxUser"
+            form_user_chose_num.text = "已选 $chose 人，$limitMaxUser"
         } else {
             ll_form_user_chose.visibility = View.GONE
         }

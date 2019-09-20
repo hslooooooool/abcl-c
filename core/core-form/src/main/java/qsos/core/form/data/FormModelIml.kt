@@ -40,7 +40,7 @@ class FormModelIml(
         formRepo.updateValue(value)
     }
 
-    override fun getUsers(formItem: FormItem, key: String?): List<Value> {
-        return formRepo.getUsers(formItem, key)
+    override fun getUsers(formItemId: Long, key: String?): List<Value> {
+        return formRepo.getUsers(formItemId, key)
     }
 }

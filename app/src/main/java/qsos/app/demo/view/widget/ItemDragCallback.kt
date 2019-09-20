@@ -1,4 +1,4 @@
-package qsos.app.demo.view.widget.adapter
+package qsos.app.demo.view.widget
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView

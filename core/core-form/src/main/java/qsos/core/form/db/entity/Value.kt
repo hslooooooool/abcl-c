@@ -48,49 +48,40 @@ data class Value(
     @Embedded
     var location: FormValueOfLocation? = FormValueOfLocation()
 
-    companion object {
-        fun newText(text: FormValueOfText, formItemId: Long? = null): Value {
-            val v = Value()
-            v.formItemId = formItemId
-            v.text = text
-            return v
-        }
+    fun newText(text: FormValueOfText, formItemId: Long? = null): Value {
+        this.formItemId = formItemId
+        this.text = text
+        return this
+    }
 
-        fun newTime(time: FormValueOfTime, formItemId: Long? = null): Value {
-            val v = Value()
-            v.formItemId = formItemId
-            v.time = time
-            return v
-        }
+    fun newTime(time: FormValueOfTime, formItemId: Long? = null): Value {
+        this.formItemId = formItemId
+        this.time = time
+        return this
+    }
 
-        fun newCheck(check: FormValueOfCheck, formItemId: Long? = null): Value {
-            val v = Value()
-            v.formItemId = formItemId
-            v.check = check
-            return v
-        }
+    fun newCheck(check: FormValueOfCheck, formItemId: Long? = null): Value {
+        this.formItemId = formItemId
+        this.check = check
+        return this
+    }
 
-        fun newUser(user: FormValueOfUser, formItemId: Long? = null): Value {
-            val v = Value()
-            v.formItemId = formItemId
-            v.user = user
-            return v
-        }
+    fun newUser(user: FormValueOfUser, formItemId: Long? = null): Value {
+        this.formItemId = formItemId
+        this.user = user
+        return this
+    }
 
-        fun newFile(file: FormValueOfFile, formItemId: Long? = null): Value {
-            val v = Value()
-            v.formItemId = formItemId
-            v.file = file
-            return v
-        }
+    fun newFile(file: FormValueOfFile, formItemId: Long? = null): Value {
+        this.formItemId = formItemId
+        this.file = file
+        return this
+    }
 
-        fun newLocation(location: FormValueOfLocation, formItemId: Long? = null): Value {
-            val v = Value()
-            v.formItemId = formItemId
-            v.location = location
-            return v
-        }
-
+    fun newLocation(location: FormValueOfLocation, formItemId: Long? = null): Value {
+        this.formItemId = formItemId
+        this.location = location
+        return this
     }
 
 }

@@ -2,21 +2,38 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
-	android:id="@+id/item_user"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:gravity="center"
 	android:orientation="vertical"
 	android:padding="4dp">
 	
-	<ImageView
-		android:id="@+id/iv_item_user"
-		android:layout_width="50dp"
-		android:layout_height="50dp"
-		app:srcCompat="@drawable/form_take_image" />
+	<RelativeLayout
+		android:layout_width="70dp"
+		android:layout_height="70dp">
+		
+		<ImageView
+			android:id="@+id/item_form_user_icon"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_margin="10dp"
+			android:scaleType="fitXY"
+			android:transitionName="transition_image"
+			app:srcCompat="@drawable/form_take_file" />
+		
+		<ImageView
+			android:id="@+id/item_form_user_delete"
+			android:layout_width="20dp"
+			android:layout_height="20dp"
+			android:layout_alignParentEnd="true"
+			android:padding="3dp"
+			android:visibility="invisible"
+			app:srcCompat="@drawable/form_close_red"
+			tools:visibility="visible" />
+	</RelativeLayout>
 	
 	<TextView
-		android:id="@+id/tv_item_user"
+		android:id="@+id/item_form_user_name"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:ellipsize="end"
@@ -24,5 +41,5 @@
 		android:maxLines="1"
 		android:textColor="#505050"
 		android:textSize="16sp"
-		tools:text="测试" />
+		tools:text="姓名" />
 </LinearLayout>

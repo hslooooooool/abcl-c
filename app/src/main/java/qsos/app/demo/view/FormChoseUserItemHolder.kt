@@ -1,9 +1,11 @@
-package qsos.core.form.view.hodler
+package qsos.app.demo.view
 
 import android.content.Context
 import android.view.View
-import kotlinx.android.synthetic.main.form_user.view.*
-import qsos.core.form.db.entity.FormUserEntity
+import androidx.core.content.ContextCompat
+import kotlinx.android.synthetic.main.app_form_users_item.view.*
+import qsos.app.demo.R
+import qsos.core.form.db.entity.UserEntity
 import qsos.core.lib.utils.image.ImageLoaderUtils
 import qsos.lib.base.base.holder.BaseHolder
 import qsos.lib.base.callback.OnListItemClickListener
@@ -15,17 +17,22 @@ import qsos.lib.base.callback.OnListItemClickListener
 class FormChoseUserItemHolder(
         itemView: View,
         private val itemClick: OnListItemClickListener
-) : BaseHolder<FormUserEntity>(itemView) {
+) : BaseHolder<UserEntity>(itemView) {
 
     private val context: Context = itemView.context
 
-    override fun setData(data: FormUserEntity, position: Int) {
+    override fun setData(data: UserEntity, position: Int) {
 
         itemView.form_user_name.text = data.userName
         itemView.form_user_desc.text = data.userDesc
 
-        itemView.form_user_cb.visibility = if (data.userCb) View.VISIBLE else View.INVISIBLE
-        itemView.form_user_cb.setImageResource(if (data.limitEdit) android.R.drawable.ic_menu_compass else android.R.drawable.ic_menu_delete)
+        itemView.form_user_ll.isEnabled = !data.limitEdit
+        val color = if (data.checked) {
+            ContextCompat.getColor(itemView.context, R.color.gray_low)
+        } else {
+            ContextCompat.getColor(itemView.context, R.color.white)
+        }
+        itemView.form_user_ll.setBackgroundColor(color)
 
         ImageLoaderUtils.display(context, itemView.form_user_head, data.userAvatar)
 

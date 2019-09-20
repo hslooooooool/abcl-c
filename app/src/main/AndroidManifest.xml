@@ -14,7 +14,7 @@
 		
 		<!--共享文件夹-->
 		<activity
-			android:name="qsos.app.demo.view.activity.SplashActivity"
+			android:name="qsos.app.demo.view.SplashActivity"
 			android:configChanges="orientation|keyboardHidden|screenSize"
 			android:screenOrientation="portrait">
 			<intent-filter>
@@ -27,8 +27,11 @@
 		
 		<!--闪屏页-->
 		<activity
-			android:name="qsos.app.demo.view.activity.DemoActivity"
+			android:name="qsos.app.demo.view.DemoActivity"
 			android:configChanges="orientation|keyboardHidden|screenSize" />
+		
+		<!--用户选择界面-->
+		<activity android:name="qsos.app.demo.view.FormUserChoseActivity" />
 		
 		<provider
 			android:name="qsos.app.demo.AppFileProvider"
@@ -47,6 +50,7 @@
 	<uses-permission
 		android:name="android.permission.WRITE_MEDIA_STORAGE"
 		tools:ignore="ProtectedPermissions" />
+	
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />

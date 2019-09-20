@@ -3,51 +3,30 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:focusable="true"
+	android:focusableInTouchMode="true"
 	android:orientation="vertical">
 	
-	<LinearLayout
+	<EditText
+		android:id="@+id/form_users_et"
 		android:layout_width="match_parent"
-		android:layout_height="60dp"
-		android:focusable="true"
-		android:focusableInTouchMode="true"
-		android:orientation="horizontal"
-		android:padding="10dp">
-		
-		<EditText
-			android:id="@+id/form_users_et"
-			android:layout_width="0dp"
-			android:layout_height="match_parent"
-			android:layout_weight="1"
-			android:background="@drawable/form_line_card_radio_gray_radio"
-			android:gravity="start|center_vertical"
-			android:hint="搜索"
-			android:imeOptions="actionSearch"
-			android:inputType="text"
-			android:padding="10dp"
-			android:textSize="14sp" />
-		
-		<TextView
-			android:id="@+id/form_user_search"
-			android:layout_width="60dp"
-			android:layout_height="match_parent"
-			android:layout_margin="4dp"
-			android:gravity="center"
-			android:text="搜索"
-			android:textColor="@android:color/holo_blue_dark"
-			android:textSize="14sp" />
-	
-	</LinearLayout>
-	
-	<View
-		android:layout_width="match_parent"
-		android:layout_height="1px"
-		android:background="@android:color/darker_gray" />
+		android:layout_height="wrap_content"
+		android:layout_margin="10dp"
+		android:background="@drawable/form_card_radio_gray"
+		android:hint="搜索"
+		android:imeOptions="actionSearch"
+		android:inputType="text"
+		android:maxLines="1"
+		android:padding="10dp"
+		android:textSize="16sp" />
 	
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/form_user_rv"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
-		android:layout_weight="1" />
+		android:layout_weight="1"
+		android:background="@color/gray_low"
+		tools:listitem="@layout/app_form_users_item" />
 	
 	<LinearLayout
 		android:id="@+id/ll_form_user_chose"
@@ -65,30 +44,33 @@
 			android:background="@drawable/form_selector_button"
 			android:gravity="center"
 			android:text="全选"
-			android:textColor="@color/black"
-			android:textSize="16sp" />
+			android:textColor="@color/white"
+			android:textSize="16sp"
+			android:textStyle="bold" />
 		
 		<TextView
-			android:id="@+id/tv_form_user_chose_cancel"
+			android:id="@+id/form_user_chose_cancel"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="1"
 			android:background="@drawable/form_selector_button"
 			android:gravity="center"
-			android:text="取消全选"
-			android:textColor="@color/black"
-			android:textSize="16sp" />
+			android:text="清除"
+			android:textColor="@color/white"
+			android:textSize="16sp"
+			android:textStyle="bold" />
 		
 		<TextView
-			android:id="@+id/tv_form_user_chose_num"
+			android:id="@+id/form_user_chose_num"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="2"
 			android:background="@drawable/form_selector_button"
 			android:enabled="false"
 			android:gravity="center"
-			android:textColor="@android:color/holo_blue_light"
-			android:textSize="12sp"
+			android:textColor="@color/white"
+			android:textSize="14sp"
+			android:textStyle="italic"
 			tools:text="已选择10个" />
 	</LinearLayout>
 </LinearLayout>
