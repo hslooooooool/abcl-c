@@ -77,9 +77,7 @@ class TweetRepository(
             val result = ApiEngine.createService(ApiTweet::class.java).clear()
             val list = ApiEngine.createService(ApiTweet::class.java).list().await()
             mDataTweetList.postValue(list)
-            if (result.code == 200) success(result.msg) else {
-                fail(result.msg ?: "清除失败")
-            }
+            if (result.code == 200) success(result.msg) else fail(result.msg ?: "清除失败")
         }
     }
 

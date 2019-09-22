@@ -10,5 +10,5 @@ object BaseConfig {
      * */
     var DEBUG = true
     /**配置请求地址*/
-    var BASE_URL = "http://192.168.1.17:8084/"
+    var BASE_URL = "http://192.168.1.7:8084/"
 }

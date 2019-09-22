@@ -47,7 +47,7 @@ open class AppApplication(
 
         BaseConfig.DEBUG = true
         /**BASE_URL配置*/
-        BaseConfig.BASE_URL = "http://192.168.1.11:8084"
+        BaseConfig.BASE_URL = "http://192.168.1.7:8081"
 
         /**Timber 日志*/
         Timber.plant(GlobalExceptionHelper.CrashReportingTree())
