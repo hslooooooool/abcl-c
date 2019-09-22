@@ -46,6 +46,7 @@ class FormItemUserHolder(
                             db = { FormDatabase.getInstance().formItemValueDao.delete(data.formItemValue!!.values!![p]) }
                             onSuccess = {
                                 data.formItemValue!!.values!!.removeAt(p)
+                                itemView.item_form_users_size.text = "${data.formItemValue!!.values!!.size}\t人"
                                 itemView.item_form_users_rv.adapter?.notifyDataSetChanged()
                             }
                             onFail = {
