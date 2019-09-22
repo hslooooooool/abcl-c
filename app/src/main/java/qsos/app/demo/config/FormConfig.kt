@@ -114,4 +114,8 @@ class FormConfig : IFormConfig {
     override fun previewFile(index: Int, formValueOfFiles: List<FormValueOfFile>) {
         Timber.tag("表单文件预览代理").i("文件$index")
     }
+
+    override fun previewUser(index: Int, formValueOfUser: List<FormValueOfUser>) {
+        Timber.tag("表单用户预览代理").i("用户$index")
+    }
 }

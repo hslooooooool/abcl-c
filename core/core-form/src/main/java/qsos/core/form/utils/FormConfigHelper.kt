@@ -43,6 +43,10 @@ object FormConfigHelper : IFormConfig {
         mFormConfig?.previewFile(index, formValueOfFiles)
     }
 
+    override fun previewUser(index: Int, formValueOfUser: List<FormValueOfUser>) {
+        mFormConfig?.previewUser(index, formValueOfUser)
+    }
+
     private var mFormConfig: IFormConfig? = null
 
     fun init(formConfig: IFormConfig) {

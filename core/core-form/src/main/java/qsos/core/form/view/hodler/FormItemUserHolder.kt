@@ -12,6 +12,7 @@ import qsos.core.form.db.FormDatabase
 import qsos.core.form.db.entity.FormItem
 import qsos.core.form.db.entity.Value
 import qsos.core.form.dbComplete
+import qsos.core.form.utils.FormConfigHelper
 import qsos.core.lib.utils.image.ImageLoaderUtils
 import qsos.lib.base.base.adapter.BaseNormalAdapter
 import qsos.lib.base.base.holder.BaseHolder
@@ -53,6 +54,9 @@ class FormItemUserHolder(
                                 ToastUtils.showToastLong(holder.itemView.context, "删除失败 ${it.message}")
                             }
                         }
+                    }
+                    holder.itemView.item_form_user_icon.setOnClickListener {
+                        FormConfigHelper.previewUser(p, values.map { it.user!! })
                     }
                 })
 
