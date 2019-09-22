@@ -28,6 +28,9 @@ interface FormItemValueDao {
     @Delete
     fun delete(value: Value)
 
+    @Query("DELETE FROM formItemValue WHERE formItemId=:formItemId")
+    fun deleteByFormItemId(formItemId: Long)
+
     @Query("DELETE FROM formItemValue WHERE formItemId=:formItemId AND userDesc=:userDesc")
     fun deleteByFormItemIdAndUserDesc(formItemId: Long?, userDesc: String)
 

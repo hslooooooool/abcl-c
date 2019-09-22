@@ -32,6 +32,10 @@ class FormModelIml(
         formRepo.deleteForm(form)
     }
 
+    override fun deleteFormItemAllValue(formItemId: Long) {
+        formRepo.deleteFormItemAllValue(formItemId)
+    }
+
     override fun getFormItem(formItemId: Long): FormItem? {
         return formRepo.getFormItem(formItemId)
     }
@@ -40,7 +44,4 @@ class FormModelIml(
         formRepo.updateValue(value)
     }
 
-    override fun getUsers(formItemId: Long, key: String?): List<Value> {
-        return formRepo.getUsers(formItemId, key)
-    }
 }

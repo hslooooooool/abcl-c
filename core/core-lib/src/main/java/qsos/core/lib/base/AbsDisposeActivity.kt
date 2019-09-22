@@ -1,18 +1,17 @@
-package qsos.core.form.view.activity
+package qsos.core.lib.base
 
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import qsos.core.lib.base.IDisposable
 import qsos.lib.base.base.activity.BaseActivity
 
 /**
  * @author : 华清松
- * 表单基础 Activity
+ * AbsDisposeActivity
  */
-abstract class AbsFormActivity : BaseActivity(), IDisposable {
+abstract class AbsDisposeActivity : BaseActivity(), IDisposable {
     override var mCompositeDisposable: CompositeDisposable? = CompositeDisposable()
     val mJob = Dispatchers.Main + Job()
 

@@ -31,12 +31,13 @@ interface IFormRepo {
     /**清除表单数据*/
     fun deleteForm(form: FormEntity)
 
+    /**清除表单项下值列表数据*/
+    fun deleteFormItemAllValue(formItemId: Long)
+
     /**获取表单项数据*/
     fun getFormItem(formItemId: Long): FormItem?
 
     /**更新表单项数据*/
     fun updateValue(value: Value)
 
-    /**获取可选用户列表 key 可以是姓名、手机号*/
-    fun getUsers(formItemId: Long, key: String?): List<Value>
 }

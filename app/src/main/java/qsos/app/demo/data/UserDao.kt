@@ -10,8 +10,11 @@ import qsos.core.form.db.entity.UserEntity
 @Dao
 interface UserDao {
 
-    @Query("SELECT * FROM demoUser where  userName like :key OR userDesc like :key")
-    fun getUserByKey(key: String?): List<UserEntity>
+    @Query("SELECT * FROM demoUser")
+    fun findAll(): List<UserEntity>
+
+    @Query("SELECT * FROM demoUser where userName like '%'||:key||'%' OR userDesc like '%'||:key||'%' ")
+    fun findUserByKey(key: String): List<UserEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(user: UserEntity): Long
@@ -27,5 +30,8 @@ interface UserDao {
 
     @Delete
     fun delete(user: UserEntity)
+
+    @Query("DELETE FROM demoUser")
+    fun deleteAll()
 
 }

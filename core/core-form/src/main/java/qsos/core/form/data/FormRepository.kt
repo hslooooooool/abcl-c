@@ -52,6 +52,10 @@ class FormRepository : IFormRepo {
         FormDatabase.getInstance().formDao.delete(form)
     }
 
+    override fun deleteFormItemAllValue(formItemId: Long) {
+        FormDatabase.getInstance().formItemValueDao.deleteByFormItemId(formItemId)
+    }
+
     override fun getFormItem(formItemId: Long): FormItem? {
         var sFormItem: FormItem? = null
         FormDatabase.getInstance().formItemDao.getFormItem(formItemId)?.let {
@@ -64,10 +68,6 @@ class FormRepository : IFormRepo {
 
     override fun updateValue(value: Value) {
         FormDatabase.getInstance().formItemValueDao.update(value)
-    }
-
-    override fun getUsers(formItemId: Long, key: String?): List<Value> {
-        return FormDatabase.getInstance().formItemValueDao.getUserByFormItemIdAndUserDesc(formItemId, key)
     }
 
 }

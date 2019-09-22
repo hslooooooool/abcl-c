@@ -33,20 +33,20 @@ class FormItemUserHolder(
     override fun setData(data: FormItem, position: Int) {
         itemView.form_item_title.text = "${data.title}"
         itemView.item_form_users_size.text = "${data.formItemValue!!.values!!.size}\t人"
-        itemView.item_form_users_rv.layoutManager = GridLayoutManager(itemView.context, 5)
+        itemView.item_form_users_rv.layoutManager = GridLayoutManager(itemView.context, 4)
         val values: ArrayList<Value> = data.formItemValue?.values!!
         itemView.item_form_users_rv.adapter = BaseNormalAdapter(R.layout.form_item_user_item, values,
-                setHolder = { holder, value, _ ->
+                setHolder = { holder, value, p ->
                     val user = value.user!!
                     ImageLoaderUtils.display(holder.itemView.context, holder.itemView.item_form_user_icon, user.userAvatar)
                     holder.itemView.item_form_user_name.text = user.userName
                     holder.itemView.item_form_user_delete.visibility = if (!value.limitEdit) View.VISIBLE else View.INVISIBLE
                     holder.itemView.item_form_user_delete.setOnClickListener {
                         CoroutineScope(mJob).dbComplete {
-                            db = { FormDatabase.getInstance().formItemValueDao.delete(data.formItemValue!!.values!![position]) }
+                            db = { FormDatabase.getInstance().formItemValueDao.delete(data.formItemValue!!.values!![p]) }
                             onSuccess = {
-                                data.formItemValue!!.values!!.removeAt(position)
-                                holder.itemView.item_form_users_rv.adapter?.notifyDataSetChanged()
+                                data.formItemValue!!.values!!.removeAt(p)
+                                itemView.item_form_users_rv.adapter?.notifyDataSetChanged()
                             }
                             onFail = {
                                 ToastUtils.showToastLong(holder.itemView.context, "删除失败 ${it.message}")
