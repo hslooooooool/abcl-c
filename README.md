@@ -36,7 +36,7 @@ open class AppApplication : BaseApplication(){
 
 }
 ```
-- 图片加载
+- 图片加载-Glide封装
 - 异常捕获
 ```
 dependencies {
@@ -77,7 +77,7 @@ dependencies {
 - 文件选择（拍照、录像、录音、文件选择）
 - 文件解压缩
 - 文件读写工具
-- 自定义表单
+- 动态表单
 提供包括文本展示、文本输入、单选/多选、位置设置、日期设置、人员设置、附件（拍照/图库/视频/语音/文件）设置等功能，采用Room数据库进行数据操作
 ```
 dependencies {
@@ -118,6 +118,7 @@ class FormConfig : IFormConfig {
     ...
 }
 ```
+- 动态流程
 - web容器
 - JsBridge调用
 
