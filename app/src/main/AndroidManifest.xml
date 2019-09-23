@@ -14,7 +14,7 @@
 		
 		<!--共享文件夹-->
 		<activity
-			android:name="qsos.app.demo.view.SplashActivity"
+			android:name="qsos.app.demo.SplashActivity"
 			android:configChanges="orientation|keyboardHidden|screenSize"
 			android:screenOrientation="portrait">
 			<intent-filter>
@@ -27,11 +27,11 @@
 		
 		<!--闪屏页-->
 		<activity
-			android:name="qsos.app.demo.view.DemoActivity"
+			android:name="qsos.app.demo.tweet.TweetActivity"
 			android:configChanges="orientation|keyboardHidden|screenSize" />
 		
 		<!--用户选择界面-->
-		<activity android:name="qsos.app.demo.view.FormUserChoseActivity" />
+		<activity android:name="qsos.app.demo.form.FormUserChoseActivity" />
 		
 		<provider
 			android:name="qsos.app.demo.AppFileProvider"

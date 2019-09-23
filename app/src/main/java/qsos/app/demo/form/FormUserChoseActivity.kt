@@ -1,4 +1,4 @@
-package qsos.app.demo.view
+package qsos.app.demo.form
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -14,14 +14,12 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import kotlinx.android.synthetic.main.app_form_users.*
 import kotlinx.coroutines.CoroutineScope
 import qsos.app.demo.R
-import qsos.app.demo.data.UserDatabase
-import qsos.app.demo.router.AppPath
+import qsos.app.demo.AppPath
 import qsos.core.form.data.FormModelIml
 import qsos.core.form.data.IFormModel
 import qsos.core.form.db
 import qsos.core.form.db.entity.FormItem
 import qsos.core.form.db.entity.FormValueOfUser
-import qsos.core.form.db.entity.UserEntity
 import qsos.core.form.db.entity.Value
 import qsos.core.form.dbComplete
 import qsos.core.form.view.other.FormItemDecoration

@@ -1,11 +1,10 @@
-package qsos.app.demo.view
+package qsos.app.demo.form
 
 import android.content.Context
 import android.view.View
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.app_form_users_item.view.*
 import qsos.app.demo.R
-import qsos.core.form.db.entity.UserEntity
 import qsos.core.lib.utils.image.ImageLoaderUtils
 import qsos.lib.base.base.holder.BaseHolder
 import qsos.lib.base.callback.OnListItemClickListener

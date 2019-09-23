@@ -1,4 +1,4 @@
-package qsos.core.form.db.entity
+package qsos.app.demo.form
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -24,14 +24,4 @@ data class UserEntity(
         var userAvatar: String? = null,
         var limitEdit: Boolean = false,
         var checked: Boolean = false
-) {
-    fun transValueToThis(v: Value): UserEntity {
-        id = v.id
-        userId = v.user!!.userId
-        userName = v.user!!.userName
-        userDesc = v.user!!.userDesc
-        userAvatar = v.user!!.userAvatar
-        limitEdit = v.limitEdit
-        return this
-    }
-}
+)

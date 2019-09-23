@@ -1,9 +1,9 @@
-package qsos.app.demo.config
+package qsos.app.demo.form
 
 import com.alibaba.android.arouter.launcher.ARouter
 import com.google.gson.Gson
 import kotlinx.coroutines.*
-import qsos.app.demo.router.AppPath
+import qsos.app.demo.AppPath
 import qsos.core.form.config.IFormConfig
 import qsos.core.form.db.entity.FormValueOfFile
 import qsos.core.form.db.entity.FormValueOfLocation

@@ -1,4 +1,4 @@
-package qsos.app.demo.utils
+package qsos.app.demo.form
 
 import qsos.core.form.db.entity.*
 import java.util.*
@@ -140,7 +140,7 @@ object FormHelper {
             ))
             /**人员-推荐人*/
             val users = arrayListOf<Value>()
-            for (i in 0..2) {
+            for (i in 0..1) {
                 // 案例将初始化两个不可撤销的人员，在固定的审批流程下非常有用
                 users.add(Value(limitEdit = true, limitType = "role-manager", position = i).newUser(FormValueOfUser(userId = "000$i", userName = "用户$i", userDesc = "1822755555$i", userAvatar = "http://www.qsos.vip/upload/2018/11/ic_launcher20181225044818498.png")))
             }

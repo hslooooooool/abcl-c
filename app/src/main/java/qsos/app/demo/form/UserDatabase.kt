@@ -1,10 +1,9 @@
-package qsos.app.demo.data
+package qsos.app.demo.form
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import qsos.core.form.db.entity.UserEntity
 import qsos.lib.base.base.BaseApplication
 
 /**
@@ -28,7 +27,8 @@ abstract class UserDatabase : RoomDatabase() {
 
         fun getInstance(): UserDatabase =
                 INSTANCE ?: synchronized(this) {
-                    INSTANCE ?: create(BaseApplication.appContext).also { INSTANCE = it }
+                    INSTANCE
+                            ?: create(BaseApplication.appContext).also { INSTANCE = it }
                 }
 
         private fun create(context: Context): UserDatabase {

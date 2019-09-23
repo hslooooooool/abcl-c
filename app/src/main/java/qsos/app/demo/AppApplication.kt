@@ -7,7 +7,7 @@ import androidx.lifecycle.LifecycleRegistry
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter
 import com.scwang.smartrefresh.layout.header.ClassicsHeader
-import qsos.app.demo.config.FormConfig
+import qsos.app.demo.form.FormConfig
 import qsos.core.form.utils.FormConfigHelper
 import qsos.core.lib.config.BaseConfig
 import qsos.lib.base.base.BaseApplication

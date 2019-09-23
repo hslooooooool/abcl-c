@@ -1,4 +1,4 @@
-package qsos.app.demo.view
+package qsos.app.demo
 
 import android.os.Bundle
 import androidx.recyclerview.widget.GridLayoutManager
@@ -8,9 +8,7 @@ import kotlinx.android.synthetic.main.app_item_component.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import qsos.app.demo.R
-import qsos.app.demo.router.AppPath
-import qsos.app.demo.utils.FormHelper
+import qsos.app.demo.form.FormHelper
 import qsos.core.form.FormPath
 import qsos.core.form.data.FormRepository
 import qsos.core.form.db

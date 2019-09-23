@@ -1,4 +1,4 @@
-package qsos.app.demo.data
+package qsos.app.demo.tweet
 
 import io.reactivex.Observable
 import qsos.lib.netservice.data.BaseResponse

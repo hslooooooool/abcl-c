@@ -47,7 +47,7 @@
 			android:textStyle="bold"
 			tools:text="测试测试测试测试测试" />
 		
-		<qsos.app.demo.view.widget.NineGridLayout
+		<qsos.app.demo.widget.NineGridLayout
 			android:id="@+id/item_tweet_image_ngl"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"

@@ -1,4 +1,4 @@
-package qsos.app.demo.data
+package qsos.app.demo.tweet
 
 /**
  * @author : 华清松

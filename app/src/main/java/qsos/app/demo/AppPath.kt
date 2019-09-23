@@ -1,4 +1,4 @@
-package qsos.app.demo.router
+package qsos.app.demo
 
 /**
  * @author : 华清松

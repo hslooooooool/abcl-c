@@ -1,4 +1,4 @@
-package qsos.app.demo.utils
+package qsos.app.demo.tweet
 
 import android.app.Activity
 import android.content.Context

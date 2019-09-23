@@ -1,4 +1,4 @@
-package qsos.app.demo.view
+package qsos.app.demo.tweet
 
 import android.os.Bundle
 import android.view.ContextMenu
@@ -16,10 +16,7 @@ import com.scwang.smartrefresh.layout.listener.SimpleMultiPurposeListener
 import kotlinx.android.synthetic.main.app_activity_demo.*
 import kotlinx.android.synthetic.main.app_item_tweet.view.*
 import qsos.app.demo.R
-import qsos.app.demo.data.EmployeeBeen
-import qsos.app.demo.data.TweetModelIml
-import qsos.app.demo.router.AppPath
-import qsos.app.demo.utils.StatusBarUtil
+import qsos.app.demo.AppPath
 import qsos.core.lib.utils.image.ImageLoaderUtils
 import qsos.lib.base.base.activity.BaseActivity
 import qsos.lib.base.base.adapter.BaseNormalAdapter
@@ -34,7 +31,7 @@ import kotlin.math.min
  * 朋友圈界面
  */
 @Route(group = AppPath.GROUP, path = AppPath.TWEET)
-class DemoActivity(
+class TweetActivity(
         override val layoutId: Int? = R.layout.app_activity_demo,
         override val reload: Boolean = false
 ) : BaseActivity() {

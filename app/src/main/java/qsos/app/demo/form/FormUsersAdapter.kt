@@ -1,12 +1,10 @@
-package qsos.app.demo.view
+package qsos.app.demo.form
 
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.view.View
 import kotlinx.coroutines.CoroutineScope
 import qsos.app.demo.R
-import qsos.app.demo.data.UserDatabase
-import qsos.core.form.db.entity.UserEntity
 import qsos.core.form.dbComplete
 import qsos.lib.base.base.adapter.BaseAdapter
 import qsos.lib.base.base.holder.BaseHolder

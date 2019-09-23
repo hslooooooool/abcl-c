@@ -1,4 +1,4 @@
-package qsos.app.demo.view.widget
+package qsos.app.demo.widget
 
 import android.content.Context
 import android.graphics.drawable.Drawable

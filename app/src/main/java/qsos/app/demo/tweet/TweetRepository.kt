@@ -1,4 +1,4 @@
-package qsos.app.demo.data
+package qsos.app.demo.tweet
 
 import android.annotation.SuppressLint
 import io.reactivex.android.schedulers.AndroidSchedulers

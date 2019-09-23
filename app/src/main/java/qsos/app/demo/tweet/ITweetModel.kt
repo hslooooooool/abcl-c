@@ -1,4 +1,4 @@
-package qsos.app.demo.data
+package qsos.app.demo.tweet
 
 import qsos.lib.netservice.IBaseModel
 import qsos.lib.netservice.data.BaseHttpLiveData

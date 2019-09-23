@@ -1,7 +1,6 @@
-package qsos.app.demo.data
+package qsos.app.demo.form
 
 import androidx.room.*
-import qsos.core.form.db.entity.UserEntity
 
 /**
  * @author : 华清松
