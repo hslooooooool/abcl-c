@@ -1,4 +1,4 @@
-package vip.qsos.exception
+package qsos.core.exception
 
 import android.net.ParseException
 import android.os.Environment

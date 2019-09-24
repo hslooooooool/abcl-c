@@ -1,4 +1,4 @@
-package vip.qsos.core_file
+package qsos.core.file
 
 import android.content.Context
 import android.graphics.Bitmap

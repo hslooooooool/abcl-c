@@ -13,8 +13,8 @@ import qsos.lib.netservice.expand.retrofitByDef
 import qsos.lib.netservice.expand.retrofitWithLiveDataByDef
 import retrofit2.HttpException
 import retrofit2.await
-import vip.qsos.exception.GlobalException
-import vip.qsos.exception.GlobalExceptionHelper
+import qsos.core.exception.GlobalException
+import qsos.core.exception.GlobalExceptionHelper
 import kotlin.coroutines.CoroutineContext
 
 /**

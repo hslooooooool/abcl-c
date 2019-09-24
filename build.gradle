@@ -8,7 +8,6 @@ buildscript {
     addRepos(repositories)
 
     dependencies {
-
         classpath 'com.android.tools.build:gradle:3.5.0'
         // kotlin
         classpath deps.kotlin.plugin

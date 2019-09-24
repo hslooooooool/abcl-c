@@ -7,15 +7,15 @@ import com.google.gson.Gson
 import io.reactivex.Observable
 import kotlinx.coroutines.*
 import qsos.app.demo.AppPath
+import qsos.core.file.RxImageConverters
+import qsos.core.file.RxImagePicker
+import qsos.core.file.Sources
 import qsos.core.form.config.IFormConfig
 import qsos.core.form.db.entity.FormValueOfFile
 import qsos.core.form.db.entity.FormValueOfLocation
 import qsos.core.form.db.entity.FormValueOfUser
 import qsos.core.lib.utils.file.FileUtils
 import timber.log.Timber
-import vip.qsos.core_file.RxImageConverters
-import vip.qsos.core_file.RxImagePicker
-import vip.qsos.core_file.Sources
 import java.io.File
 
 /**
@@ -26,7 +26,7 @@ class FormConfig : IFormConfig {
 
     override fun takeCamera(context: Context, formItemId: Long, onSuccess: (FormValueOfFile) -> Any) {
         Timber.tag("表单文件代理").i("拍照")
-        RxImagePicker.with((context as FragmentActivity).supportFragmentManager).requestImage(Sources.CAMERA)
+        RxImagePicker.with((context as FragmentActivity).supportFragmentManager).takeImage(Sources.CAMERA)
                 .flatMap {
                     RxImageConverters.uriToFileObservable(context, it, FileUtils.createImageFile())
                 }
@@ -40,39 +40,43 @@ class FormConfig : IFormConfig {
 
     override fun takeGallery(context: Context, formItemId: Long, canTakeSize: Int, onSuccess: (List<FormValueOfFile>) -> Any) {
         Timber.tag("表单文件代理").i("图库")
-        if (canTakeSize < 2) {
-            RxImagePicker.with((context as FragmentActivity).supportFragmentManager).requestImage(Sources.GALLERY)
-                    .flatMap {
-                        RxImageConverters.uriToFileObservable(context, it, FileUtils.createImageFile())
-                    }
-                    .subscribe {
-                        val file = FormValueOfFile(fileId = "0002", fileName = "图库", filePath = it.absolutePath, fileType = it.extension, fileUrl = it.absolutePath, fileCover = it.absolutePath)
-                        onSuccess.invoke(arrayListOf(file))
-                    }.takeUnless {
-                        context.isFinishing
-                    }
-        } else {
-            RxImagePicker.with((context as FragmentActivity).supportFragmentManager).requestMultipleImages()
-                    .flatMap {
-                        val files = arrayListOf<File>()
-                        it.forEachIndexed { index, uri ->
-                            if (index < canTakeSize) {
-                                RxImageConverters.uriToFile(context, uri, FileUtils.createImageFile())?.let { f ->
-                                    files.add(f)
+        when (canTakeSize) {
+            1 -> {
+                RxImagePicker.with((context as FragmentActivity).supportFragmentManager).takeImage(Sources.GALLERY)
+                        .flatMap {
+                            RxImageConverters.uriToFileObservable(context, it, FileUtils.createImageFile())
+                        }
+                        .subscribe {
+                            val file = FormValueOfFile(fileId = "0002", fileName = "图库", filePath = it.absolutePath, fileType = it.extension, fileUrl = it.absolutePath, fileCover = it.absolutePath)
+                            onSuccess.invoke(arrayListOf(file))
+                        }.takeUnless {
+                            context.isFinishing
+                        }
+            }
+            in 2..9 -> {
+                RxImagePicker.with((context as FragmentActivity).supportFragmentManager).takeImages()
+                        .flatMap {
+                            val files = arrayListOf<File>()
+                            it.forEachIndexed { index, uri ->
+                                if (index < canTakeSize) {
+                                    RxImageConverters.uriToFile(context, uri, FileUtils.createImageFile())?.let { f ->
+                                        files.add(f)
+                                    }
                                 }
                             }
+                            Observable.just(files)
                         }
-                        Observable.just(files)
-                    }
-                    .subscribe {
-                        val files = arrayListOf<FormValueOfFile>()
-                        it.forEach { f ->
-                            files.add(FormValueOfFile(fileId = "0002", fileName = "图库", filePath = f.absolutePath, fileType = f.extension, fileUrl = f.absolutePath, fileCover = f.absolutePath))
+                        .subscribe {
+                            val files = arrayListOf<FormValueOfFile>()
+                            it.forEach { f ->
+                                files.add(FormValueOfFile(fileId = "0002", fileName = "图库", filePath = f.absolutePath, fileType = f.extension, fileUrl = f.absolutePath, fileCover = f.absolutePath))
+                            }
+                            onSuccess.invoke(files)
+                        }.takeUnless {
+                            context.isFinishing
                         }
-                        onSuccess.invoke(files)
-                    }.takeUnless {
-                        context.isFinishing
-                    }
+            }
+            else -> onSuccess(arrayListOf())
         }
     }
 

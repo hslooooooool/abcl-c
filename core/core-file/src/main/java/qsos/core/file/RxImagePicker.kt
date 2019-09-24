@@ -1,4 +1,4 @@
-package vip.qsos.core_file
+package qsos.core.file
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -25,6 +25,7 @@ import java.util.*
  * @author : 华清松
  * 图片选择界面
  */
+@SuppressLint("CheckResult")
 class RxImagePicker : Fragment() {
 
     /**观察是否绑定Activity*/
@@ -38,26 +39,27 @@ class RxImagePicker : Fragment() {
     /**是否为多选*/
     private var isMultiple = false
     /**选择方式*/
-    private var imageSource: Sources? = null
+    private var mTakeType: Int = Sources.GALLERY
     /**选择界面标题 Sources.CHOOSER 时生效*/
-    private var chooserTitle: String? = null
+    private var mChooserTitle: String? = null
 
     /**单图选择*/
-    fun requestImage(source: Sources, chooserTitle: String? = "图片选择"): Observable<Uri> {
+    fun takeImage(@Sources.Type type: Int = Sources.CHOOSER, chooserTitle: String? = "图片选择"): Observable<Uri> {
         initSubjects()
-        this.chooserTitle = chooserTitle
-        isMultiple = false
-        imageSource = source
+        this.isMultiple = false
+        this.mTakeType = type
+        this.mChooserTitle = chooserTitle
         requestPickImage()
         return publishSubject.takeUntil(canceledSubject)
     }
 
     /**多图选择*/
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    fun requestMultipleImages(): Observable<List<Uri>> {
+    fun takeImages(chooserTitle: String? = "图片选择"): Observable<List<Uri>> {
         initSubjects()
-        imageSource = Sources.DOCUMENTS
-        isMultiple = true
+        this.isMultiple = true
+        this.mChooserTitle = chooserTitle
+        this.mTakeType = Sources.DOCUMENTS
         requestPickImage()
         return publishMultipleSubject.takeUntil(canceledSubject)
     }
@@ -66,13 +68,6 @@ class RxImagePicker : Fragment() {
         super.onCreate(savedInstanceState)
         // 保留Fragment
         retainInstance = true
-    }
-
-    private fun initSubjects() {
-        publishSubject = PublishSubject.create()
-        attachedSubject = PublishSubject.create()
-        canceledSubject = PublishSubject.create()
-        publishMultipleSubject = PublishSubject.create()
     }
 
     override fun onAttach(context: Context) {
@@ -97,9 +92,9 @@ class RxImagePicker : Fragment() {
         if (resultCode == RESULT_OK) {
             /**选择结果回调*/
             when (requestCode) {
-                SELECT_PHOTO -> handleGalleryResult(data)
-                TAKE_PHOTO -> pushImage(cameraPictureUrl)
-                CHOOSER -> if (isCamera(data)) pushImage(cameraPictureUrl) else handleGalleryResult(data)
+                Sources.CAMERA -> pushImage(cameraPictureUrl)
+                Sources.GALLERY, Sources.DOCUMENTS -> handleGalleryResult(data)
+                Sources.CHOOSER -> if (isCamera(data)) pushImage(cameraPictureUrl) else handleGalleryResult(data)
             }
         } else {
             /**取消选择*/
@@ -107,36 +102,22 @@ class RxImagePicker : Fragment() {
         }
     }
 
+    /**初始化*/
+    private fun initSubjects() {
+        publishSubject = PublishSubject.create()
+        attachedSubject = PublishSubject.create()
+        canceledSubject = PublishSubject.create()
+        publishMultipleSubject = PublishSubject.create()
+    }
+
     /**是否为拍照照片*/
     private fun isCamera(data: Intent?): Boolean {
         return data == null || data.data == null && data.clipData == null
     }
 
-    /**获取图库选择结果*/
-    private fun handleGalleryResult(data: Intent?) {
-        if (isMultiple) {
-            /**多图回传*/
-            val imageUris = ArrayList<Uri>()
-            val clipData = data?.clipData
-            if (clipData != null) {
-                for (i in 0 until clipData.itemCount) {
-                    imageUris.add(clipData.getItemAt(i).uri)
-                }
-            } else {
-                data?.data?.let { imageUris.add(it) }
-            }
-            pushImageList(imageUris)
-        } else {
-            /**单图回传*/
-            pushImage(data?.data)
-        }
-    }
-
     /**开始图片选择*/
-    @SuppressLint("CheckResult")
     private fun requestPickImage() {
         if (!isAdded) {
-            // 未持有Activity时，绑定观察
             attachedSubject.subscribe {
                 pickImage()
             }
@@ -145,36 +126,31 @@ class RxImagePicker : Fragment() {
         }
     }
 
-    /**图片选取*/
+    /**图片选取方式判断*/
     private fun pickImage() {
         if (!checkPermission()) {
             return
         }
-        var chooseCode = 0
         var pictureChooseIntent: Intent? = null
-        when (imageSource) {
+        when (mTakeType) {
             Sources.CAMERA -> {
                 cameraPictureUrl = createImageUri()
                 pictureChooseIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 pictureChooseIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraPictureUrl)
                 grantWritePermission(context!!, pictureChooseIntent, cameraPictureUrl!!)
-                chooseCode = TAKE_PHOTO
             }
             Sources.GALLERY -> {
                 pictureChooseIntent = createPickFromGalleryIntent()
-                chooseCode = SELECT_PHOTO
             }
             Sources.DOCUMENTS -> {
                 pictureChooseIntent = createPickFromDocumentsIntent()
-                chooseCode = SELECT_PHOTO
             }
             Sources.CHOOSER -> {
-                pictureChooseIntent = createChooserIntent(chooserTitle)
-                chooseCode = CHOOSER
+                pictureChooseIntent = createChooserIntent(mChooserTitle)
             }
         }
 
-        startActivityForResult(pictureChooseIntent, chooseCode)
+        startActivityForResult(pictureChooseIntent, mTakeType)
     }
 
     /**图片选择器*/
@@ -225,6 +201,15 @@ class RxImagePicker : Fragment() {
         return pictureChooseIntent
     }
 
+    /**创建拍照保存路径*/
+    private fun createImageUri(): Uri? {
+        val contentResolver = activity!!.contentResolver
+        val cv = ContentValues()
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        cv.put(MediaStore.Images.Media.TITLE, timeStamp)
+        return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv)
+    }
+
     /**申请文件读写权限*/
     private fun checkPermission(): Boolean {
         return if (ContextCompat.checkSelfPermission(activity!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -237,21 +222,32 @@ class RxImagePicker : Fragment() {
         }
     }
 
-    /**创建拍照保存路径*/
-    private fun createImageUri(): Uri? {
-        val contentResolver = activity!!.contentResolver
-        val cv = ContentValues()
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        cv.put(MediaStore.Images.Media.TITLE, timeStamp)
-        return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv)
-    }
-
     /**申请文件读写权限*/
     private fun grantWritePermission(context: Context, intent: Intent, uri: Uri) {
         val resInfoList = context.packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
         for (resolveInfo in resInfoList) {
             val packageName = resolveInfo.activityInfo.packageName
             context.grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+    }
+
+    /**获取图库选择结果*/
+    private fun handleGalleryResult(data: Intent?) {
+        if (isMultiple) {
+            /**多图回传*/
+            val imageUris = ArrayList<Uri>()
+            val clipData = data?.clipData
+            if (clipData != null) {
+                for (i in 0 until clipData.itemCount) {
+                    imageUris.add(clipData.getItemAt(i).uri)
+                }
+            } else {
+                data?.data?.let { imageUris.add(it) }
+            }
+            pushImageList(imageUris)
+        } else {
+            /**单图回传*/
+            pushImage(data?.data)
         }
     }
 
@@ -273,14 +269,11 @@ class RxImagePicker : Fragment() {
 
     companion object {
 
-        private const val SELECT_PHOTO = 100
-        private const val TAKE_PHOTO = 101
-        private const val CHOOSER = 102
-
-        private val TAG = RxImagePicker::class.java.simpleName
+        private val TAG = RxImagePicker::class.java.name
         /**拍照存储URI*/
         private var cameraPictureUrl: Uri? = null
 
+        /**获取RxImagePicker实例*/
         fun with(fm: FragmentManager): RxImagePicker {
             var rxImagePickerFragment = fm.findFragmentByTag(TAG) as RxImagePicker?
             if (rxImagePickerFragment == null) {

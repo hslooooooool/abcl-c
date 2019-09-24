@@ -1,4 +1,4 @@
-package vip.qsos.exception
+package qsos.core.exception
 
 /**
  * @author : 华清松

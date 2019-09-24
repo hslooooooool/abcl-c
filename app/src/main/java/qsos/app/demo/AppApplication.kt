@@ -13,8 +13,8 @@ import qsos.core.lib.config.BaseConfig
 import qsos.lib.base.base.BaseApplication
 import qsos.lib.base.utils.rx.RxBus
 import timber.log.Timber
-import vip.qsos.exception.GlobalException
-import vip.qsos.exception.GlobalExceptionHelper
+import qsos.core.exception.GlobalException
+import qsos.core.exception.GlobalExceptionHelper
 
 /**
  * @author : 华清松
