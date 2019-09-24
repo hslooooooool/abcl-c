@@ -1,5 +1,6 @@
 package qsos.core.form.config
 
+import android.content.Context
 import qsos.core.form.db.entity.FormValueOfFile
 import qsos.core.form.db.entity.FormValueOfUser
 
@@ -14,12 +15,12 @@ interface IFormPreviewConfig {
      * @param index 当前预览文件下标
      * @param formValueOfFiles 可预览的图片集合
      */
-    fun previewFile(index: Int, formValueOfFiles: List<FormValueOfFile>)
+    fun previewFile(context: Context, index: Int, formValueOfFiles: List<FormValueOfFile>)
 
     /**
      * 人员预览
      * @param index 当前预览人员下标
      * @param formValueOfUser 可预览的人员集合
      */
-    fun previewUser(index: Int, formValueOfUser: List<FormValueOfUser>)
+    fun previewUser(context: Context, index: Int, formValueOfUser: List<FormValueOfUser>)
 }

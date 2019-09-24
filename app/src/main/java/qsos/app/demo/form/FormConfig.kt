@@ -1,14 +1,22 @@
 package qsos.app.demo.form
 
+import android.content.Context
+import androidx.fragment.app.FragmentActivity
 import com.alibaba.android.arouter.launcher.ARouter
 import com.google.gson.Gson
+import io.reactivex.Observable
 import kotlinx.coroutines.*
 import qsos.app.demo.AppPath
 import qsos.core.form.config.IFormConfig
 import qsos.core.form.db.entity.FormValueOfFile
 import qsos.core.form.db.entity.FormValueOfLocation
 import qsos.core.form.db.entity.FormValueOfUser
+import qsos.core.lib.utils.file.FileUtils
 import timber.log.Timber
+import vip.qsos.core_file.RxImageConverters
+import vip.qsos.core_file.RxImagePicker
+import vip.qsos.core_file.Sources
+import java.io.File
 
 /**
  * @author : 华清松
@@ -16,31 +24,59 @@ import timber.log.Timber
  */
 class FormConfig : IFormConfig {
 
-    override fun takeCamera(formItemId: Long, onSuccess: (FormValueOfFile) -> Any) {
+    override fun takeCamera(context: Context, formItemId: Long, onSuccess: (FormValueOfFile) -> Any) {
         Timber.tag("表单文件代理").i("拍照")
-        CoroutineScope(Job()).launch(Dispatchers.Main) {
-            val takeFile = async(Dispatchers.IO) {
-                val file = FormValueOfFile(fileId = "0001", fileName = "拍照", filePath = "/0/data/vip.qsos.demo/temp/logo.png", fileType = ".png", fileUrl = "http://www.qsos.vip/resource/logo.png", fileCover = "http://www.qsos.vip/resource/logo.png")
-                file
-            }
-            val file = takeFile.await()
-            onSuccess.invoke(file)
-        }
+        RxImagePicker.with((context as FragmentActivity).supportFragmentManager).requestImage(Sources.CAMERA)
+                .flatMap {
+                    RxImageConverters.uriToFileObservable(context, it, FileUtils.createImageFile())
+                }
+                .subscribe {
+                    val file = FormValueOfFile(fileId = "0001", fileName = "拍照", filePath = it.absolutePath, fileType = it.extension, fileUrl = it.absolutePath, fileCover = it.absolutePath)
+                    onSuccess.invoke(file)
+                }.takeUnless {
+                    context.isFinishing
+                }
     }
 
-    override fun takeGallery(formItemId: Long, canTakeSize: Int, onSuccess: (List<FormValueOfFile>) -> Any) {
+    override fun takeGallery(context: Context, formItemId: Long, canTakeSize: Int, onSuccess: (List<FormValueOfFile>) -> Any) {
         Timber.tag("表单文件代理").i("图库")
-        CoroutineScope(Job()).launch(Dispatchers.Main) {
-            val takeFile = async(Dispatchers.IO) {
-                val file = FormValueOfFile(fileId = "0002", fileName = "图库", filePath = "/0/data/vip.qsos.demo/temp/logo.jpg", fileType = ".jpg", fileUrl = "http://www.qsos.vip/resource/logo.jpg", fileCover = "http://www.qsos.vip/resource/logo.jpg")
-                file
-            }
-            val file = takeFile.await()
-            onSuccess.invoke(arrayListOf(file))
+        if (canTakeSize < 2) {
+            RxImagePicker.with((context as FragmentActivity).supportFragmentManager).requestImage(Sources.GALLERY)
+                    .flatMap {
+                        RxImageConverters.uriToFileObservable(context, it, FileUtils.createImageFile())
+                    }
+                    .subscribe {
+                        val file = FormValueOfFile(fileId = "0002", fileName = "图库", filePath = it.absolutePath, fileType = it.extension, fileUrl = it.absolutePath, fileCover = it.absolutePath)
+                        onSuccess.invoke(arrayListOf(file))
+                    }.takeUnless {
+                        context.isFinishing
+                    }
+        } else {
+            RxImagePicker.with((context as FragmentActivity).supportFragmentManager).requestMultipleImages()
+                    .flatMap {
+                        val files = arrayListOf<File>()
+                        it.forEachIndexed { index, uri ->
+                            if (index < canTakeSize) {
+                                RxImageConverters.uriToFile(context, uri, FileUtils.createImageFile())?.let { f ->
+                                    files.add(f)
+                                }
+                            }
+                        }
+                        Observable.just(files)
+                    }
+                    .subscribe {
+                        val files = arrayListOf<FormValueOfFile>()
+                        it.forEach { f ->
+                            files.add(FormValueOfFile(fileId = "0002", fileName = "图库", filePath = f.absolutePath, fileType = f.extension, fileUrl = f.absolutePath, fileCover = f.absolutePath))
+                        }
+                        onSuccess.invoke(files)
+                    }.takeUnless {
+                        context.isFinishing
+                    }
         }
     }
 
-    override fun takeVideo(formItemId: Long, canTakeSize: Int, onSuccess: (List<FormValueOfFile>) -> Any) {
+    override fun takeVideo(context: Context, formItemId: Long, canTakeSize: Int, onSuccess: (List<FormValueOfFile>) -> Any) {
         Timber.tag("表单文件代理").i("视频")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeFile = async(Dispatchers.IO) {
@@ -52,7 +88,7 @@ class FormConfig : IFormConfig {
         }
     }
 
-    override fun takeAudio(formItemId: Long, onSuccess: (FormValueOfFile) -> Any) {
+    override fun takeAudio(context: Context, formItemId: Long, onSuccess: (FormValueOfFile) -> Any) {
         Timber.tag("表单文件代理").i("音频")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeFile = async(Dispatchers.IO) {
@@ -64,7 +100,7 @@ class FormConfig : IFormConfig {
         }
     }
 
-    override fun takeFile(formItemId: Long, canTakeSize: Int, mimeTypes: List<String>, onSuccess: (List<FormValueOfFile>) -> Any) {
+    override fun takeFile(context: Context, formItemId: Long, canTakeSize: Int, mimeTypes: List<String>, onSuccess: (List<FormValueOfFile>) -> Any) {
         Timber.tag("表单文件代理").i("文件")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeFile = async(Dispatchers.IO) {
@@ -80,7 +116,7 @@ class FormConfig : IFormConfig {
         }
     }
 
-    override fun takeLocation(formItemId: Long, location: FormValueOfLocation?, onSuccess: (FormValueOfLocation) -> Any) {
+    override fun takeLocation(context: Context, formItemId: Long, location: FormValueOfLocation?, onSuccess: (FormValueOfLocation) -> Any) {
         Timber.tag("表单位置代理").i("位置，已有位置${Gson().toJson(location)}")
         CoroutineScope(Job()).launch(Dispatchers.Main) {
             val takeLocation = async(Dispatchers.IO) {
@@ -91,7 +127,7 @@ class FormConfig : IFormConfig {
         }
     }
 
-    override fun takeUser(formItemId: Long, canTakeSize: Int, checkedUsers: List<FormValueOfUser>, onSuccess: (List<FormValueOfUser>) -> Any) {
+    override fun takeUser(context: Context, formItemId: Long, canTakeSize: Int, checkedUsers: List<FormValueOfUser>, onSuccess: (List<FormValueOfUser>) -> Any) {
         Timber.tag("表单用户代理").i("用户，已有用户${Gson().toJson(checkedUsers)}")
         ARouter.getInstance().build(AppPath.FORM_ITEM_USERS)
                 .withLong(AppPath.FORM_ITEM_ID, formItemId)
@@ -111,11 +147,11 @@ class FormConfig : IFormConfig {
 //        }
     }
 
-    override fun previewFile(index: Int, formValueOfFiles: List<FormValueOfFile>) {
+    override fun previewFile(context: Context, index: Int, formValueOfFiles: List<FormValueOfFile>) {
         Timber.tag("表单文件预览代理").i("文件$index")
     }
 
-    override fun previewUser(index: Int, formValueOfUser: List<FormValueOfUser>) {
+    override fun previewUser(context: Context, index: Int, formValueOfUser: List<FormValueOfUser>) {
         Timber.tag("表单用户预览代理").i("用户$index")
     }
 }

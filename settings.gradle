@@ -3,11 +3,13 @@
 include ':app'
 
 /*****************************************功能组件 CORE***************************************************/
-// 自定义表单模块
+// 文件操作模块
+include ':core:core-file'
+// 动态表单模块
 include ':core:core-form'
 // 网络请求模块
 include ':core:core-netservice'
-// 全局异常处理模块
+// 异常处理模块
 include ':core:core-exception'
 // 基础依赖集合
 include ':core:core-lib'

@@ -561,6 +561,14 @@ object FileUtils {
         return file
     }
 
+    fun createImageFile(): File? {
+        return try {
+            File(IMAGE_PATH, "图片-" + System.currentTimeMillis().toString() + ".jpeg")
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     fun createMovieFile(): File? {
         return try {
             File(VIDEO_PATH, "视频-" + System.currentTimeMillis().toString() + ".mp4")

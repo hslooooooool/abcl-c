@@ -91,7 +91,7 @@ class FormAdapter(
             }
             /**选择人员*/
             R.id.item_form_users_size -> {
-                FormConfigHelper.takeUser(data[position].id!!, canTakeSize, data[position].formItemValue!!.values!!.map { v -> v.user!! }) {
+                FormConfigHelper.takeUser(mContext, data[position].id!!, canTakeSize, data[position].formItemValue!!.values!!.map { v -> v.user!! }) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         data[position].formItemValue!!.values!!.removeIf { v -> !v.limitEdit }
                     } else {
@@ -122,7 +122,7 @@ class FormAdapter(
             }
             /**选择位置*/
             R.id.item_form_location -> {
-                FormConfigHelper.takeLocation(data[position].id!!, data[position].formItemValue?.value?.location) {
+                FormConfigHelper.takeLocation(mContext, data[position].id!!, data[position].formItemValue?.value?.location) {
                     Timber.tag("表单位置获取结果").i(Gson().toJson(it))
                     data[position].formItemValue!!.value!!.location = it
                     updateFormItemValueByPosition(position)
@@ -268,32 +268,32 @@ class FormAdapter(
         } else {
             var size: Int = data[position].formItemValue!!.values?.size ?: 0
             when (view.id) {
-                R.id.form_item_file_take_camera -> FormConfigHelper.takeCamera(data[position].id!!) {
+                R.id.form_item_file_take_camera -> FormConfigHelper.takeCamera(mContext, data[position].id!!) {
                     Timber.tag("表单拍照获取结果").i(Gson().toJson(it))
                     val v = Value(position = size++).newFile(it, formItemId = data[position].id)
                     addFormItemValueByPosition(position, v)
                 }
-                R.id.form_item_file_take_album -> FormConfigHelper.takeGallery(data[position].id!!, canTakeSize) {
+                R.id.form_item_file_take_album -> FormConfigHelper.takeGallery(mContext, data[position].id!!, canTakeSize) {
                     Timber.tag("表单图库获取结果").i(Gson().toJson(it))
                     it.forEach { file ->
                         val v = Value(position = size++).newFile(file, formItemId = data[position].id)
                         addFormItemValueByPosition(position, v)
                     }
                 }
-                R.id.form_item_file_take_video -> FormConfigHelper.takeVideo(data[position].id!!, canTakeSize) {
+                R.id.form_item_file_take_video -> FormConfigHelper.takeVideo(mContext, data[position].id!!, canTakeSize) {
                     Timber.tag("表单视频获取结果").i(Gson().toJson(it))
                     it.forEach { file ->
                         val v = Value(position = size++).newFile(file, formItemId = data[position].id)
                         addFormItemValueByPosition(position, v)
                     }
                 }
-                R.id.form_item_file_take_audio -> FormConfigHelper.takeAudio(data[position].id!!) {
+                R.id.form_item_file_take_audio -> FormConfigHelper.takeAudio(mContext, data[position].id!!) {
                     Timber.tag("表单音频获取结果").i(Gson().toJson(it))
                     val v = Value(position = size++).newFile(it, formItemId = data[position].id)
                     addFormItemValueByPosition(position, v)
                 }
                 R.id.form_item_file_take_file -> {
-                    FormConfigHelper.takeFile(data[position].id!!, canTakeSize, data[position].formItemValue!!.limitTypeList!!) {
+                    FormConfigHelper.takeFile(mContext, data[position].id!!, canTakeSize, data[position].formItemValue!!.limitTypeList!!) {
                         Timber.tag("表单文件获取结果").i(Gson().toJson(it))
                         it.forEach { file ->
                             val v = Value(position = size++).newFile(file, formItemId = data[position].id)

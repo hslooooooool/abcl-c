@@ -3,7 +3,6 @@ package qsos.core.form.view.hodler
 import android.annotation.SuppressLint
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.form_item_user.view.*
 import kotlinx.android.synthetic.main.form_item_user_item.view.*
 import kotlinx.android.synthetic.main.form_normal_title.view.*
@@ -35,7 +34,7 @@ class FormItemUserHolder(
     override fun setData(data: FormItem, position: Int) {
         itemView.form_item_title.text = "${data.title}"
         itemView.item_form_users_size.text = "${data.formItemValue!!.values!!.size}\t人"
-        itemView.item_form_users_rv.layoutManager = GridLayoutManager(itemView.context, 4) as RecyclerView.LayoutManager?
+        itemView.item_form_users_rv.layoutManager = GridLayoutManager(itemView.context, 4)
         itemView.item_form_users_rv.isNestedScrollingEnabled = false
         val values: ArrayList<Value> = data.formItemValue?.values!!
         itemView.item_form_users_rv.adapter = BaseNormalAdapter(R.layout.form_item_user_item, values,
@@ -58,7 +57,7 @@ class FormItemUserHolder(
                         }
                     }
                     holder.itemView.item_form_user_icon.setOnClickListener {
-                        FormConfigHelper.previewUser(p, values.map { it.user!! })
+                        FormConfigHelper.previewUser(it.context, p, values.map { it.user!! })
                     }
                 })
 
