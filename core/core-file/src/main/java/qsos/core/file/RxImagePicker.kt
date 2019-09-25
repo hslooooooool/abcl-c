@@ -41,15 +41,28 @@ class RxImagePicker : Fragment() {
     /**选择方式*/
     private var mTakeType: Int = Sources.GALLERY
     /**选择界面标题 Sources.CHOOSER 时生效*/
-    private var mChooserTitle: String? = null
+    private var mChooserTitle: String? = "选择"
+    /**默认限制录制时长为10秒*/
+    private var mLimitTime: Int = 10000
 
     /**单图选择*/
-    fun takeImage(@Sources.Type type: Int = Sources.CHOOSER, chooserTitle: String? = "图片选择"): Observable<Uri> {
+    fun takeImage(@Sources.Type type: Int = Sources.CHOOSER, chooserTitle: String = "图片选择"): Observable<Uri> {
         initSubjects()
         this.isMultiple = false
         this.mTakeType = type
         this.mChooserTitle = chooserTitle
         requestPickImage()
+        return publishSubject.takeUntil(canceledSubject)
+    }
+
+    /**视频选择*/
+    fun takeVideo(@Sources.Type type: Int = Sources.CHOOSER, limitTime: Int = 10000, chooserTitle: String = "视频选择"): Observable<Uri> {
+        initSubjects()
+        this.isMultiple = false
+        this.mTakeType = type
+        this.mLimitTime = limitTime
+        this.mChooserTitle = chooserTitle
+        requestPickVideo()
         return publishSubject.takeUntil(canceledSubject)
     }
 
@@ -92,9 +105,9 @@ class RxImagePicker : Fragment() {
         if (resultCode == RESULT_OK) {
             /**选择结果回调*/
             when (requestCode) {
-                Sources.CAMERA -> pushImage(cameraPictureUrl)
+                Sources.CAMERA -> pushImage(temFileUri)
                 Sources.GALLERY, Sources.DOCUMENTS -> handleGalleryResult(data)
-                Sources.CHOOSER -> if (isCamera(data)) pushImage(cameraPictureUrl) else handleGalleryResult(data)
+                Sources.CHOOSER -> if (isCamera(data)) pushImage(temFileUri) else handleGalleryResult(data)
             }
         } else {
             /**取消选择*/
@@ -126,6 +139,17 @@ class RxImagePicker : Fragment() {
         }
     }
 
+    /**开始视频选择*/
+    private fun requestPickVideo() {
+        if (!isAdded) {
+            attachedSubject.subscribe {
+                pickVideo()
+            }
+        } else {
+            pickVideo()
+        }
+    }
+
     /**图片选取方式判断*/
     private fun pickImage() {
         if (!checkPermission()) {
@@ -134,59 +158,66 @@ class RxImagePicker : Fragment() {
         var pictureChooseIntent: Intent? = null
         when (mTakeType) {
             Sources.CAMERA -> {
-                cameraPictureUrl = createImageUri()
-                pictureChooseIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                pictureChooseIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraPictureUrl)
-                grantWritePermission(context!!, pictureChooseIntent, cameraPictureUrl!!)
+                temFileUri = createImageUri()
+                pictureChooseIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
+                    it.putExtra(MediaStore.EXTRA_OUTPUT, temFileUri)
+                    grantWritePermission(context!!, it, temFileUri!!)
+                }
             }
             Sources.GALLERY -> {
-                pictureChooseIntent = createPickFromGalleryIntent()
+                pictureChooseIntent = createPickFromGalleryIntent("image/*")
             }
             Sources.DOCUMENTS -> {
-                pictureChooseIntent = createPickFromDocumentsIntent()
+                pictureChooseIntent = createPickFromDocumentsIntent("image/*")
             }
             Sources.CHOOSER -> {
-                pictureChooseIntent = createChooserIntent(mChooserTitle)
+                pictureChooseIntent = createImageChooserIntent(mChooserTitle)
             }
         }
 
         startActivityForResult(pictureChooseIntent, mTakeType)
     }
 
-    /**图片选择器*/
-    private fun createChooserIntent(chooserTitle: String?): Intent {
-        cameraPictureUrl = createImageUri()
-        val cameraIntents = ArrayList<Intent>()
-        val captureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        val packageManager = context!!.packageManager
-        val camList = packageManager.queryIntentActivities(captureIntent, 0)
-        for (res in camList) {
-            val packageName = res.activityInfo.packageName
-            val intent = Intent(captureIntent)
-            intent.component = ComponentName(res.activityInfo.packageName, res.activityInfo.name)
-            intent.setPackage(packageName)
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraPictureUrl)
-            grantWritePermission(context!!, intent, cameraPictureUrl!!)
-            cameraIntents.add(intent)
+    /**视频选取方式判断*/
+    private fun pickVideo() {
+        if (!checkPermission()) {
+            return
         }
-        val galleryIntent = createPickFromDocumentsIntent()
-        val chooserIntent = Intent.createChooser(galleryIntent, chooserTitle)
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toTypedArray())
-        return chooserIntent
+        var pictureChooseIntent: Intent? = null
+        when (mTakeType) {
+            Sources.CAMERA -> {
+                temFileUri = createVideoUri()
+                pictureChooseIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE).also {
+                    it.putExtra(MediaStore.EXTRA_OUTPUT, temFileUri)
+                    grantWritePermission(context!!, it, temFileUri!!)
+                }
+            }
+            Sources.GALLERY -> {
+                pictureChooseIntent = createPickFromGalleryIntent("video/*")
+            }
+            Sources.DOCUMENTS -> {
+                pictureChooseIntent = createPickFromDocumentsIntent("video/*")
+            }
+            Sources.CHOOSER -> {
+                pictureChooseIntent = createVideoChooserIntent()
+            }
+        }
+
+        startActivityForResult(pictureChooseIntent, mTakeType)
     }
 
     /**构建图库选择Intent*/
-    private fun createPickFromGalleryIntent(): Intent {
+    private fun createPickFromGalleryIntent(mimiType: String = "*/*"): Intent {
         val pictureChooseIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             pictureChooseIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple)
         }
-        pictureChooseIntent.type = "image/*"
+        pictureChooseIntent.type = mimiType
         return pictureChooseIntent
     }
 
     /**构建文档管理选择Intent*/
-    private fun createPickFromDocumentsIntent(): Intent {
+    private fun createPickFromDocumentsIntent(mimiType: String = "*/*"): Intent {
         val pictureChooseIntent: Intent
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             pictureChooseIntent = Intent(Intent.ACTION_OPEN_DOCUMENT)
@@ -197,16 +228,71 @@ class RxImagePicker : Fragment() {
         }
         pictureChooseIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
         pictureChooseIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        pictureChooseIntent.type = "image/*"
+        pictureChooseIntent.type = mimiType
         return pictureChooseIntent
+    }
+
+    /**构建图片选择器Intent*/
+    private fun createImageChooserIntent(chooserTitle: String?): Intent {
+        temFileUri = createImageUri()
+        val cameraIntents = ArrayList<Intent>()
+        val captureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val packageManager = context!!.packageManager
+        val camList = packageManager.queryIntentActivities(captureIntent, 0)
+        for (res in camList) {
+            val packageName = res.activityInfo.packageName
+            val intent = Intent(captureIntent)
+            intent.component = ComponentName(res.activityInfo.packageName, res.activityInfo.name)
+            intent.setPackage(packageName)
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, temFileUri)
+            grantWritePermission(context!!, intent, temFileUri!!)
+            cameraIntents.add(intent)
+        }
+        val galleryIntent = createPickFromDocumentsIntent()
+        val chooserIntent = Intent.createChooser(galleryIntent, chooserTitle)
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toTypedArray())
+        return chooserIntent
+    }
+
+    /**构建视频选择器Intent*/
+    private fun createVideoChooserIntent(): Intent {
+        temFileUri = createVideoUri()
+        val cameraIntents = ArrayList<Intent>()
+        val captureIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+        // 某些手机此设置是不生效的，需要自行封装解决
+        captureIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, mLimitTime)
+        val packageManager = context!!.packageManager
+        val camList = packageManager.queryIntentActivities(captureIntent, 0)
+        for (res in camList) {
+            val packageName = res.activityInfo.packageName
+            val intent = Intent(captureIntent)
+            intent.component = ComponentName(res.activityInfo.packageName, res.activityInfo.name)
+            intent.setPackage(packageName)
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, temFileUri)
+            grantWritePermission(context!!, intent, temFileUri!!)
+            cameraIntents.add(intent)
+        }
+        val galleryIntent = createPickFromDocumentsIntent("video/*")
+        val chooserIntent = Intent.createChooser(galleryIntent, mChooserTitle)
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toTypedArray())
+        return chooserIntent
     }
 
     /**创建拍照保存路径*/
     private fun createImageUri(): Uri? {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val contentResolver = activity!!.contentResolver
         val cv = ContentValues()
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         cv.put(MediaStore.Images.Media.TITLE, timeStamp)
+        return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv)
+    }
+
+    /**创建录像保存路径*/
+    private fun createVideoUri(): Uri? {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val contentResolver = activity!!.contentResolver
+        val cv = ContentValues()
+        cv.put(MediaStore.Video.Media.TITLE, timeStamp)
         return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv)
     }
 
@@ -271,7 +357,7 @@ class RxImagePicker : Fragment() {
 
         private val TAG = RxImagePicker::class.java.name
         /**拍照存储URI*/
-        private var cameraPictureUrl: Uri? = null
+        private var temFileUri: Uri? = null
 
         /**获取RxImagePicker实例*/
         fun with(fm: FragmentManager): RxImagePicker {

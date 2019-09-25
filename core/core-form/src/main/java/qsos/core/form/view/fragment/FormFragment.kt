@@ -51,14 +51,17 @@ class FormFragment(
         }
 
         RxPermissions(this).request(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA, Manifest.permission.READ_PHONE_STATE
-        ).subscribe {
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA
+        ).subscribe({
             if (!it) {
-                ToastUtils.showToastLong(mContext, "请前往设置开启权限方可使用表单功能")
+                ToastUtils.showToastLong(mContext, "权限开启失败，无法使用此功能")
                 activity?.finish()
             }
-        }
+        }, {
+            it.printStackTrace()
+        })
 
         form_main_rv.layoutManager = LinearLayoutManager(mContext)
         mAdapter = FormAdapter(mFormList, mJob)

@@ -22,8 +22,8 @@ import android.widget.RelativeLayout
 import androidx.core.content.FileProvider
 import okhttp3.ResponseBody
 import qsos.core.lib.utils.image.ImageLoaderUtils
-import qsos.lib.base.BuildConfig
 import qsos.lib.base.R
+import qsos.lib.base.base.BaseApplication
 import qsos.lib.base.callback.OnTListener
 import qsos.lib.base.utils.ToastUtils
 import top.zibin.luban.Luban
@@ -40,25 +40,20 @@ import java.text.DecimalFormat
  * 文件工具类
  */
 object FileUtils {
-    /**上传图片大小限制*/
-    const val M10 = 10 * 1048576L
-    /**上传文件大小限制*/
-    const val M30 = 30 * 1048576L
-
-    /**配置当前APP缓存保存地址，默认认为手机有SD存储*/
-    private var sdPath = "${getDefaultAppPath()}/${BuildConfig.LIBRARY_PACKAGE_NAME}"
-    /**缓存地址，NOTICE 设计此地址内的所有文件应该在APP里面包含的清除缓存功能可以被删除*/
-    private val CACHE_PATH = "$sdPath/cache"
-    /**视频地址*/
-    val VIDEO_PATH = "$CACHE_PATH/video"
-    /**图片地址*/
-    val IMAGE_PATH = "$CACHE_PATH/image"
-    /**录音地址*/
-    val AUDIO_PATH = "$CACHE_PATH/audio"
-    /**下载地址*/
-    val DOWNLOAD_PATH = "$CACHE_PATH/download"
-    /**其它文件*/
-    val OTHER_PATH = "$CACHE_PATH/other"
+    var mContext: BaseApplication = BaseApplication.appContext
+    /**手机是否有SD存储*/
+    private var hasSDCard = checkSDStatus()
+    /**缓存地址*/
+    var CACHE_PATH: String = BaseApplication.appContext.getExternalFilesDir(null)?.path
+            ?: BaseApplication.appContext.filesDir.path
+    /**音视频缓存地址*/
+    var MEDIA_PATH: String
+    /**图片缓存地址*/
+    var IMAGE_PATH: String
+    /**下载缓存地址*/
+    var DOWNLOAD_PATH: String
+    /**其它文件缓存地址*/
+    var OTHER_PATH: String
 
     /**媒体类型*/
     private val MIME_TABLE = arrayOf(
@@ -145,16 +140,24 @@ object FileUtils {
     )
 
     init {
-        createFileHolder(IMAGE_PATH)
-        createFileHolder(VIDEO_PATH)
-        createFileHolder(AUDIO_PATH)
-        createFileHolder(DOWNLOAD_PATH)
-        createFileHolder(OTHER_PATH)
+        IMAGE_PATH = "$CACHE_PATH/image/"
+        MEDIA_PATH = "$CACHE_PATH/media/"
+        DOWNLOAD_PATH = "$CACHE_PATH/download/"
+        OTHER_PATH = "$CACHE_PATH/other/"
+        initFile(IMAGE_PATH)
+        initFile(MEDIA_PATH)
+        initFile(DOWNLOAD_PATH)
+        initFile(OTHER_PATH)
+    }
+
+    /**检查SD卡是否可用*/
+    private fun checkSDStatus(): Boolean {
+        return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
     }
 
     /**创建文件夹或文件*/
     @JvmStatic
-    fun createFileHolder(fileHolder: String) {
+    fun initFile(fileHolder: String) {
         val file = File(fileHolder)
         if (!file.exists()) {
             file.mkdirs()
@@ -184,6 +187,7 @@ object FileUtils {
 
     /**调用本地应用打开文件*/
     @Throws(Exception::class)
+    @JvmStatic
     fun openFileOnPhone(activity: Activity, file: File) {
         val intent = Intent()
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -210,6 +214,7 @@ object FileUtils {
         }
     }
 
+    @JvmStatic
     fun getFile(context: Context, contentUri: Uri): File? {
         return try {
             File(getRealPathFromUri(context, contentUri))
@@ -251,31 +256,11 @@ object FileUtils {
         }
     }
 
-    /**检查是否有SD卡*/
-    fun checkSDStatus(): Boolean {
-        return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
-    }
-
     /**获得默认的下载地址*/
+    @JvmStatic
     private fun getDefaultDownLoadPath(): String {
         return if (checkSDStatus()) Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
         else Environment.getDownloadCacheDirectory().absolutePath
-    }
-
-    /**获得默认的可用存储地址*/
-    private fun getDefaultAppPath(): String {
-        return if (checkSDStatus()) Environment.getExternalStorageDirectory().path
-        else Environment.getDataDirectory().path
-    }
-
-    /**
-     * 获取当前APP缓存地址保存以fileName为名的文件路径
-     * @param context 当前活动
-     * @param fileName 文件名称
-     * @return
-     */
-    fun getAppCancelPath(context: Context, fileName: String): String {
-        return "${context.externalCacheDir}/$fileName"
     }
 
     /**检查文件是否存在*/
@@ -561,17 +546,19 @@ object FileUtils {
         return file
     }
 
+    /**创建一个图片文件*/
     fun createImageFile(): File? {
         return try {
-            File(IMAGE_PATH, "图片-" + System.currentTimeMillis().toString() + ".jpeg")
+            File(IMAGE_PATH, "IMAGE_" + System.currentTimeMillis().toString() + ".jpg")
         } catch (e: Exception) {
             null
         }
     }
 
+    /**创建一个视频文件*/
     fun createMovieFile(): File? {
         return try {
-            File(VIDEO_PATH, "视频-" + System.currentTimeMillis().toString() + ".mp4")
+            File(MEDIA_PATH, "MOVIE_" + System.currentTimeMillis().toString() + ".mp4")
         } catch (e: Exception) {
             null
         }

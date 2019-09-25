@@ -12,7 +12,6 @@
 		android:theme="@style/AppTheme"
 		tools:replace="android:label,android:icon,android:theme">
 		
-		<!--共享文件夹-->
 		<activity
 			android:name="qsos.app.demo.SplashActivity"
 			android:configChanges="orientation|keyboardHidden|screenSize"
@@ -32,16 +31,7 @@
 		
 		<!--用户选择界面-->
 		<activity android:name="qsos.app.demo.form.FormUserChoseActivity" />
-		
-		<provider
-			android:name="qsos.app.demo.AppFileProvider"
-			android:authorities="${applicationId}.provider"
-			android:exported="false"
-			android:grantUriPermissions="true">
-			<meta-data
-				android:name="android.support.FILE_PROVIDER_PATHS"
-				android:resource="@xml/app_file_paths" />
-		</provider>
+	
 	</application>
 	
 	<uses-permission
@@ -57,7 +47,6 @@
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
 	<uses-permission android:name="android.permission.CAMERA" />
-	
 	<uses-permission android:name="android.permission.RECORD_AUDIO" />
 
 </manifest>
