@@ -241,14 +241,16 @@ object FileUtils {
         }
     }
 
-    private fun getRealPathFromUri(context: Context, contentUri: Uri): String {
+    /**通过URI获取文件名称*/
+    fun getRealPathFromUri(context: Context, contentUri: Uri): String {
         var cursor: Cursor? = null
         return try {
             val pro = arrayOf(MediaStore.Images.Media.DATA)
             cursor = context.contentResolver.query(contentUri, pro, null, null, null)
             val columnIndex = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
             cursor.moveToFirst()
-            cursor.getString(columnIndex)
+            val name = cursor.getString(columnIndex)
+            getFileNameByPath(name)
         } catch (e: Exception) {
             contentUri.path ?: ""
         } finally {
@@ -258,7 +260,7 @@ object FileUtils {
 
     /**获得默认的下载地址*/
     @JvmStatic
-    private fun getDefaultDownLoadPath(): String {
+    fun getDefaultDownLoadPath(): String {
         return if (checkSDStatus()) Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
         else Environment.getDownloadCacheDirectory().absolutePath
     }
@@ -271,7 +273,7 @@ object FileUtils {
 
     /**创建文件*/
     @Throws(IOException::class)
-    private fun createFile(path: String): Boolean {
+    fun createFile(path: String): Boolean {
         if (!checkExistence(path)) {
             val temp = File(path)
             temp.createNewFile()
@@ -320,12 +322,12 @@ object FileUtils {
     }
 
     /**
-     * 从url中，获得默认文件名
+     * 从路径中，获得文件名
      */
-    fun getFileNameByUrl(url: String?): String {
-        if (url == null || url.isEmpty()) return "unknown"
-        val nameStart = url.lastIndexOf('/') + 1
-        return url.substring(nameStart)
+    fun getFileNameByPath(path: String?): String {
+        if (path == null || path.isEmpty()) return "unknown"
+        val nameStart = path.lastIndexOf('/') + 1
+        return path.substring(nameStart)
     }
 
     /**

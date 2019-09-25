@@ -6,7 +6,6 @@ import android.net.Uri
 import android.provider.MediaStore
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.io.IOException
@@ -40,7 +39,7 @@ object RxImageConverters {
             } catch (e: Exception) {
                 emitter.onError(e)
             }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        }).subscribeOn(Schedulers.io())
     }
 
     /**转为Bitmap*/
@@ -53,7 +52,7 @@ object RxImageConverters {
             } catch (e: IOException) {
                 emitter.onError(e)
             }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        }).subscribeOn(Schedulers.io())
     }
 
     private fun File.copyInputStreamToFile(inputStream: InputStream) {

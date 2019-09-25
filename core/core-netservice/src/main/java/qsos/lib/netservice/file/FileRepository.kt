@@ -37,7 +37,7 @@ class FileRepository(
             fileEntity.loadMsg = "下载失败，链接错误"
             listener.back(fileEntity)
         } else {
-            val saveName = fileEntity.filename ?: FileUtils.getFileNameByUrl(fileEntity.url)
+            val saveName = fileEntity.filename ?: FileUtils.getFileNameByPath(fileEntity.url)
             val savePath = fileEntity.path ?: "${FileUtils.DOWNLOAD_PATH}/$saveName"
             fileEntity.path = savePath
             ApiEngine.createService(ApiDownloadFile::class.java).downloadFile(fileEntity.url!!)

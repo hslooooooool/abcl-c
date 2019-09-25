@@ -16,6 +16,11 @@ open class Sources {
         const val MULTI: Int = 3
         /**自选操作，相机或单选*/
         const val CHOOSER: Int = 4
+
+        /**值设置是否超出范围*/
+        fun overNumber(num: Int): Boolean {
+            return num < 1 || num > 4
+        }
     }
 
     @IntDef(CAMERA, ONE, CHOOSER)

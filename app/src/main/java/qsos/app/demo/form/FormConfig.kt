@@ -24,6 +24,9 @@ import java.io.File
  */
 class FormConfig : IFormConfig {
 
+    /**临时存放文件对应的名称*/
+    data class KV<T>(val name: String, val value: T)
+
     override fun takeCamera(context: Context, formItemId: Long, onSuccess: (FormValueOfFile) -> Any) {
         Timber.tag("表单文件代理").i("拍照")
         RxImagePicker.with((context as FragmentActivity).supportFragmentManager).takeImage(Sources.CAMERA)
@@ -42,12 +45,16 @@ class FormConfig : IFormConfig {
         Timber.tag("表单文件代理").i("图库")
         when (canTakeSize) {
             1 -> {
+                var kv: KV<File>
                 RxImagePicker.with((context as FragmentActivity).supportFragmentManager).takeImage(Sources.ONE)
-                        .flatMap {
-                            RxImageConverters.uriToFileObservable(context, it, FileUtils.createImageFile())
+                        .flatMap { uri ->
+                            RxImageConverters.uriToFile(context, uri, FileUtils.createImageFile())?.let {
+                                kv = KV(FileUtils.getRealPathFromUri(context, uri), it)
+                                Observable.just(kv)
+                            }
                         }
                         .subscribe {
-                            val file = FormValueOfFile(fileId = "0002", fileName = "图库", filePath = it.absolutePath, fileType = it.extension, fileUrl = it.absolutePath, fileCover = it.absolutePath)
+                            val file = FormValueOfFile(fileId = it.value.absolutePath, fileName = it.name, filePath = it.value.absolutePath, fileType = it.value.extension, fileUrl = it.value.absolutePath, fileCover = it.value.absolutePath)
                             onSuccess.invoke(arrayListOf(file))
                         }.takeUnless {
                             context.isFinishing
@@ -108,7 +115,7 @@ class FormConfig : IFormConfig {
 
     override fun takeFile(context: Context, formItemId: Long, canTakeSize: Int, mimeTypes: List<String>, onSuccess: (List<FormValueOfFile>) -> Any) {
         Timber.tag("表单文件代理").i("文件")
-        RxImagePicker.with((context as FragmentActivity).supportFragmentManager).takeFiles(arrayOf("image/*", "video/*", "txt/*"))
+        RxImagePicker.with((context as FragmentActivity).supportFragmentManager).takeFiles(arrayOf("image/*", "video/*", "text/plain"))
                 .flatMap {
                     val files = arrayListOf<File>()
                     it.forEachIndexed { index, uri ->
@@ -123,7 +130,7 @@ class FormConfig : IFormConfig {
                 .subscribe {
                     val files = arrayListOf<FormValueOfFile>()
                     it.forEach { f ->
-                        files.add(FormValueOfFile(fileId = "takeFile${f.absolutePath}", fileName = "图库", filePath = f.absolutePath, fileType = f.extension, fileUrl = f.absolutePath, fileCover = f.absolutePath))
+                        files.add(FormValueOfFile(fileId = "takeFile${f.absolutePath}", fileName = "文件", filePath = f.absolutePath, fileType = f.extension, fileUrl = f.absolutePath, fileCover = f.absolutePath))
                     }
                     onSuccess.invoke(files)
                 }.takeUnless {
@@ -147,19 +154,6 @@ class FormConfig : IFormConfig {
         ARouter.getInstance().build(AppPath.FORM_ITEM_USERS)
                 .withLong(AppPath.FORM_ITEM_ID, formItemId)
                 .navigation()
-        // or
-//        CoroutineScope(Job()).launch(Dispatchers.Main) {
-//            val takeUser = async(Dispatchers.IO) {
-//                val users = arrayListOf<FormValueOfUser>()
-//                users.addAll(checkedUsers)
-//                for (i in checkedUsers.size..canTakeSize + checkedUsers.size) {
-//                    users.add(FormValueOfUser(userId = "000$i", userName = "用户$i", userDesc = "1822755555$i", userAvatar = "http://www.qsos.vip/upload/2018/11/ic_launcher20181225044818498.png"))
-//                }
-//                users
-//            }
-//            val users = takeUser.await()
-//            onSuccess.invoke(users)
-//        }
     }
 
     override fun previewFile(context: Context, index: Int, formValueOfFiles: List<FormValueOfFile>) {
