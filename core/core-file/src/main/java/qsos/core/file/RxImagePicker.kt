@@ -39,19 +39,27 @@ class RxImagePicker : Fragment() {
     /**是否为多选*/
     private var isMultiple = false
     /**选择方式*/
-    private var mTakeType: Int = Sources.GALLERY
+    private var mTakeType: Int = Sources.ONE
+    /**文件种类
+     * 0 图片 1 视频 2 音频 3 文件
+     * */
+    private var mFileType: Int = 0
     /**选择界面标题 Sources.CHOOSER 时生效*/
     private var mChooserTitle: String? = "选择"
     /**默认限制录制时长为10秒*/
     private var mLimitTime: Int = 10000
+    /**默认限制文件类型*/
+    private var mMimeTypes: Array<String> = arrayOf("*/*")
+    private var mMimeType: String = if (mMimeTypes.isEmpty()) "*/*" else mMimeTypes[0]
 
-    /**单图选择*/
+    /**图片选择*/
     fun takeImage(@Sources.Type type: Int = Sources.CHOOSER, chooserTitle: String = "图片选择"): Observable<Uri> {
         initSubjects()
         this.isMultiple = false
+        this.mFileType = 0
         this.mTakeType = type
         this.mChooserTitle = chooserTitle
-        requestPickImage()
+        requestPick()
         return publishSubject.takeUntil(canceledSubject)
     }
 
@@ -60,20 +68,32 @@ class RxImagePicker : Fragment() {
         initSubjects()
         this.isMultiple = false
         this.mTakeType = type
+        this.mFileType = 1
         this.mLimitTime = limitTime
         this.mChooserTitle = chooserTitle
-        requestPickVideo()
+        requestPick()
         return publishSubject.takeUntil(canceledSubject)
     }
 
-    /**多图选择*/
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    fun takeImages(chooserTitle: String? = "图片选择"): Observable<List<Uri>> {
+    /**文件选择*/
+    fun takeFile(@Sources.Type type: Int = Sources.CHOOSER, chooserTitle: String = "文件选择"): Observable<Uri> {
         initSubjects()
-        this.isMultiple = true
+        this.isMultiple = false
+        this.mFileType = 3
+        this.mTakeType = type
         this.mChooserTitle = chooserTitle
-        this.mTakeType = Sources.DOCUMENTS
-        requestPickImage()
+        requestPick()
+        return publishSubject.takeUntil(canceledSubject)
+    }
+
+    /**文件选择*/
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    fun takeFiles(mimeType: Array<String> = arrayOf("*/*"), multiple: Boolean = true): Observable<List<Uri>> {
+        initSubjects()
+        this.isMultiple = multiple
+        this.mTakeType = Sources.MULTI
+        this.mMimeTypes = mimeType
+        requestPick()
         return publishMultipleSubject.takeUntil(canceledSubject)
     }
 
@@ -97,7 +117,7 @@ class RxImagePicker : Fragment() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            pickImage()
+            startPick()
         }
     }
 
@@ -106,7 +126,7 @@ class RxImagePicker : Fragment() {
             /**选择结果回调*/
             when (requestCode) {
                 Sources.CAMERA -> pushImage(temFileUri)
-                Sources.GALLERY, Sources.DOCUMENTS -> handleGalleryResult(data)
+                Sources.ONE, Sources.MULTI -> handleGalleryResult(data)
                 Sources.CHOOSER -> if (isCamera(data)) pushImage(temFileUri) else handleGalleryResult(data)
             }
         } else {
@@ -123,117 +143,88 @@ class RxImagePicker : Fragment() {
         publishMultipleSubject = PublishSubject.create()
     }
 
-    /**是否为拍照照片*/
+    /**是否为相机*/
     private fun isCamera(data: Intent?): Boolean {
         return data == null || data.data == null && data.clipData == null
     }
 
-    /**开始图片选择*/
-    private fun requestPickImage() {
+    private fun requestPick() {
         if (!isAdded) {
             attachedSubject.subscribe {
-                pickImage()
+                startPick()
             }
         } else {
-            pickImage()
-        }
-    }
-
-    /**开始视频选择*/
-    private fun requestPickVideo() {
-        if (!isAdded) {
-            attachedSubject.subscribe {
-                pickVideo()
-            }
-        } else {
-            pickVideo()
+            startPick()
         }
     }
 
     /**图片选取方式判断*/
-    private fun pickImage() {
+    private fun startPick() {
         if (!checkPermission()) {
             return
         }
-        var pictureChooseIntent: Intent? = null
-        when (mTakeType) {
-            Sources.CAMERA -> {
+        var chooseIntent: Intent? = null
+        // 0 图片 1 视频 2 音频 3 文件
+        when {
+            mTakeType == Sources.CAMERA && mFileType == 0 -> {
                 temFileUri = createImageUri()
-                pictureChooseIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
+                chooseIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
                     it.putExtra(MediaStore.EXTRA_OUTPUT, temFileUri)
                     grantWritePermission(context!!, it, temFileUri!!)
                 }
             }
-            Sources.GALLERY -> {
-                pictureChooseIntent = createPickFromGalleryIntent("image/*")
-            }
-            Sources.DOCUMENTS -> {
-                pictureChooseIntent = createPickFromDocumentsIntent("image/*")
-            }
-            Sources.CHOOSER -> {
-                pictureChooseIntent = createImageChooserIntent(mChooserTitle)
-            }
-        }
-
-        startActivityForResult(pictureChooseIntent, mTakeType)
-    }
-
-    /**视频选取方式判断*/
-    private fun pickVideo() {
-        if (!checkPermission()) {
-            return
-        }
-        var pictureChooseIntent: Intent? = null
-        when (mTakeType) {
-            Sources.CAMERA -> {
-                temFileUri = createVideoUri()
-                pictureChooseIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE).also {
+            mTakeType == Sources.CAMERA && mFileType == 1 -> {
+                temFileUri = createImageUri()
+                chooseIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE).also {
                     it.putExtra(MediaStore.EXTRA_OUTPUT, temFileUri)
                     grantWritePermission(context!!, it, temFileUri!!)
                 }
             }
-            Sources.GALLERY -> {
-                pictureChooseIntent = createPickFromGalleryIntent("video/*")
+            mTakeType == Sources.CHOOSER && mFileType == 0 -> {
+                chooseIntent = createImageChooserIntent()
             }
-            Sources.DOCUMENTS -> {
-                pictureChooseIntent = createPickFromDocumentsIntent("video/*")
+            mTakeType == Sources.CHOOSER && mFileType == 1 -> {
+                chooseIntent = createVideoChooserIntent()
             }
-            Sources.CHOOSER -> {
-                pictureChooseIntent = createVideoChooserIntent()
+            mTakeType == Sources.CHOOSER && mFileType == 2 -> {
+                chooseIntent = createAudioChooserIntent()
+            }
+            mTakeType == Sources.ONE -> {
+                chooseIntent = createPickOne()
+            }
+            mTakeType == Sources.MULTI -> {
+                chooseIntent = createPickMore()
             }
         }
 
-        startActivityForResult(pictureChooseIntent, mTakeType)
+        startActivityForResult(chooseIntent, mTakeType)
     }
 
-    /**构建图库选择Intent*/
-    private fun createPickFromGalleryIntent(mimiType: String = "*/*"): Intent {
+    /**构建文件单选Intent*/
+    private fun createPickOne(): Intent {
         val pictureChooseIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            pictureChooseIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple)
-        }
-        pictureChooseIntent.type = mimiType
+        pictureChooseIntent.type = mMimeType
         return pictureChooseIntent
     }
 
-    /**构建文档管理选择Intent*/
-    private fun createPickFromDocumentsIntent(mimiType: String = "*/*"): Intent {
+    /**构建文件多选Intent*/
+    private fun createPickMore(): Intent {
         val pictureChooseIntent: Intent
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             pictureChooseIntent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             pictureChooseIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, isMultiple)
+            pictureChooseIntent.putExtra(Intent.EXTRA_MIME_TYPES, mMimeTypes)
             pictureChooseIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
         } else {
-            pictureChooseIntent = Intent(Intent.ACTION_GET_CONTENT)
+            pictureChooseIntent = createPickOne()
         }
         pictureChooseIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
         pictureChooseIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        pictureChooseIntent.type = mimiType
         return pictureChooseIntent
     }
 
     /**构建图片选择器Intent*/
-    private fun createImageChooserIntent(chooserTitle: String?): Intent {
+    private fun createImageChooserIntent(): Intent {
         temFileUri = createImageUri()
         val cameraIntents = ArrayList<Intent>()
         val captureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -248,8 +239,8 @@ class RxImagePicker : Fragment() {
             grantWritePermission(context!!, intent, temFileUri!!)
             cameraIntents.add(intent)
         }
-        val galleryIntent = createPickFromDocumentsIntent()
-        val chooserIntent = Intent.createChooser(galleryIntent, chooserTitle)
+        val galleryIntent = createPickMore()
+        val chooserIntent = Intent.createChooser(galleryIntent, mChooserTitle)
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toTypedArray())
         return chooserIntent
     }
@@ -272,7 +263,29 @@ class RxImagePicker : Fragment() {
             grantWritePermission(context!!, intent, temFileUri!!)
             cameraIntents.add(intent)
         }
-        val galleryIntent = createPickFromDocumentsIntent("video/*")
+        val galleryIntent = createPickMore()
+        val chooserIntent = Intent.createChooser(galleryIntent, mChooserTitle)
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toTypedArray())
+        return chooserIntent
+    }
+
+    /**构建音频选择器Intent*/
+    private fun createAudioChooserIntent(): Intent {
+        temFileUri = createVideoUri()
+        val cameraIntents = ArrayList<Intent>()
+        val captureIntent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
+        val packageManager = context!!.packageManager
+        val camList = packageManager.queryIntentActivities(captureIntent, 0)
+        for (res in camList) {
+            val packageName = res.activityInfo.packageName
+            val intent = Intent(captureIntent)
+            intent.component = ComponentName(res.activityInfo.packageName, res.activityInfo.name)
+            intent.setPackage(packageName)
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, temFileUri)
+            grantWritePermission(context!!, intent, temFileUri!!)
+            cameraIntents.add(intent)
+        }
+        val galleryIntent = createPickMore()
         val chooserIntent = Intent.createChooser(galleryIntent, mChooserTitle)
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toTypedArray())
         return chooserIntent
@@ -317,10 +330,9 @@ class RxImagePicker : Fragment() {
         }
     }
 
-    /**获取图库选择结果*/
+    /**获取选择结果*/
     private fun handleGalleryResult(data: Intent?) {
         if (isMultiple) {
-            /**多图回传*/
             val imageUris = ArrayList<Uri>()
             val clipData = data?.clipData
             if (clipData != null) {
@@ -332,7 +344,6 @@ class RxImagePicker : Fragment() {
             }
             pushImageList(imageUris)
         } else {
-            /**单图回传*/
             pushImage(data?.data)
         }
     }
