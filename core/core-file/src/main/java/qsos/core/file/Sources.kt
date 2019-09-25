@@ -8,17 +8,22 @@ import androidx.annotation.IntDef
  */
 open class Sources {
     companion object {
-        /**拍照*/
+        /**相机*/
         const val CAMERA: Int = 1
-        /**图库*/
-        const val GALLERY: Int = 2
-        /**文档*/
-        const val DOCUMENTS: Int = 3
-        /**选择拍照或文档*/
+        /**单选*/
+        const val ONE: Int = 2
+        /**多选*/
+        const val MULTI: Int = 3
+        /**自选操作，相机或单选*/
         const val CHOOSER: Int = 4
+
+        /**值设置是否超出范围*/
+        fun overNumber(num: Int): Boolean {
+            return num < 1 || num > 4
+        }
     }
 
-    @IntDef(GALLERY, DOCUMENTS, CHOOSER)
+    @IntDef(CAMERA, ONE, CHOOSER)
     @Retention(AnnotationRetention.SOURCE)
     annotation class Type
 }

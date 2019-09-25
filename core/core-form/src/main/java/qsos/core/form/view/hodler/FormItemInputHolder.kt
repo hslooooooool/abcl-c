@@ -46,11 +46,13 @@ class FormItemInputHolder(
             @SuppressLint("BinaryOperationInTimber")
             override fun afterTextChanged(p0: Editable) {
                 val content = itemView.item_form_input.text.toString()
-                data.formItemValue!!.values!![0].text!!.content = content
-                CoroutineScope(mJob).db<Long> {
-                    db = { FormDatabase.getInstance().formItemValueDao.insert(data.formItemValue!!.values!![0]) }
-                    onSuccess = {
-                        Timber.tag("数据库插入").i("更新输入值$it=$content")
+                if (data.formItemValue!!.values!![0].text!!.content != content) {
+                    data.formItemValue!!.values!![0].text!!.content = content
+                    CoroutineScope(mJob).db<Long> {
+                        db = { FormDatabase.getInstance().formItemValueDao.insert(data.formItemValue!!.values!![0]) }
+                        onSuccess = {
+                            Timber.tag("数据库插入").i("更新输入值$it=$content")
+                        }
                     }
                 }
             }

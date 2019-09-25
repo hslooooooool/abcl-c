@@ -310,11 +310,14 @@ class FormAdapter(
         CoroutineScope(mJob).db<Long> {
             db = { FormDatabase.getInstance().formItemValueDao.insert(value) }
             onSuccess = {
-                it?.let {
-                    value.id = it
-                    data[position].formItemValue!!.values!!.add(value)
-                    data[position].formItemValue!!.values!!.sortBy { v -> v.position }
-                    notifyItemChanged(position)
+                if (it?.let {
+                            value.id = it
+                            data[position].formItemValue!!.values!!.add(value)
+                            data[position].formItemValue!!.values!!.sortBy { v -> v.position }
+                            notifyItemChanged(position)
+                        } == null
+                ) {
+                    ToastUtils.showToast(mContext, "更新失败")
                 }
             }
             onFail = {
