@@ -29,9 +29,6 @@ import java.io.File
  */
 class FormConfig : IFormConfig {
 
-    /**临时存放文件对应的名称*/
-    data class KV<T>(val name: String, val value: T)
-
     override fun takeCamera(context: Context, formItemId: Long, onSuccess: (FormValueOfFile) -> Any) {
         Timber.tag("表单文件代理").i("拍照")
         RxImagePicker.with((context as FragmentActivity).supportFragmentManager).takeImage(Sources.DEVICE)
@@ -39,7 +36,7 @@ class FormConfig : IFormConfig {
                     RxImageConverters.uriToFileObservable(context, it, FileUtils.createImageFile())
                 }
                 .subscribe {
-                    val file = FormValueOfFile(fileId = "0001", fileName = "拍照", filePath = it.absolutePath, fileType = it.extension, fileUrl = it.absolutePath, fileCover = it.absolutePath)
+                    val file = FormValueOfFile(fileId = "0001", fileName = it.name, filePath = it.absolutePath, fileType = it.extension, fileUrl = it.absolutePath, fileCover = it.absolutePath)
                     onSuccess.invoke(file)
                 }.takeUnless {
                     context.isFinishing
@@ -50,16 +47,12 @@ class FormConfig : IFormConfig {
         Timber.tag("表单文件代理").i("图库")
         when (canTakeSize) {
             1 -> {
-                var kv: KV<File>
                 RxImagePicker.with((context as FragmentActivity).supportFragmentManager).takeImage(Sources.ONE)
-                        .flatMap { uri ->
-                            RxImageConverters.uriToFile(context, uri, FileUtils.createImageFile())?.let {
-                                kv = KV(FileUtils.getRealPathFromUri(context, uri), it)
-                                Observable.just(kv)
-                            }
+                        .flatMap {
+                            RxImageConverters.uriToFileObservable(context, it, FileUtils.createImageFile())
                         }
                         .subscribe {
-                            val file = FormValueOfFile(fileId = it.value.absolutePath, fileName = it.name, filePath = it.value.absolutePath, fileType = it.value.extension, fileUrl = it.value.absolutePath, fileCover = it.value.absolutePath)
+                            val file = FormValueOfFile(fileId = it.absolutePath, fileName = it.name, filePath = it.absolutePath, fileType = it.extension, fileUrl = it.absolutePath, fileCover = it.absolutePath)
                             onSuccess.invoke(arrayListOf(file))
                         }.takeUnless {
                             context.isFinishing
@@ -81,7 +74,7 @@ class FormConfig : IFormConfig {
                         .subscribe {
                             val files = arrayListOf<FormValueOfFile>()
                             it.forEach { f ->
-                                files.add(FormValueOfFile(fileId = "takeGallery${f.absolutePath}", fileName = "图库", filePath = f.absolutePath, fileType = f.extension, fileUrl = f.absolutePath, fileCover = f.absolutePath))
+                                files.add(FormValueOfFile(fileId = "takeGallery${f.absolutePath}", fileName = f.name, filePath = f.absolutePath, fileType = f.extension, fileUrl = f.absolutePath, fileCover = f.absolutePath))
                             }
                             onSuccess.invoke(files)
                         }.takeUnless {
@@ -99,7 +92,7 @@ class FormConfig : IFormConfig {
                     RxImageConverters.uriToFileObservable(context, it, FileUtils.createMovieFile())
                 }
                 .subscribe {
-                    val file = FormValueOfFile(fileId = "takeVideo", fileName = "视频", filePath = it.absolutePath, fileType = it.extension, fileUrl = it.absolutePath, fileCover = it.absolutePath)
+                    val file = FormValueOfFile(fileId = "takeVideo", fileName = it.name, filePath = it.absolutePath, fileType = it.extension, fileUrl = it.absolutePath, fileCover = it.absolutePath)
                     onSuccess.invoke(arrayListOf(file))
                 }.takeUnless {
                     context.isFinishing
@@ -141,7 +134,7 @@ class FormConfig : IFormConfig {
                     val files = arrayListOf<File>()
                     it.forEachIndexed { index, uri ->
                         if (index < canTakeSize) {
-                            RxImageConverters.uriToFile(context, uri, FileUtils.createImageFile())?.let { f ->
+                            RxImageConverters.uriToFile(context, uri, FileUtils.createFileByUri(context, uri))?.let { f ->
                                 files.add(f)
                             }
                         }
@@ -151,7 +144,7 @@ class FormConfig : IFormConfig {
                 .subscribe {
                     val files = arrayListOf<FormValueOfFile>()
                     it.forEach { f ->
-                        files.add(FormValueOfFile(fileId = "takeFile${f.absolutePath}", fileName = "文件", filePath = f.absolutePath, fileType = f.extension, fileUrl = f.absolutePath, fileCover = f.absolutePath))
+                        files.add(FormValueOfFile(fileId = "takeFile", fileName = f.name, filePath = f.absolutePath, fileType = f.extension, fileUrl = f.absolutePath, fileCover = f.absolutePath))
                     }
                     onSuccess.invoke(files)
                 }.takeUnless {
