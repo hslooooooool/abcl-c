@@ -1,12 +1,14 @@
 package qsos.app.demo.form
 
 import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import com.alibaba.android.arouter.launcher.ARouter
 import com.google.gson.Gson
 import io.reactivex.Observable
 import kotlinx.coroutines.*
 import qsos.app.demo.AppPath
+import qsos.app.demo.R
 import qsos.core.file.RxImageConverters
 import qsos.core.file.RxImagePicker
 import qsos.core.file.Sources
@@ -14,6 +16,9 @@ import qsos.core.form.config.IFormConfig
 import qsos.core.form.db.entity.FormValueOfFile
 import qsos.core.form.db.entity.FormValueOfLocation
 import qsos.core.form.db.entity.FormValueOfUser
+import qsos.core.lib.utils.dialog.AbsBottomDialog
+import qsos.core.lib.utils.dialog.BottomDialog
+import qsos.core.lib.utils.dialog.BottomDialogUtils
 import qsos.core.lib.utils.file.FileUtils
 import timber.log.Timber
 import java.io.File
@@ -103,6 +108,20 @@ class FormConfig : IFormConfig {
 
     override fun takeAudio(context: Context, formItemId: Long, onSuccess: (FormValueOfFile) -> Any) {
         Timber.tag("表单文件代理").i("音频")
+        BottomDialogUtils.showCustomerView(context, R.layout.audio_dialog, object : BottomDialog.ViewListener {
+            override fun bindView(dialog: AbsBottomDialog) {
+                AudioUtils.record(dialog).subscribe {
+                    val file = File(it)
+                    file.mkdir().let {
+                        val valueOfFile = FormValueOfFile(fileId = "takeAudio", fileName = file.name, filePath = file.absolutePath, fileType = file.extension, fileUrl = file.absolutePath, fileCover = file.absolutePath)
+                        onSuccess.invoke(valueOfFile)
+                    }
+                }.takeUnless {
+                    (context as AppCompatActivity).isFinishing
+                }
+            }
+        })
+        return
         RxImagePicker.with((context as FragmentActivity).supportFragmentManager).takeAudio()
                 .flatMap {
                     RxImageConverters.uriToFileObservable(context, it, FileUtils.createAudioFile())

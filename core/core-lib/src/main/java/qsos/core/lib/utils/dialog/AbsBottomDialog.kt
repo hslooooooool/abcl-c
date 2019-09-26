@@ -1,17 +1,17 @@
-package qsos.core.form.view.widget.dialog
+package qsos.core.lib.utils.dialog
 
 import android.os.Bundle
 import android.view.*
 import androidx.annotation.IdRes
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
-import qsos.core.form.R
+import qsos.lib.lib.R
 
 /**
  * @author : 华清松
  * 自定义底部弹窗
  */
-abstract class BaseBottomDialog : DialogFragment() {
+abstract class AbsBottomDialog : DialogFragment() {
 
     var mParentView: View? = null
     open var layoutRes: Int = 0
@@ -29,7 +29,7 @@ abstract class BaseBottomDialog : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NO_TITLE, R.style.FormBottomDialogStyle)
+        setStyle(STYLE_NO_TITLE, R.style.BottomDialogStyle)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -40,7 +40,7 @@ abstract class BaseBottomDialog : DialogFragment() {
         return mParentView
     }
 
-    abstract fun bindView(dialog: BaseBottomDialog)
+    abstract fun bindView(dialog: AbsBottomDialog)
 
 
     override fun onStart() {
