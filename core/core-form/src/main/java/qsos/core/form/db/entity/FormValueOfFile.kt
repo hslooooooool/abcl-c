@@ -1,5 +1,8 @@
 package qsos.core.form.db.entity
 
+import android.text.TextUtils
+import java.util.*
+
 /**
  * @author : 华清松
  * 表单项值-文件实体类
@@ -24,10 +27,15 @@ data class FormValueOfFile(
     companion object {
         /**根据文件mime类型区分为以下几大类，用于表单附件缩略图展示*/
         fun getFileTypeByMime(fileType: String?): String {
-            return when (fileType) {
-                ".png", ".jpg", ".jpeg" -> "IMAGE"
-                ".amr", ".wav", ".raw", ".mp3" -> "AUDIO"
-                ".mp4", ".avi" -> "VIDEO"
+            if (TextUtils.isEmpty(fileType)) {
+                return "FILE"
+            }
+            fileType!!
+            fileType.toLowerCase(Locale.CHINA)
+            return when {
+                fileType.endsWith("png") || fileType.endsWith("jpg") || fileType.endsWith("jpeg") -> "IMAGE"
+                fileType.endsWith("amr") || fileType.endsWith("wav") || fileType.endsWith("raw") || fileType.endsWith("mp3") -> "AUDIO"
+                fileType.endsWith("png") || fileType.endsWith("mp4") || fileType.endsWith("avi") -> "VIDEO"
                 else -> "FILE"
             }
         }
