@@ -29,7 +29,7 @@ class FormConfig : IFormConfig {
 
     override fun takeCamera(context: Context, formItemId: Long, onSuccess: (FormValueOfFile) -> Any) {
         Timber.tag("表单文件代理").i("拍照")
-        RxImagePicker.with((context as FragmentActivity).supportFragmentManager).takeImage(Sources.CAMERA)
+        RxImagePicker.with((context as FragmentActivity).supportFragmentManager).takeImage(Sources.DEVICE)
                 .flatMap {
                     RxImageConverters.uriToFileObservable(context, it, FileUtils.createImageFile())
                 }
@@ -103,14 +103,16 @@ class FormConfig : IFormConfig {
 
     override fun takeAudio(context: Context, formItemId: Long, onSuccess: (FormValueOfFile) -> Any) {
         Timber.tag("表单文件代理").i("音频")
-        CoroutineScope(Job()).launch(Dispatchers.Main) {
-            val takeFile = async(Dispatchers.IO) {
-                val file = FormValueOfFile(fileId = "takeAudio", fileName = "音频", filePath = "/0/data/vip.qsos.demo/temp/logo.amr", fileType = ".amr", fileUrl = "http://www.qsos.vip/resource/logo.amr")
-                file
-            }
-            val file = takeFile.await()
-            onSuccess.invoke(file)
-        }
+        RxImagePicker.with((context as FragmentActivity).supportFragmentManager).takeAudio()
+                .flatMap {
+                    RxImageConverters.uriToFileObservable(context, it, FileUtils.createAudioFile())
+                }
+                .subscribe {
+                    val file = FormValueOfFile(fileId = "takeAudio", fileName = "音频", filePath = it.absolutePath, fileType = it.extension, fileUrl = it.absolutePath, fileCover = it.absolutePath)
+                    onSuccess.invoke(file)
+                }.takeUnless {
+                    context.isFinishing
+                }
     }
 
     override fun takeFile(context: Context, formItemId: Long, canTakeSize: Int, mimeTypes: List<String>, onSuccess: (List<FormValueOfFile>) -> Any) {

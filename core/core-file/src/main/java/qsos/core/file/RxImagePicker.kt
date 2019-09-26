@@ -1,7 +1,6 @@
 package qsos.core.file
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity.RESULT_OK
 import android.content.ComponentName
@@ -17,17 +16,18 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
+import qsos.core.lib.base.IDisposable
 import java.text.SimpleDateFormat
 import java.util.*
 
 /**
  * @author : 华清松
- * 图片选择界面
+ * 媒体文件获取，提供系统的相机拍照、录制，系统的录音，系统的文件选取等功能的实现
  */
-@SuppressLint("CheckResult")
-class RxImagePicker : Fragment() {
-
+class RxImagePicker : Fragment(), IDisposable {
     /**观察是否绑定Activity*/
     private lateinit var attachedSubject: PublishSubject<Boolean>
     /**选择单张*/
@@ -54,6 +54,20 @@ class RxImagePicker : Fragment() {
     private var mMimeTypes: Array<String> = arrayOf("*/*")
     private var mMimeType: String = if (mMimeTypes.isEmpty()) "*/*" else mMimeTypes[0]
 
+    override var mCompositeDisposable: CompositeDisposable? = CompositeDisposable()
+    override fun dispose() {
+        mCompositeDisposable?.dispose()
+    }
+
+    override fun addDispose(disposable: Disposable) {
+        mCompositeDisposable?.add(disposable)
+    }
+
+    override fun onDestroy() {
+        dispose()
+        super.onDestroy()
+    }
+
     /**图片选择*/
     fun takeImage(@Sources.Type type: Int = Sources.CHOOSER, chooserTitle: String = "图片选择"): Observable<Uri> {
         initSubjects()
@@ -73,6 +87,19 @@ class RxImagePicker : Fragment() {
         this.isMultiple = false
         this.mTakeType = type
         this.mMimeTypes = arrayOf("video/*")
+        this.mLimitTime = limitTime
+        this.mChooserTitle = chooserTitle
+        requestPick()
+        return publishSubject.takeUntil(canceledSubject)
+    }
+
+    /**音频选择*/
+    fun takeAudio(@Sources.Type type: Int = Sources.CHOOSER, limitTime: Int = 10000, chooserTitle: String = "音频选择"): Observable<Uri> {
+        initSubjects()
+        this.mFileType = 2
+        this.isMultiple = false
+        this.mTakeType = type
+        this.mMimeTypes = arrayOf("audio/*")
         this.mLimitTime = limitTime
         this.mChooserTitle = chooserTitle
         requestPick()
@@ -130,7 +157,7 @@ class RxImagePicker : Fragment() {
         if (resultCode == RESULT_OK) {
             /**选择结果回调*/
             when (requestCode) {
-                Sources.CAMERA -> pushImage(temFileUri)
+                Sources.DEVICE -> pushImage(temFileUri)
                 Sources.ONE, Sources.MULTI -> handleGalleryResult(data)
                 Sources.CHOOSER -> if (isCamera(data)) pushImage(temFileUri) else handleGalleryResult(data)
             }
@@ -157,6 +184,8 @@ class RxImagePicker : Fragment() {
         if (!isAdded) {
             attachedSubject.subscribe {
                 startPick()
+            }.also {
+                addDispose(it)
             }
         } else {
             startPick()
@@ -173,29 +202,40 @@ class RxImagePicker : Fragment() {
         var chooseIntent: Intent? = null
         when {
             /**拍照*/
-            mTakeType == Sources.CAMERA && mFileType == 0 -> {
+            mTakeType == Sources.DEVICE && mFileType == 0 -> {
                 temFileUri = createImageUri()
                 chooseIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
                     it.putExtra(MediaStore.EXTRA_OUTPUT, temFileUri)
                     grantWritePermission(context!!, it, temFileUri!!)
                 }
             }
-            /**视频拍摄*/
-            mTakeType == Sources.CAMERA && mFileType == 1 -> {
-                temFileUri = createImageUri()
-                chooseIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE).also {
-                    it.putExtra(MediaStore.EXTRA_OUTPUT, temFileUri)
-                    grantWritePermission(context!!, it, temFileUri!!)
-                }
-            }
-
             /**拍照或选择*/
             mTakeType == Sources.CHOOSER && mFileType == 0 -> {
                 chooseIntent = createImageChooserIntent()
             }
+
+            /**视频拍摄*/
+            mTakeType == Sources.DEVICE && mFileType == 1 -> {
+                temFileUri = createVideoUri()
+                chooseIntent = Intent(MediaStore.ACTION_VIDEO_CAPTURE).also {
+                    it.putExtra(MediaStore.EXTRA_DURATION_LIMIT, mLimitTime)
+                    it.putExtra(MediaStore.EXTRA_OUTPUT, temFileUri)
+                    grantWritePermission(context!!, it, temFileUri!!)
+                }
+            }
             /**视频拍摄或选择*/
             mTakeType == Sources.CHOOSER && mFileType == 1 -> {
                 chooseIntent = createVideoChooserIntent()
+            }
+
+            /**音频录制*/
+            mTakeType == Sources.DEVICE && mFileType == 2 -> {
+                temFileUri = createAudioUri()
+                chooseIntent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION).also {
+                    it.putExtra(MediaStore.EXTRA_DURATION_LIMIT, mLimitTime)
+                    it.putExtra(MediaStore.EXTRA_OUTPUT, temFileUri)
+                    grantWritePermission(context!!, it, temFileUri!!)
+                }
             }
             /**音频录制或选择*/
             mTakeType == Sources.CHOOSER && mFileType == 2 -> {
@@ -238,6 +278,7 @@ class RxImagePicker : Fragment() {
             pictureChooseIntent = createPickOne()
         }
         pictureChooseIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
+        /**临时授权app访问URI代表的文件所有权*/
         pictureChooseIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         return pictureChooseIntent
     }
@@ -325,6 +366,15 @@ class RxImagePicker : Fragment() {
         val contentResolver = activity!!.contentResolver
         val cv = ContentValues()
         cv.put(MediaStore.Video.Media.TITLE, timeStamp)
+        return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv)
+    }
+
+    /**创建录音保存路径*/
+    private fun createAudioUri(): Uri? {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val contentResolver = activity!!.contentResolver
+        val cv = ContentValues()
+        cv.put(MediaStore.Audio.Media.TITLE, timeStamp)
         return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv)
     }
 

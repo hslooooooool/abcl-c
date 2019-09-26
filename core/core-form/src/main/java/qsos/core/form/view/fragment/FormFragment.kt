@@ -1,13 +1,11 @@
 package qsos.core.form.view.fragment
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.form_main.*
 import kotlinx.coroutines.CoroutineScope
 import qsos.core.form.FormPath
@@ -49,19 +47,6 @@ class FormFragment(
             activity?.finish()
             return
         }
-
-        RxPermissions(this).request(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA
-        ).subscribe({
-            if (!it) {
-                ToastUtils.showToastLong(mContext, "权限开启失败，无法使用此功能")
-                activity?.finish()
-            }
-        }, {
-            it.printStackTrace()
-        })
 
         form_main_rv.layoutManager = LinearLayoutManager(mContext)
         mAdapter = FormAdapter(mFormList, mJob)

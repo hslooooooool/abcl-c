@@ -8,13 +8,13 @@ import androidx.annotation.IntDef
  */
 open class Sources {
     companion object {
-        /**相机*/
-        const val CAMERA: Int = 1
+        /**设备*/
+        const val DEVICE: Int = 1
         /**单选*/
         const val ONE: Int = 2
         /**多选*/
         const val MULTI: Int = 3
-        /**自选操作，相机或单选*/
+        /**自选操作，设备或单选*/
         const val CHOOSER: Int = 4
 
         /**值设置是否超出范围*/
@@ -23,7 +23,7 @@ open class Sources {
         }
     }
 
-    @IntDef(CAMERA, ONE, CHOOSER)
+    @IntDef(DEVICE, ONE, CHOOSER)
     @Retention(AnnotationRetention.SOURCE)
     annotation class Type
 }

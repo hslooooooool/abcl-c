@@ -566,6 +566,15 @@ object FileUtils {
         }
     }
 
+    /**创建一个音频文件*/
+    fun createAudioFile(): File? {
+        return try {
+            File(MEDIA_PATH, "AUDIO_" + System.currentTimeMillis().toString() + ".amr")
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     /**获取视屏第一帧画面*/
     fun getVideoThumb(path: String): Bitmap {
         val media = MediaMetadataRetriever()
