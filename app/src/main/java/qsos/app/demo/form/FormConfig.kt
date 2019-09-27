@@ -89,7 +89,7 @@ class FormConfig : IFormConfig {
         Timber.tag("表单文件代理").i("视频")
         RxImagePicker.with((context as FragmentActivity).supportFragmentManager).takeVideo()
                 .flatMap {
-                    RxImageConverters.uriToFileObservable(context, it, FileUtils.createMovieFile())
+                    RxImageConverters.uriToFileObservable(context, it, FileUtils.createVideoFile())
                 }
                 .subscribe {
                     val file = FormValueOfFile(fileId = "takeVideo", fileName = it.name, filePath = it.absolutePath, fileType = it.extension, fileUrl = it.absolutePath, fileCover = it.absolutePath)

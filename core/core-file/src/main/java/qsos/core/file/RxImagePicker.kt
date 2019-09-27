@@ -194,10 +194,12 @@ class RxImagePicker : Fragment(), IDisposable {
 
     /**图片选取方式判断*/
     private fun startPick() {
-        /**类型超出返回*/
-        if (Sources.overNumber(mTakeType)) return
-        /**未授予权限*/
-        if (!checkPermission()) return
+        /**类型超出返回 或 未授予权限*/
+        if (Sources.overNumber(mTakeType) || !checkPermission()) {
+            canceledSubject.onNext(mTakeType)
+            canceledSubject.onComplete()
+            return
+        }
 
         var chooseIntent: Intent? = null
         when {
@@ -353,7 +355,7 @@ class RxImagePicker : Fragment(), IDisposable {
 
     /**创建拍照保存路径*/
     private fun createImageUri(): Uri? {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val timeStamp: String = "image_" + SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val contentResolver = activity!!.contentResolver
         val cv = ContentValues()
         cv.put(MediaStore.Images.Media.TITLE, timeStamp)
@@ -362,20 +364,20 @@ class RxImagePicker : Fragment(), IDisposable {
 
     /**创建录像保存路径*/
     private fun createVideoUri(): Uri? {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val timeStamp: String = "video_" + SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val contentResolver = activity!!.contentResolver
         val cv = ContentValues()
         cv.put(MediaStore.Video.Media.TITLE, timeStamp)
-        return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv)
+        return contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, cv)
     }
 
     /**创建录音保存路径*/
     private fun createAudioUri(): Uri? {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val timeStamp: String = "audio_" + SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val contentResolver = activity!!.contentResolver
         val cv = ContentValues()
         cv.put(MediaStore.Audio.Media.TITLE, timeStamp)
-        return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv)
+        return contentResolver.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, cv)
     }
 
     /**申请文件读写权限*/

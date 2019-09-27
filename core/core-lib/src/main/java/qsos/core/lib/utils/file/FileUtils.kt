@@ -268,9 +268,9 @@ object FileUtils {
 
     /**创建一个视频文件*/
     @JvmStatic
-    fun createMovieFile(): File? {
+    fun createVideoFile(): File? {
         return try {
-            File(MEDIA_PATH, "MOVIE_" + System.currentTimeMillis().toString() + ".mp4")
+            File(MEDIA_PATH, "VIDEO_" + System.currentTimeMillis().toString() + ".3gp")
         } catch (e: Exception) {
             null
         }

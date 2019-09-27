@@ -35,7 +35,7 @@ data class FormValueOfFile(
             return when {
                 fileType.endsWith("png") || fileType.endsWith("jpg") || fileType.endsWith("jpeg") -> "IMAGE"
                 fileType.endsWith("amr") || fileType.endsWith("wav") || fileType.endsWith("raw") || fileType.endsWith("mp3") -> "AUDIO"
-                fileType.endsWith("png") || fileType.endsWith("mp4") || fileType.endsWith("avi") -> "VIDEO"
+                fileType.endsWith("3gp") || fileType.endsWith("mp4") || fileType.endsWith("avi") -> "VIDEO"
                 else -> "FILE"
             }
         }
