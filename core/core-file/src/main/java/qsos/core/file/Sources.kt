@@ -23,7 +23,7 @@ open class Sources {
         }
     }
 
-    @IntDef(DEVICE, ONE, CHOOSER)
+    @IntDef(value = [DEVICE, ONE, CHOOSER])
     @Retention(AnnotationRetention.SOURCE)
     annotation class Type
 }

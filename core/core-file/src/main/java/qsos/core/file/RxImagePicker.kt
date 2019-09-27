@@ -55,6 +55,7 @@ class RxImagePicker : Fragment(), IDisposable {
     private var mMimeType: String = if (mMimeTypes.isEmpty()) "*/*" else mMimeTypes[0]
 
     override var mCompositeDisposable: CompositeDisposable? = CompositeDisposable()
+
     override fun dispose() {
         mCompositeDisposable?.dispose()
     }
@@ -118,7 +119,7 @@ class RxImagePicker : Fragment(), IDisposable {
         return publishSubject.takeUntil(canceledSubject)
     }
 
-    /**文件选择*/
+    /**文件多选，KITKAT 以上可用*/
     @TargetApi(Build.VERSION_CODES.KITKAT)
     fun takeFiles(mimeType: Array<String> = arrayOf("*/*"), multiple: Boolean = true): Observable<List<Uri>> {
         initSubjects()
