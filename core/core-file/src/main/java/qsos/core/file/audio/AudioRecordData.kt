@@ -37,12 +37,12 @@ enum class AudioRecordState(val value: String) {
 data class AudioRecordConfig(
         var limitMinTime: Int = 1,
         var limitMaxTime: Int = 60,
-        var audioFormat: AudioFormat = AudioFormat.AMR
+        var audioType: AudioType = AudioType.AMR
 ) {
     open class Builder {
         private var limitMinTime: Int = 1
         private var limitMaxTime: Int = 60
-        private var audioFormat: AudioFormat = AudioFormat.AMR
+        private var audioType: AudioType = AudioType.AMR
 
         open fun setLimitMinTime(minTime: Int): Builder {
             this.limitMinTime = minTime
@@ -54,13 +54,13 @@ data class AudioRecordConfig(
             return this
         }
 
-        open fun setAudioFormat(format: AudioFormat): Builder {
-            this.audioFormat = format
+        open fun setAudioFormat(type: AudioType): Builder {
+            this.audioType = type
             return this
         }
 
         open fun build(): AudioRecordConfig {
-            return AudioRecordConfig(limitMinTime, limitMaxTime, audioFormat)
+            return AudioRecordConfig(limitMinTime, limitMaxTime, audioType)
         }
     }
 }
@@ -69,7 +69,7 @@ data class AudioRecordConfig(
  * @author : 华清松
  * 录制格式，支持 amr wav 格式，默认 amr 格式
  */
-enum class AudioFormat {
+enum class AudioType {
     AMR, WAV
 }
 

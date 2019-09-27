@@ -12,12 +12,12 @@
 	
 	<!--等高宽图片-->
 	<declare-styleable name="RatioImageView">
-		<attr name="ratio" format="dimension" />
+		<attr name="ratio" type="dimension" />
 	</declare-styleable>
 	
 	<!--九宫格图片布局-->
 	<declare-styleable name="AbsNineGridLayout">
-		<attr name="space" format="dimension" />
+		<attr name="space" type="dimension" />
 	</declare-styleable>
 
 </resources>

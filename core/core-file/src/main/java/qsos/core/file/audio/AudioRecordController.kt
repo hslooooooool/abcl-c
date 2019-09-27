@@ -27,11 +27,9 @@ class AudioRecordController(private val config: AudioRecordConfig) : IControlVie
 
     override fun start() {
         release()
-        mRecordData.audioPath = when (config.audioFormat) {
-            AudioFormat.WAV -> AudioRecordUtils.wavFilePath
-            AudioFormat.AMR -> AudioRecordUtils.amrFilePath
-        }
+
         mRecordData.recordTime = 0
+        mRecordData.audioPath = AudioRecordUtils.initAudioPath(config.audioType)
 
         AudioRecordUtils.startRecord(mRecordData.audioPath, object : OnTListener<Boolean> {
             override fun back(t: Boolean) {
@@ -70,12 +68,14 @@ class AudioRecordController(private val config: AudioRecordConfig) : IControlVie
 
     override fun cancel() {
         mRecordData.recordState = AudioRecordState.CANCEL
+        AudioRecordUtils.clearAll()
         mAudioPublisher.onNext(mRecordData)
         mAudioPublisher.onComplete()
     }
 
     override fun finish() {
         AudioRecordUtils.release()
+        AudioRecordUtils.clearTemRaw()
         release()
         when (mRecordData.recordState) {
             AudioRecordState.RECORDING, AudioRecordState.CANCEL_REFUSE, AudioRecordState.FINISH -> {

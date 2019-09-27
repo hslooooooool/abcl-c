@@ -18,7 +18,6 @@ object AudioRecordUtils {
     private var bufferSizeInBytes = 0
     private var mAudioRecord: AudioRecord? = null
     private var mRecordListener: OnTListener<Boolean>? = null
-    private var mAudioPath: String = ""
     private var mRecordThread: Thread? = null
     private var mRecording: Boolean = true
 
@@ -28,15 +27,25 @@ object AudioRecordUtils {
     /**采用频率，44100是标准*/
     private const val AUDIO_SAMPLE_RATE = 44100
     private var mAudioBasePath: String = "error"
-    private val mRawPath: String = "${getBasePath()}.raw"
+    private var mRawPath: String = ""
     /**获取编码后的WAV格式音频文件路径*/
-    val wavFilePath: String = "$mAudioBasePath.wav"
+    var mWavPath: String = ""
     /**获取编码后的AMR格式音频文件路径*/
-    val amrFilePath: String = "$mAudioBasePath.amr"
+    var mAmrPath: String = ""
+    /**录音文件路径*/
+    private var mAudioPath: String = ""
 
-    private fun getBasePath(): String {
-        mAudioBasePath = "${FileUtils.MEDIA_PATH}/${System.currentTimeMillis()}"
-        return mAudioBasePath
+    /**初始化文件路径*/
+    fun initAudioPath(type: AudioType): String {
+        mAudioBasePath = "${FileUtils.MEDIA_PATH}/AUDIO_${System.currentTimeMillis()}"
+        mRawPath = "$mAudioBasePath.raw"
+        mWavPath = "$mAudioBasePath.wav"
+        mAmrPath = "$mAudioBasePath.amr"
+        mAudioPath = when (type) {
+            AudioType.WAV -> mWavPath
+            AudioType.AMR -> mAmrPath
+        }
+        return mAudioPath
     }
 
     /**开始录音*/
@@ -53,6 +62,7 @@ object AudioRecordUtils {
 
     fun release() {
         try {
+            mRecording = false
             mAudioRecord?.stop()
         } finally {
             mAudioRecord?.release()
@@ -91,7 +101,7 @@ object AudioRecordUtils {
             file.delete()
         }
         val fos = FileOutputStream(file)
-        while (mRecording) {
+        while (mRecording && mAudioRecord != null) {
             readSize = mAudioRecord!!.read(audioData, 0, bufferSizeInBytes)
             if (AudioRecord.ERROR_INVALID_OPERATION != readSize) {
                 fos.write(audioData)
@@ -114,8 +124,29 @@ object AudioRecordUtils {
         while (inputStream.read(data) != -1) {
             outputStream.write(data)
         }
+        outputStream.flush()
         inputStream.close()
         outputStream.close()
+    }
+
+    /**完成录音，清除临时缓存的录音源文件*/
+    fun clearTemRaw() {
+        val file = File(mRawPath)
+        if (file.exists()) {
+            file.delete()
+        }
+    }
+
+    /**取消录音，清除已保存的录音文件*/
+    fun clearAll() {
+        val file = File(mRawPath)
+        if (file.exists()) {
+            file.delete()
+        }
+        val file1 = File(mAudioPath)
+        if (file1.exists()) {
+            file1.delete()
+        }
     }
 
     @Throws(Exception::class)

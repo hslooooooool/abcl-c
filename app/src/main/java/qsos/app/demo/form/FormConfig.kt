@@ -103,13 +103,15 @@ class FormConfig : IFormConfig {
         Timber.tag("表单文件代理").i("音频")
         BottomDialogUtils.showCustomerView(context, R.layout.audio_dialog, object : BottomDialog.ViewListener {
             override fun bindView(dialog: AbsBottomDialog) {
-                AudioUtils.record(dialog).subscribe {
+                AudioUtils.record(dialog).subscribe({
                     val file = File(it)
-                    file.mkdir().let {
+                    file.exists().let {
                         val valueOfFile = FormValueOfFile(fileId = "takeAudio", fileName = file.name, filePath = file.absolutePath, fileType = file.extension, fileUrl = file.absolutePath, fileCover = file.absolutePath)
                         onSuccess.invoke(valueOfFile)
                     }
-                }.takeUnless {
+                }, {
+                    it.printStackTrace()
+                }).takeUnless {
                     (context as AppCompatActivity).isFinishing
                 }
             }

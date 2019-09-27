@@ -7,7 +7,7 @@ import android.widget.TextView
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import qsos.app.demo.R
-import qsos.core.file.audio.AudioFormat
+import qsos.core.file.audio.AudioType
 import qsos.core.file.audio.AudioRecordConfig
 import qsos.core.file.audio.AudioRecordController
 import qsos.core.file.audio.AudioRecordState
@@ -33,7 +33,7 @@ object AudioUtils {
             config: AudioRecordConfig = AudioRecordConfig.Builder()
                     .setLimitMinTime(1)
                     .setLimitMaxTime(30)
-                    .setAudioFormat(AudioFormat.AMR)
+                    .setAudioFormat(AudioType.AMR)
                     .build()
     ): Observable<String> {
         fileObservable = PublishSubject.create()

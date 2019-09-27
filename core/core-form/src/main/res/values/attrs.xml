@@ -3,6 +3,6 @@
 
     <!--限制最大高度的列表-->
     <declare-styleable name="FormMaxHeightRecyclerView">
-        <attr name="formMaxHeight" format="dimension" />
+        <attr name="formMaxHeight" type="dimension" />
     </declare-styleable>
 </resources>
