@@ -116,17 +116,6 @@ class FormConfig : IFormConfig {
                 }
             }
         })
-        return
-        RxImagePicker.with((context as FragmentActivity).supportFragmentManager).takeAudio()
-                .flatMap {
-                    RxImageConverters.uriToFileObservable(context, it, FileUtils.createAudioFile())
-                }
-                .subscribe {
-                    val file = FormValueOfFile(fileId = "takeAudio", fileName = "音频", filePath = it.absolutePath, fileType = it.extension, fileUrl = it.absolutePath, fileCover = it.absolutePath)
-                    onSuccess.invoke(file)
-                }.takeUnless {
-                    context.isFinishing
-                }
     }
 
     override fun takeFile(context: Context, formItemId: Long, canTakeSize: Int, mimeTypes: List<String>, onSuccess: (List<FormValueOfFile>) -> Any) {
