@@ -23,8 +23,6 @@ class FormItemFileHolder(
 
     override fun setData(data: FormItem, position: Int) {
         itemView.form_item_title.text = data.title
-        itemView.rv_item_form_files.layoutManager = GridLayoutManager(itemView.context, 3)
-        itemView.rv_item_form_files.adapter = FormFileAdapter(data.formItemValue?.values!!, mJob)
 
         data.formItemValue!!.limitTypeList?.forEach {
             when (FormValueOfFile.getFileTypeByMime(it)) {
@@ -42,6 +40,13 @@ class FormItemFileHolder(
                     itemView.form_item_file_take_file.visibility = View.VISIBLE
                 }
             }
+        }
+
+        if (itemView.rv_item_form_files.layoutManager == null) {
+            itemView.rv_item_form_files.layoutManager = GridLayoutManager(itemView.context, 3)
+            itemView.rv_item_form_files.adapter = FormFileAdapter(data.formItemValue?.values!!, mJob)
+        } else {
+            itemView.rv_item_form_files.adapter!!.notifyDataSetChanged()
         }
 
         itemView.form_item_title.setOnClickListener {

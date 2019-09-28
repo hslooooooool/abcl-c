@@ -20,31 +20,37 @@ class FormItemFileItemHolder(
 ) : BaseHolder<Value>(itemView) {
 
     override fun setData(data: Value, position: Int) {
-
-        when (FormValueOfFile.getFileTypeByMime(data.file!!.fileType)) {
-            "IMAGE" -> {
-                ImageLoaderUtils.display(
-                        itemView.context, itemView.iv_item_form_file_icon, data.file!!.fileCover,
-                        AppCompatResources.getDrawable(itemView.context, R.drawable.form_take_image)
-                )
-            }
-            "VIDEO" -> {
-                ImageLoaderUtils.display(
-                        itemView.context, itemView.iv_item_form_file_icon, data.file!!.fileCover,
-                        AppCompatResources.getDrawable(itemView.context, R.drawable.form_take_video)
-                )
-            }
-            "AUDIO" -> {
-                ImageLoaderUtils.display(
-                        itemView.context, itemView.iv_item_form_file_icon, data.file!!.fileCover,
-                        AppCompatResources.getDrawable(itemView.context, R.drawable.form_take_audio)
-                )
-            }
-            else -> {
-                ImageLoaderUtils.display(
-                        itemView.context, itemView.iv_item_form_file_icon, data.file!!.fileCover,
-                        AppCompatResources.getDrawable(itemView.context, R.drawable.form_take_file)
-                )
+        data.file!!.fileCover?.let {
+            itemView.iv_item_form_file_icon.setTag(itemView.iv_item_form_file_icon.id, data.file!!.fileCover)
+        }
+        val tag = itemView.iv_item_form_file_icon.getTag(itemView.iv_item_form_file_icon.id) as String?
+        if (itemView.iv_item_form_file_icon.getTag(itemView.iv_item_form_file_icon.id) != null
+                && tag == data.file!!.fileCover) {
+            when (FormValueOfFile.getFileTypeByMime(data.file!!.fileType)) {
+                "IMAGE" -> {
+                    ImageLoaderUtils.display(
+                            itemView.context, itemView.iv_item_form_file_icon, data.file!!.fileCover,
+                            AppCompatResources.getDrawable(itemView.context, R.drawable.form_take_image)
+                    )
+                }
+                "VIDEO" -> {
+                    ImageLoaderUtils.display(
+                            itemView.context, itemView.iv_item_form_file_icon, data.file!!.fileCover,
+                            AppCompatResources.getDrawable(itemView.context, R.drawable.form_take_video)
+                    )
+                }
+                "AUDIO" -> {
+                    ImageLoaderUtils.display(
+                            itemView.context, itemView.iv_item_form_file_icon, data.file!!.fileCover,
+                            AppCompatResources.getDrawable(itemView.context, R.drawable.form_take_audio)
+                    )
+                }
+                else -> {
+                    ImageLoaderUtils.display(
+                            itemView.context, itemView.iv_item_form_file_icon, data.file!!.fileCover,
+                            AppCompatResources.getDrawable(itemView.context, R.drawable.form_take_file)
+                    )
+                }
             }
         }
         itemView.tv_item_form_file_name.text = data.file!!.fileName

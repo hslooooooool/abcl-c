@@ -28,7 +28,7 @@ import qsos.lib.base.utils.ToastUtils
 class FormFragment(
         var formId: Long? = -1L,
         override val layoutId: Int? = R.layout.form_main,
-        override val reload: Boolean = true
+        override val reload: Boolean = false
 ) : AbsFormFragment() {
     /**表单列表项容器*/
     private lateinit var mAdapter: FormAdapter
@@ -68,6 +68,8 @@ class FormFragment(
                 }
             }
         }
+
+        getData()
     }
 
     override fun getData() {

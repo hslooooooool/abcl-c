@@ -30,7 +30,7 @@ class FormFileAdapter(
         when (view.id) {
             R.id.iv_item_form_file_icon -> {
                 /**预览*/
-                FormConfigHelper.previewFile(mContext, position, data.map { it.file!! })
+                FormConfigHelper.previewFile(mContext!!, position, data.map { it.file!! })
             }
             R.id.iv_item_form_file_delete -> {
                 /**删除*/

@@ -91,7 +91,7 @@ class FormAdapter(
             }
             /**选择人员*/
             R.id.item_form_users_size -> {
-                FormConfigHelper.takeUser(mContext, data[position].id!!, canTakeSize, data[position].formItemValue!!.values!!.map { v -> v.user!! }) {
+                FormConfigHelper.takeUser(mContext!!, data[position].id!!, canTakeSize, data[position].formItemValue!!.values!!.map { v -> v.user!! }) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         data[position].formItemValue!!.values!!.removeIf { v -> !v.limitEdit }
                     } else {
@@ -122,7 +122,7 @@ class FormAdapter(
             }
             /**选择位置*/
             R.id.item_form_location -> {
-                FormConfigHelper.takeLocation(mContext, data[position].id!!, data[position].formItemValue?.value?.location) {
+                FormConfigHelper.takeLocation(mContext!!, data[position].id!!, data[position].formItemValue?.value?.location) {
                     Timber.tag("表单位置获取结果").i(Gson().toJson(it))
                     data[position].formItemValue!!.value!!.location = it
                     updateFormItemValueByPosition(position)
@@ -219,7 +219,7 @@ class FormAdapter(
                 operation.isCheck = it.check!!.ckChecked
                 operations.add(operation)
             }
-            BottomDialogUtils.setBottomChoseListView(mContext, operations, object : OnTListener<Operation> {
+            BottomDialogUtils.setBottomChoseListView(mContext!!, operations, object : OnTListener<Operation> {
                 override fun back(t: Operation) {
                     data[position].formItemValue!!.values!!.forEach {
                         it.check!!.ckChecked = it.id == t.value
@@ -242,7 +242,7 @@ class FormAdapter(
                 operation.isCheck = it.check!!.ckChecked
                 operations.add(operation)
             }
-            BottomDialogUtils.setBottomSelectListView(mContext, data[position].title, operations, object : OnTListener<List<Operation>> {
+            BottomDialogUtils.setBottomSelectListView(mContext!!, data[position].title, operations, object : OnTListener<List<Operation>> {
                 override fun back(t: List<Operation>) {
                     data[position].formItemValue!!.values!!.forEach { value ->
                         t.forEach {
@@ -266,37 +266,36 @@ class FormAdapter(
         if (canTakeSize < 1) {
             ToastUtils.showToast(view.context, "已达到添加数量限制")
         } else {
-            var size: Int = data[position].formItemValue!!.values?.size ?: 0
             when (view.id) {
-                R.id.form_item_file_take_camera -> FormConfigHelper.takeCamera(mContext, data[position].id!!) {
+                R.id.form_item_file_take_camera -> FormConfigHelper.takeCamera(mContext!!, data[position].id!!) {
                     Timber.tag("表单拍照获取结果").i(Gson().toJson(it))
-                    val v = Value(position = size++).newFile(it, formItemId = data[position].id)
+                    val v = Value().newFile(it, formItemId = data[position].id)
                     addFormItemValueByPosition(position, v)
                 }
-                R.id.form_item_file_take_album -> FormConfigHelper.takeGallery(mContext, data[position].id!!, canTakeSize) {
+                R.id.form_item_file_take_album -> FormConfigHelper.takeGallery(mContext!!, data[position].id!!, canTakeSize) {
                     Timber.tag("表单图库获取结果").i(Gson().toJson(it))
                     it.forEach { file ->
-                        val v = Value(position = size++).newFile(file, formItemId = data[position].id)
+                        val v = Value().newFile(file, formItemId = data[position].id)
                         addFormItemValueByPosition(position, v)
                     }
                 }
-                R.id.form_item_file_take_video -> FormConfigHelper.takeVideo(mContext, data[position].id!!, canTakeSize) {
+                R.id.form_item_file_take_video -> FormConfigHelper.takeVideo(mContext!!, data[position].id!!, canTakeSize) {
                     Timber.tag("表单视频获取结果").i(Gson().toJson(it))
                     it.forEach { file ->
-                        val v = Value(position = size++).newFile(file, formItemId = data[position].id)
+                        val v = Value().newFile(file, formItemId = data[position].id)
                         addFormItemValueByPosition(position, v)
                     }
                 }
-                R.id.form_item_file_take_audio -> FormConfigHelper.takeAudio(mContext, data[position].id!!) {
+                R.id.form_item_file_take_audio -> FormConfigHelper.takeAudio(mContext!!, data[position].id!!) {
                     Timber.tag("表单音频获取结果").i(Gson().toJson(it))
-                    val v = Value(position = size++).newFile(it, formItemId = data[position].id)
+                    val v = Value().newFile(it, formItemId = data[position].id)
                     addFormItemValueByPosition(position, v)
                 }
                 R.id.form_item_file_take_file -> {
-                    FormConfigHelper.takeFile(mContext, data[position].id!!, canTakeSize, data[position].formItemValue!!.limitTypeList!!) {
+                    FormConfigHelper.takeFile(mContext!!, data[position].id!!, canTakeSize, data[position].formItemValue!!.limitTypeList!!) {
                         Timber.tag("表单文件获取结果").i(Gson().toJson(it))
                         it.forEach { file ->
-                            val v = Value(position = size++).newFile(file, formItemId = data[position].id)
+                            val v = Value().newFile(file, formItemId = data[position].id)
                             addFormItemValueByPosition(position, v)
                         }
                     }
@@ -313,7 +312,6 @@ class FormAdapter(
                 if (it?.let {
                             value.id = it
                             data[position].formItemValue!!.values!!.add(value)
-                            data[position].formItemValue!!.values!!.sortBy { v -> v.position }
                             notifyItemChanged(position)
                         } == null
                 ) {
