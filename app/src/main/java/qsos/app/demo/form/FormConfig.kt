@@ -3,16 +3,16 @@ package qsos.app.demo.form
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
-import com.alibaba.android.arouter.launcher.ARouter
 import com.google.gson.Gson
 import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
-import qsos.app.demo.AppPath
 import qsos.app.demo.R
 import qsos.core.file.RxImageConverters
 import qsos.core.file.RxImagePicker
 import qsos.core.file.Sources
 import qsos.core.form.config.IFormConfig
+import qsos.core.form.db.FormDatabase
 import qsos.core.form.db.entity.FormValueOfFile
 import qsos.core.form.db.entity.FormValueOfLocation
 import qsos.core.form.db.entity.FormValueOfUser
@@ -156,9 +156,19 @@ class FormConfig : IFormConfig {
 
     override fun takeUser(context: Context, formItemId: Long, canTakeSize: Int, checkedUsers: List<FormValueOfUser>, onSuccess: (List<FormValueOfUser>) -> Any) {
         Timber.tag("表单用户代理").i("用户，已有用户${Gson().toJson(checkedUsers)}")
-        ARouter.getInstance().build(AppPath.FORM_ITEM_USERS)
-                .withLong(AppPath.FORM_ITEM_ID, formItemId)
-                .navigation()
+        RxUserPicker.with((context as FragmentActivity).supportFragmentManager).takeUser(formItemId)
+                .observeOn(Schedulers.io())
+                .map {
+                    FormDatabase.getInstance().formItemValueDao.getByFormItemId(it).filter { v ->
+                        !v.limitEdit
+                    }.map { v ->
+                        v.user!!
+                    }
+                }.subscribe {
+                    onSuccess.invoke(it)
+                }.takeUnless {
+                    context.isFinishing
+                }
     }
 
     override fun previewFile(context: Context, index: Int, formValueOfFiles: List<FormValueOfFile>) {

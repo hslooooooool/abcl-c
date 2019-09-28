@@ -86,7 +86,6 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:minHeight="80dp"
-		android:nestedScrollingEnabled="false"
 		tools:ignore="UnusedAttribute"
 		tools:listitem="@layout/form_item_file_item" />
 

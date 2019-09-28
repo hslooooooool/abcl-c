@@ -32,34 +32,39 @@ class FormItemUserHolder(
 ) : BaseHolder<FormItem>(itemView) {
 
     override fun setData(data: FormItem, position: Int) {
+        val values: ArrayList<Value> = data.formItemValue?.values!!
+
         itemView.form_item_title.text = "${data.title}"
         itemView.item_form_users_size.text = "${data.formItemValue!!.values!!.size}\t人"
-        itemView.item_form_users_rv.layoutManager = GridLayoutManager(itemView.context, 4)
-        itemView.item_form_users_rv.isNestedScrollingEnabled = false
-        val values: ArrayList<Value> = data.formItemValue?.values!!
-        itemView.item_form_users_rv.adapter = BaseNormalAdapter(R.layout.form_item_user_item, values,
-                setHolder = { holder, value, p ->
-                    val user = value.user!!
-                    ImageLoaderUtils.display(holder.itemView.context, holder.itemView.item_form_user_icon, user.userAvatar)
-                    holder.itemView.item_form_user_name.text = user.userName
-                    holder.itemView.item_form_user_delete.visibility = if (!value.limitEdit) View.VISIBLE else View.INVISIBLE
-                    holder.itemView.item_form_user_delete.setOnClickListener {
-                        CoroutineScope(mJob).dbComplete {
-                            db = { FormDatabase.getInstance().formItemValueDao.delete(data.formItemValue!!.values!![p]) }
-                            onSuccess = {
-                                data.formItemValue!!.values!!.removeAt(p)
-                                itemView.item_form_users_size.text = "${data.formItemValue!!.values!!.size}\t人"
-                                itemView.item_form_users_rv.adapter?.notifyDataSetChanged()
-                            }
-                            onFail = {
-                                ToastUtils.showToastLong(holder.itemView.context, "删除失败 ${it.message}")
+
+        if (itemView.item_form_users_rv.layoutManager == null) {
+            itemView.item_form_users_rv.layoutManager = GridLayoutManager(itemView.context, 4)
+            itemView.item_form_users_rv.adapter = BaseNormalAdapter(R.layout.form_item_user_item, values,
+                    setHolder = { holder, value, p ->
+                        val user = value.user!!
+                        ImageLoaderUtils.display(holder.itemView.context, holder.itemView.item_form_user_icon, user.userAvatar)
+                        holder.itemView.item_form_user_name.text = user.userName
+                        holder.itemView.item_form_user_delete.visibility = if (!value.limitEdit) View.VISIBLE else View.INVISIBLE
+                        holder.itemView.item_form_user_delete.setOnClickListener {
+                            CoroutineScope(mJob).dbComplete {
+                                db = { FormDatabase.getInstance().formItemValueDao.delete(data.formItemValue!!.values!![p]) }
+                                onSuccess = {
+                                    data.formItemValue!!.values!!.removeAt(p)
+                                    itemView.item_form_users_size.text = "${data.formItemValue!!.values!!.size}\t人"
+                                    itemView.item_form_users_rv.adapter?.notifyDataSetChanged()
+                                }
+                                onFail = {
+                                    ToastUtils.showToastLong(holder.itemView.context, "删除失败 ${it.message}")
+                                }
                             }
                         }
-                    }
-                    holder.itemView.item_form_user_icon.setOnClickListener {
-                        FormConfigHelper.previewUser(it.context, p, values.map { it.user!! })
-                    }
-                })
+                        holder.itemView.item_form_user_icon.setOnClickListener {
+                            FormConfigHelper.previewUser(it.context, p, values.map { it.user!! })
+                        }
+                    })
+        } else {
+            itemView.item_form_users_rv.adapter!!.notifyDataSetChanged()
+        }
 
         itemView.form_item_title.setOnClickListener {
             itemClick.onItemClick(it, position, data)

@@ -29,4 +29,5 @@ abstract class AbsFormFragment : BaseFragment(), IDisposable {
         mJob.cancel()
         super.onDestroy()
     }
+
 }

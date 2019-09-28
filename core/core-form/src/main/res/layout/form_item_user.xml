@@ -33,7 +33,6 @@
 		android:layout_marginBottom="10dp"
 		android:background="@color/white"
 		android:minHeight="100dp"
-		android:nestedScrollingEnabled="false"
 		android:padding="12sp"
 		tools:ignore="UnusedAttribute"
 		tools:listitem="@layout/form_item_user_item" />

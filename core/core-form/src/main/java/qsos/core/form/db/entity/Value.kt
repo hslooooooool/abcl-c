@@ -32,21 +32,27 @@ data class Value(
     /**输入*/
     @Embedded
     var text: FormValueOfText? = null
+        get() = if (field != null) field else FormValueOfText()
     /**时间*/
     @Embedded
-    var time: FormValueOfTime? = FormValueOfTime()
+    var time: FormValueOfTime? = null
+        get() = if (field != null) field else FormValueOfTime()
     /**选择*/
     @Embedded
-    var check: FormValueOfCheck? = FormValueOfCheck()
+    var check: FormValueOfCheck? = null
+        get() = if (field != null) field else FormValueOfCheck()
     /**人员*/
     @Embedded
-    var user: FormValueOfUser? = FormValueOfUser()
+    var user: FormValueOfUser? = null
+        get() = if (field != null) field else FormValueOfUser()
     /**附件*/
     @Embedded
-    var file: FormValueOfFile? = FormValueOfFile()
+    var file: FormValueOfFile? = null
+        get() = if (field != null) field else FormValueOfFile()
     /**位置*/
     @Embedded
-    var location: FormValueOfLocation? = FormValueOfLocation()
+    var location: FormValueOfLocation? = null
+        get() = if (field != null) field else FormValueOfLocation()
 
     fun newText(text: FormValueOfText, formItemId: Long? = null): Value {
         this.formItemId = formItemId

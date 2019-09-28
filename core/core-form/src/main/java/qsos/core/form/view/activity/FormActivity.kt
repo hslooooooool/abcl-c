@@ -1,6 +1,7 @@
 package qsos.core.form.view.activity
 
 import android.Manifest
+import android.content.Intent
 import android.os.Bundle
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -67,6 +68,14 @@ class FormActivity(
                 ToastUtils.showToast(mContext, "数据错误 ${it.message}")
                 super.onBackPressed()
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val allFragments = supportFragmentManager.fragments
+        for (fragment in allFragments) {
+            fragment.onActivityResult(requestCode, resultCode, data)
         }
     }
 }

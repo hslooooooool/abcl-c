@@ -1,20 +1,20 @@
 package qsos.app.demo.form
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.KeyEvent
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
-import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import kotlinx.android.synthetic.main.app_form_users.*
 import kotlinx.coroutines.CoroutineScope
-import qsos.app.demo.R
 import qsos.app.demo.AppPath
+import qsos.app.demo.R
+import qsos.core.form.FormPath
 import qsos.core.form.data.FormModelIml
 import qsos.core.form.data.IFormModel
 import qsos.core.form.db
@@ -36,7 +36,7 @@ import qsos.lib.base.utils.BaseUtils
 class FormUserChoseActivity(
         override val layoutId: Int = R.layout.app_form_users,
         override val reload: Boolean = false
-) : AbsDisposeActivity(), Toolbar.OnMenuItemClickListener {
+) : AbsDisposeActivity() {
 
     private val mFormModel: IFormModel = FormModelIml()
 
@@ -94,6 +94,10 @@ class FormUserChoseActivity(
             }
             return@OnKeyListener false
         })
+
+        form_user_chose_sure.setOnClickListener {
+            finish()
+        }
 
         initUser()
     }
@@ -156,17 +160,10 @@ class FormUserChoseActivity(
         mAdapter?.notifyDataSetChanged()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menu?.add("确认")?.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        return true
-    }
-
-    override fun onMenuItemClick(item: MenuItem?): Boolean {
-        finish()
-        return true
-    }
-
     override fun finish() {
+        val intent = Intent()
+        intent.putExtra(FormPath.FORM_ITEM_ID, formItemId)
+        setResult(Activity.RESULT_OK, intent)
         if (formItemId == null) {
             super.finish()
         } else {
