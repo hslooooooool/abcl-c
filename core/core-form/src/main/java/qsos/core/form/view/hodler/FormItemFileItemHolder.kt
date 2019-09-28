@@ -24,8 +24,7 @@ class FormItemFileItemHolder(
             itemView.iv_item_form_file_icon.setTag(itemView.iv_item_form_file_icon.id, data.file!!.fileCover)
         }
         val tag = itemView.iv_item_form_file_icon.getTag(itemView.iv_item_form_file_icon.id) as String?
-        if (itemView.iv_item_form_file_icon.getTag(itemView.iv_item_form_file_icon.id) != null
-                && tag == data.file!!.fileCover) {
+        if (tag == data.file!!.fileCover) {
             when (FormValueOfFile.getFileTypeByMime(data.file!!.fileType)) {
                 "IMAGE" -> {
                     ImageLoaderUtils.display(
@@ -53,6 +52,7 @@ class FormItemFileItemHolder(
                 }
             }
         }
+
         itemView.tv_item_form_file_name.text = data.file!!.fileName
 
         itemView.iv_item_form_file_icon.setOnClickListener {
