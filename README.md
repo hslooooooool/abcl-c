@@ -30,6 +30,7 @@ dependencies {
     implementation 'com.github.hslooooooool.abcl-c:core-netservice:core_vision'
 }
 ```
+
 你的AppApplication如下配置
 ```
 open class AppApplication : BaseApplication(){
@@ -50,6 +51,7 @@ dependencies {
     implementation 'com.github.hslooooooool.abcl-c:core-exception:core_vision'
 }
 ```
+
 你的AppApplication如下配置
 ```
 open class AppApplication : BaseApplication(){
@@ -80,12 +82,14 @@ dependencies {
     implementation 'com.github.hslooooooool.abcl-c:core-netservice:core_vision'
 }
 ```
+
 - 文件选择（拍照、录像、录音、文件选择）
 ```
 dependencies {
     implementation 'com.github.hslooooooool.abcl-c:core-file:core_vision'
 }
 ```
+
 使用案例见表单文教操作配置，如下：
 ```
 class FormConfig : IFormConfig {
