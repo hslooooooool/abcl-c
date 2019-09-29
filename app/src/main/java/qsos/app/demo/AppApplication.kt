@@ -8,13 +8,15 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter
 import com.scwang.smartrefresh.layout.header.ClassicsHeader
 import qsos.app.demo.form.FormConfig
+import qsos.app.demo.player.PlayerConfig
+import qsos.core.exception.GlobalException
+import qsos.core.exception.GlobalExceptionHelper
 import qsos.core.form.utils.FormConfigHelper
 import qsos.core.lib.config.BaseConfig
+import qsos.core.player.PlayerConfigHelper
 import qsos.lib.base.base.BaseApplication
 import qsos.lib.base.utils.rx.RxBus
 import timber.log.Timber
-import qsos.core.exception.GlobalException
-import qsos.core.exception.GlobalExceptionHelper
 
 /**
  * @author : 华清松
@@ -53,13 +55,14 @@ open class AppApplication(
         Timber.plant(GlobalExceptionHelper.CrashReportingTree())
         /**全局异常捕获处理*/
         Thread.setDefaultUncaughtExceptionHandler(GlobalExceptionHelper)
-        RxBus.toFlow(GlobalExceptionHelper.ExceptionEvent::class.java)
-                .subscribe {
-                    dealGlobalException(it.exception)
-                }
+        RxBus.toFlow(GlobalExceptionHelper.ExceptionEvent::class.java).subscribe {
+            dealGlobalException(it.exception)
+        }
 
         /**配置表单文件操作代理实现*/
         FormConfigHelper.init(FormConfig())
+        /**配置媒体预览操作代理实现*/
+        PlayerConfigHelper.init(PlayerConfig())
     }
 
     /**TODO 统一处理异常，如重新登录、强制下线、异常反馈、网络检查*/

@@ -1,8 +1,8 @@
 # 概要
 
-名称|版本
----|---|
-core_vision|[![](https://jitpack.io/v/hslooooooool/abcl-c.svg)](https://jitpack.io/#hslooooooool/abcl-c)
+名称 | 版本
+--- | ---
+core_vision | [![](https://jitpack.io/v/hslooooooool/abcl-c.svg)](https://jitpack.io/#hslooooooool/abcl-c)
 
 ABCL-C层提供一些独立功能供使用，各功能相互独立，采用kotlin协程进行线程处理；
 - 网络请求提供kotlin协程和RxJava两种方式；
@@ -332,6 +332,9 @@ class FormConfig : IFormConfig {
 ![表单](doc/form/form_info.jpg);![表单](doc/form/form_user.jpg);![表单](doc/form/form_audio.jpg)
 
 - 图片加载-Glide封装
+
+## [TODO](doc/TODO.md) 计划
+- 媒体文件预览
 - 埋点统计
 - 缓存管理
 - 文件解压缩
