@@ -1,19 +1,26 @@
 # 概要
-ABCL-C层提供一些独立功能供使用，各功能相互独立，采用kotlin协程进行线程处理。
-网络请求提供kotlin协程和RxJava两种方式；
-表单组件采用了Room数据库进行操作；
-异常日志提供日志拦截与保存，便于上传日志到服务器进行记录分析，采用了Timber日志框架进行操作，拦截了Warm级别以上的日志
 
-- 最新版本
-core_vision=[![](https://jitpack.io/v/hslooooooool/abcl-c.svg)](https://jitpack.io/#hslooooooool/abcl-c)
+名称|版本
+---|---|
+core_vision|[![](https://jitpack.io/v/hslooooooool/abcl-c.svg)](https://jitpack.io/#hslooooooool/abcl-c)
 
-引用C层全部功能：
+ABCL-C层提供一些独立功能供使用，各功能相互独立，采用kotlin协程进行线程处理；
+- 网络请求提供kotlin协程和RxJava两种方式；
+- 表单组件采用了Room数据库进行操作；
+- 异常日志提供日志拦截与保存，便于上传日志到服务器进行记录分析，采用Timber日志框架进行操作，拦截了Warm级别以上的日志，但需要开启Timber日志；
+- 文件选择采用RxJava的方式调用回传，参考[RxPermissions](https://github.com/tbruyelle/RxPermissions)/[RxImagePicker](https://github.com/MLSDev/RxImagePicker)；
+
+使用
 ```
-dependencies {
-    implementation 'com.github.hslooooooool.abcl-c:core_vision'
-}
+// 动态表单
+implementation 'com.github.hslooooooool.abcl-c:core-form:core_vision'
+// 文件选择
+implementation 'com.github.hslooooooool.abcl-c:core-file:core_vision'
+// 网络服务
+implementation 'com.github.hslooooooool.abcl-c:core-netservice:core_vision'
+// 异常捕获
+implementation 'com.github.hslooooooool.abcl-c:core-exception:core_vision'
 ```
-或单独引用以下功能
 
 ## 功能模块
 独立功能模块涵盖所有可单独实现的功能，涵盖以下功能：
@@ -36,7 +43,7 @@ open class AppApplication : BaseApplication(){
 
 }
 ```
-- 图片加载-Glide封装
+
 - 异常捕获
 ```
 dependencies {
@@ -66,8 +73,7 @@ open class AppApplication : BaseApplication(){
     }
 }
 ```
-- 埋点统计
-- 缓存管理
+
 - 文件上传与下载(网络请求模块包含实现案例)
 ```
 dependencies {
@@ -206,9 +212,19 @@ class FormConfig : IFormConfig {
 
     override fun takeUser(context: Context, formItemId: Long, canTakeSize: Int, checkedUsers: List<FormValueOfUser>, onSuccess: (List<FormValueOfUser>) -> Any) {
         Timber.tag("表单用户代理").i("用户，已有用户${Gson().toJson(checkedUsers)}")
-        ARouter.getInstance().build(AppPath.FORM_ITEM_USERS)
-                .withLong(AppPath.FORM_ITEM_ID, formItemId)
-                .navigation()
+        RxUserPicker.with((context as FragmentActivity).supportFragmentManager).takeUser(formItemId)
+                .observeOn(Schedulers.io())
+                .map {
+                    FormDatabase.getInstance().formItemValueDao.getByFormItemId(it).filter { v ->
+                        !v.limitEdit
+                    }.map { v ->
+                        v.user!!
+                    }
+                }.subscribe {
+                    onSuccess.invoke(it)
+                }.takeUnless {
+                    context.isFinishing
+                }
     }
 
     override fun previewFile(context: Context, index: Int, formValueOfFiles: List<FormValueOfFile>) {
@@ -220,7 +236,8 @@ class FormConfig : IFormConfig {
     }
 }
 ```
-其中提供了自定义录音操作的demo，调用方式如下：
+
+其中提供了自定义录音操作的demo，调用方式如下，推荐参照实现自己的UI：
 ```
     override fun takeAudio(context: Context, formItemId: Long, onSuccess: (FormValueOfFile) -> Any) {
         Timber.tag("表单文件代理").i("音频")
@@ -242,10 +259,26 @@ class FormConfig : IFormConfig {
     }
 ```
 
+其中的用户选择，同样采用了RxJava的方式进行了选择回调，详见RxUserPicker:
+```
+        RxUserPicker.with((context as FragmentActivity).supportFragmentManager).takeUser(formItemId)
+                .observeOn(Schedulers.io())
+                .map {
+                    FormDatabase.getInstance().formItemValueDao.getByFormItemId(it).filter { v ->
+                        !v.limitEdit
+                    }.map { v ->
+                        v.user!!
+                    }
+                }.subscribe {
+                    onSuccess.invoke(it)
+                }.takeUnless {
+                    context.isFinishing
+                }
+
+```
+
 ![自定义录音操作弹窗](doc/form/form_audio.jpg)
 
-- 文件解压缩
-- 文件读写工具
 - 动态表单
 提供包括文本展示、文本输入、单选/多选、位置设置、日期设置、人员设置、附件（拍照/图库/视频/语音/文件）设置等功能，采用Room数据库进行数据操作
 ```
@@ -253,6 +286,7 @@ dependencies {
     implementation 'com.github.hslooooooool.abcl-c:core-form:core_vision'
 }
 ```
+
 在你的application中初始化表单功能实现
 ```
 open class AppApplication : BaseApplication(){
@@ -267,6 +301,7 @@ open class AppApplication : BaseApplication(){
     }
 }
 ```
+
 其中FormConfig为IFormConfig接口实现类，表单中文件、位置等操作将调用此接口进行操作并设置数据，你可参考app模块中FormConfig类的处理，
 处理方法传递了表单项ID和其他参数，你可以使用表单项ID直接操作数据库或若不想直接操作数据库可使用传递的参数进行操作，实现案例：
 ```
@@ -292,6 +327,11 @@ class FormConfig : IFormConfig {
 
 ![表单](doc/form/form_info.jpg);![表单](doc/form/form_user.jpg);![表单](doc/form/form_audio.jpg)
 
+- 图片加载-Glide封装
+- 埋点统计
+- 缓存管理
+- 文件解压缩
+- 文件读写工具
 - 动态流程
 - web容器
 - JsBridge调用
