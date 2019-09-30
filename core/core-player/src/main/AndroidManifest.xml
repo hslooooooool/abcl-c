@@ -1,2 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="qsos.core.player" />
+	package="qsos.core.player">
+	<application>
+		<activity android:name=".view.GalleryActivity" />
+	</application>
+</manifest>

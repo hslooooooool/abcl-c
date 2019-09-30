@@ -1,6 +1,7 @@
 package qsos.app.demo.form
 
 import android.content.Context
+import android.text.TextUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import com.google.gson.Gson
@@ -20,6 +21,9 @@ import qsos.core.lib.utils.dialog.AbsBottomDialog
 import qsos.core.lib.utils.dialog.BottomDialog
 import qsos.core.lib.utils.dialog.BottomDialogUtils
 import qsos.core.lib.utils.file.FileUtils
+import qsos.core.player.PlayerConfigHelper
+import qsos.core.player.data.PreAudioEntity
+import qsos.core.player.data.PreImageEntity
 import timber.log.Timber
 import java.io.File
 
@@ -173,6 +177,29 @@ class FormConfig : IFormConfig {
 
     override fun previewFile(context: Context, index: Int, formValueOfFiles: List<FormValueOfFile>) {
         Timber.tag("表单文件预览代理").i("文件$index")
+        if (formValueOfFiles.isNotEmpty()) {
+            val file = formValueOfFiles[0]
+            when (FormValueOfFile.getFileTypeByMime(file.fileType)) {
+                "IMAGE" -> {
+                    PlayerConfigHelper.previewImage(context, index, formValueOfFiles.filter {
+                        !TextUtils.isEmpty(it.filePath)
+                    }.map { v ->
+                        PreImageEntity(v.fileName ?: "", v.filePath!!, v.fileName ?: "")
+                    })
+                }
+                "AUDIO" -> {
+                    PlayerConfigHelper.previewAudio(context, index, formValueOfFiles.filter {
+                        !TextUtils.isEmpty(it.filePath)
+                    }.map { v ->
+                        PreAudioEntity(v.fileName ?: "", v.filePath!!, v.fileName ?: "")
+                    })
+                }
+                "VIDEO" -> {
+                }
+                "FILE" -> {
+                }
+            }
+        }
     }
 
     override fun previewUser(context: Context, index: Int, formValueOfUser: List<FormValueOfUser>) {

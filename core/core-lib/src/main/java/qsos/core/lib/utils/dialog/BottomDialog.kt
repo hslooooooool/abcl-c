@@ -1,5 +1,6 @@
 package qsos.core.lib.utils.dialog
 
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.FragmentManager
@@ -17,6 +18,12 @@ class BottomDialog : AbsBottomDialog() {
     override var layoutRes: Int = 0
 
     private var mViewListener: ViewListener? = null
+
+    private var mDismissListener: DialogInterface.OnDismissListener? = null
+
+    fun setOnDismissListener(dismissListener: DialogInterface.OnDismissListener) {
+        this.mDismissListener = dismissListener
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +47,11 @@ class BottomDialog : AbsBottomDialog() {
         if (mViewListener != null) {
             mViewListener!!.bindView(dialog)
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        mDismissListener?.onDismiss(dialog)
     }
 
     fun setFragmentManager(manager: FragmentManager): BottomDialog {

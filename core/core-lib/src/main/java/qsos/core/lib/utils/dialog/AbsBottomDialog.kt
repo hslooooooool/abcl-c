@@ -1,5 +1,6 @@
 package qsos.core.lib.utils.dialog
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
 import androidx.annotation.IdRes
@@ -33,8 +34,8 @@ abstract class AbsBottomDialog : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        dialog?.window!!.requestFeature(Window.FEATURE_NO_TITLE)
-        dialog?.setCanceledOnTouchOutside(cancelOutside)
+        dialog!!.window!!.requestFeature(Window.FEATURE_NO_TITLE)
+        dialog!!.setCanceledOnTouchOutside(cancelOutside)
         mParentView = inflater.inflate(layoutRes, container, false)
         bindView(this)
         return mParentView
@@ -42,10 +43,9 @@ abstract class AbsBottomDialog : DialogFragment() {
 
     abstract fun bindView(dialog: AbsBottomDialog)
 
-
     override fun onStart() {
         super.onStart()
-        val window = dialog?.window
+        val window = dialog!!.window
         val params = window!!.attributes
         params.dimAmount = dimAmount
         params.width = WindowManager.LayoutParams.MATCH_PARENT
