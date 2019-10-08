@@ -1,7 +1,7 @@
 package qsos.lib.netservice.file
 
-import io.reactivex.Flowable
 import okhttp3.ResponseBody
+import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Streaming
 import retrofit2.http.Url
@@ -21,6 +21,6 @@ interface ApiDownloadFile {
     @GET
     fun downloadFile(
             @Url url: String
-    ): Flowable<ResponseBody>
+    ): Call<ResponseBody>
 
 }

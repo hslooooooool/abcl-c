@@ -15,7 +15,7 @@ import qsos.lib.base.base.BaseApplication
 object NetUtil {
     private var mConnectivityManager: ConnectivityManager = BaseApplication.appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     /**网络是否连接*/
-    var netWorkIsConnected: Boolean = false
+    var netWorkIsConnected: Boolean = true
         get() {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 isConnected()

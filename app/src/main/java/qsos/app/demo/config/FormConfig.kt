@@ -1,4 +1,4 @@
-package qsos.app.demo.form
+package qsos.app.demo.config
 
 import android.content.Context
 import android.text.TextUtils
@@ -9,6 +9,8 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
 import qsos.app.demo.R
+import qsos.app.demo.form.AudioUtils
+import qsos.app.demo.form.RxUserPicker
 import qsos.core.file.RxImageConverters
 import qsos.core.file.RxImagePicker
 import qsos.core.file.Sources
@@ -23,13 +25,15 @@ import qsos.core.lib.utils.dialog.BottomDialogUtils
 import qsos.core.lib.utils.file.FileUtils
 import qsos.core.player.PlayerConfigHelper
 import qsos.core.player.data.PreAudioEntity
+import qsos.core.player.data.PreDocumentEntity
 import qsos.core.player.data.PreImageEntity
+import qsos.core.player.data.PreVideoEntity
 import timber.log.Timber
 import java.io.File
 
 /**
  * @author : 华清松
- * 表单文件操作代理
+ * 表单文件操作具体实现
  */
 class FormConfig : IFormConfig {
 
@@ -178,25 +182,61 @@ class FormConfig : IFormConfig {
     override fun previewFile(context: Context, index: Int, formValueOfFiles: List<FormValueOfFile>) {
         Timber.tag("表单文件预览代理").i("文件$index")
         if (formValueOfFiles.isNotEmpty()) {
-            val file = formValueOfFiles[0]
-            when (FormValueOfFile.getFileTypeByMime(file.fileType)) {
+            val file = formValueOfFiles[index]
+            var position = 0
+            var positionIsRight = false
+            when (val type = FormValueOfFile.getFileTypeByMime(file.fileType)) {
                 "IMAGE" -> {
-                    PlayerConfigHelper.previewImage(context, index, formValueOfFiles.filter {
+                    val img = formValueOfFiles.filter {
                         !TextUtils.isEmpty(it.filePath)
+                    }.filter {
+                        type == FormValueOfFile.getFileTypeByMime(it.fileType)
                     }.map { v ->
+                        if (v != file && !positionIsRight) {
+                            position++
+                        } else {
+                            positionIsRight = true
+                        }
                         PreImageEntity(v.fileName ?: "", v.filePath!!, v.fileName ?: "")
-                    })
+                    }
+                    PlayerConfigHelper.previewImage(context, position, img)
                 }
                 "AUDIO" -> {
-                    PlayerConfigHelper.previewAudio(context, index, formValueOfFiles.filter {
+                    val audio = formValueOfFiles.filter {
                         !TextUtils.isEmpty(it.filePath)
+                    }.filter {
+                        type == FormValueOfFile.getFileTypeByMime(it.fileType)
                     }.map { v ->
+                        if (v != file && !positionIsRight) {
+                            position++
+                        } else {
+                            positionIsRight = true
+                        }
                         PreAudioEntity(v.fileName ?: "", v.filePath!!, v.fileName ?: "")
-                    })
+                    }
+                    PlayerConfigHelper.previewAudio(context, position, audio)
                 }
                 "VIDEO" -> {
+                    val video = formValueOfFiles.filter {
+                        !TextUtils.isEmpty(it.filePath)
+                    }.filter {
+                        type == FormValueOfFile.getFileTypeByMime(it.fileType)
+                    }.map { v ->
+                        if (v != file && !positionIsRight) {
+                            position++
+                        } else {
+                            positionIsRight = true
+                        }
+                        PreVideoEntity(v.fileName ?: "", v.filePath!!, v.fileName ?: "")
+                    }
+                    PlayerConfigHelper.previewVideo(context, index, video)
                 }
                 "FILE" -> {
+                    val doc = formValueOfFiles[index]
+                    doc.filePath?.let {
+                        PlayerConfigHelper.previewDocument(context, PreDocumentEntity(doc.fileName
+                                ?: it, it))
+                    }
                 }
             }
         }

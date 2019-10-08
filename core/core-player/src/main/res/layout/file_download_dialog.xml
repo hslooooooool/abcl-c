@@ -5,22 +5,36 @@
 	android:background="@color/white"
 	android:gravity="center_vertical"
 	android:orientation="horizontal"
-	android:padding="20dp">
+	android:padding="10dp">
 	
-	<TextView
-		android:id="@+id/audio_state"
+	<LinearLayout
 		android:layout_width="0dp"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
-		android:padding="10dp"
-		android:text="录音播放" />
+		android:orientation="vertical"
+		android:padding="10dp">
+		
+		<TextView
+			android:id="@+id/file_state"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="文件下载" />
+		
+		<ProgressBar
+			android:id="@+id/file_progress"
+			style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:max="100"
+			android:progress="0" />
+	</LinearLayout>
 	
 	<Button
-		android:id="@+id/audio_action"
+		android:id="@+id/file_action"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:background="@drawable/selector_button"
 		android:padding="10dp"
-		android:text="播放"
+		android:text="下载"
 		android:textColor="@color/white" />
 </LinearLayout>

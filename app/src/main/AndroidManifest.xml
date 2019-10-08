@@ -1,38 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	package="qsos.app.demo">
-	
-	<application
-		android:name="qsos.app.demo.AppApplication"
-		android:allowBackup="true"
-		android:icon="@drawable/ic_launcher"
-		android:label="@string/app_name"
-		android:networkSecurityConfig="@xml/app_network_security_config"
-		android:supportsRtl="true"
-		android:theme="@style/AppTheme"
-		tools:replace="android:label,android:icon,android:theme">
-		
-		<activity
-			android:name="qsos.app.demo.SplashActivity"
-			android:configChanges="orientation|keyboardHidden|screenSize"
-			android:screenOrientation="portrait">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<action android:name="android.intent.action.VIEW" />
-				
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
-		</activity>
-		
-		<!--闪屏页-->
-		<activity
-			android:name="qsos.app.demo.tweet.TweetActivity"
-			android:configChanges="orientation|keyboardHidden|screenSize" />
-		
-		<!--用户选择界面-->
-		<activity android:name="qsos.app.demo.form.FormUserChoseActivity" />
-	
-	</application>
+	<uses-feature
+		android:name="android.hardware.camera"
+		android:required="true" />
 	
 	<uses-permission
 		android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -48,5 +19,47 @@
 	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
 	<uses-permission android:name="android.permission.CAMERA" />
 	<uses-permission android:name="android.permission.RECORD_AUDIO" />
+	
+	<application
+		android:name="qsos.app.demo.AppApplication"
+		android:allowBackup="true"
+		android:icon="@drawable/ic_launcher"
+		android:label="@string/app_name"
+		android:networkSecurityConfig="@xml/app_network_security_config"
+		android:supportsRtl="true"
+		android:theme="@style/AppTheme"
+		tools:replace="android:label,android:icon,android:theme">
+		<!--共享文件-->
+		<provider
+			android:name="qsos.core.lib.base.BaseFileProvider"
+			android:authorities="qsos.app.demo.provider"
+			android:exported="false"
+			android:grantUriPermissions="true">
+			<meta-data
+				android:name="android.support.FILE_PROVIDER_PATHS"
+				android:resource="@xml/file_paths" />
+		</provider>
+		
+		<!--启动页-->
+		<activity
+			android:name="qsos.app.demo.SplashActivity"
+			android:configChanges="orientation|keyboardHidden|screenSize"
+			android:screenOrientation="portrait">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<action android:name="android.intent.action.VIEW" />
+				
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		
+		<activity
+			android:name="qsos.app.demo.tweet.TweetActivity"
+			android:configChanges="orientation|keyboardHidden|screenSize" />
+		
+		<!--用户选择界面-->
+		<activity android:name="qsos.app.demo.form.FormUserChoseActivity" />
+	
+	</application>
 
 </manifest>

@@ -4,17 +4,17 @@
 	<!--图片-->
 	<external-path
 		name="image"
-		path="Android/data/qsos.core.file/files/image/" />
+		path="Android/data/qsos.app.demo/files/image/" />
 	<!--音视频-->
 	<external-path
 		name="media"
-		path="Android/data/qsos.core.file/files/media/" />
+		path="Android/data/qsos.app.demo/files/media/" />
 	<!--下载文件-->
 	<external-path
 		name="download"
-		path="Android/data/qsos.core.file/files/download/" />
+		path="Android/data/qsos.app.demo/files/download/" />
 	<!--其它文件-->
 	<external-path
 		name="other"
-		path="Android/data/qsos.core.file/files/other/" />
+		path="Android/data/qsos.app.demo/files/other/" />
 </paths>

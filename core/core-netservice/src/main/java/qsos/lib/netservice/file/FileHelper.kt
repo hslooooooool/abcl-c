@@ -21,6 +21,7 @@ class FileHelper : IFileModel {
             imlFileModel.downloadFile(fileEntity, listener)
         } else {
             imlFileModel = FileRepository(mJob)
+            imlFileModel.downloadFile(fileEntity, listener)
         }
     }
 
@@ -29,6 +30,7 @@ class FileHelper : IFileModel {
             imlFileModel.uploadFile(fileEntity, listener)
         } else {
             imlFileModel = FileRepository(mJob)
+            imlFileModel.uploadFile(fileEntity, listener)
         }
     }
 
@@ -37,6 +39,7 @@ class FileHelper : IFileModel {
             imlFileModel.uploadFile(fileEntityList, listener)
         } else {
             imlFileModel = FileRepository(mJob)
+            imlFileModel.uploadFile(fileEntityList, listener)
         }
     }
 

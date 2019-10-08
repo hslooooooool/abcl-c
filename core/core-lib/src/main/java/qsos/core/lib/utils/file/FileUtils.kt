@@ -12,6 +12,7 @@ import android.provider.MediaStore
 import android.text.TextUtils
 import androidx.core.content.FileProvider
 import okhttp3.ResponseBody
+import qsos.core.lib.config.BaseConfig
 import qsos.lib.base.base.BaseApplication
 import qsos.lib.base.callback.OnTListener
 import top.zibin.luban.Luban
@@ -39,10 +40,10 @@ object FileUtils {
 
     /**媒体类型*/
     private val MIME_TABLE = arrayOf(
-            arrayOf(".3gp", "form_take_video/3gpp"),
+            arrayOf(".3gp", "video/3gpp"),
             arrayOf(".apk", "application/vnd.android.package-archive"),
-            arrayOf(".asf", "form_take_video/x-ms-asf"),
-            arrayOf(".avi", "form_take_video/x-msvideo"),
+            arrayOf(".asf", "video/x-ms-asf"),
+            arrayOf(".avi", "video/x-msvideo"),
             arrayOf(".bin", "application/octet-stream"),
             arrayOf(".bmp", "image/bmp"),
             arrayOf(".c", "text/plain"),
@@ -66,24 +67,24 @@ object FileUtils {
             arrayOf(".jpg", "image/jpeg"),
             arrayOf(".js", "application/x-javascript"),
             arrayOf(".log", "text/plain"),
-            arrayOf(".m3u", "form_take_audio/x-mpegurl"),
-            arrayOf(".m4a", "form_take_audio/mp4a-latm"),
-            arrayOf(".m4b", "form_take_audio/mp4a-latm"),
-            arrayOf(".m4p", "form_take_audio/mp4a-latm"),
-            arrayOf(".m4u", "form_take_video/vnd.mpegurl"),
-            arrayOf(".m4v", "form_take_video/x-m4v"),
-            arrayOf(".mov", "form_take_video/quicktime"),
-            arrayOf(".mp2", "form_take_audio/x-mpeg"),
-            arrayOf(".mp3", "form_take_audio/x-mpeg"),
-            arrayOf(".mp4", "form_take_video/mp4"),
+            arrayOf(".m3u", "audio/x-mpegurl"),
+            arrayOf(".m4a", "audio/mp4a-latm"),
+            arrayOf(".m4b", "audio/mp4a-latm"),
+            arrayOf(".m4p", "audio/mp4a-latm"),
+            arrayOf(".m4u", "video/vnd.mpegurl"),
+            arrayOf(".m4v", "video/x-m4v"),
+            arrayOf(".mov", "video/quicktime"),
+            arrayOf(".mp2", "audio/x-mpeg"),
+            arrayOf(".mp3", "audio/x-mpeg"),
+            arrayOf(".mp4", "video/mp4"),
             arrayOf(".mpc", "application/vnd.mpohun.certificate"),
-            arrayOf(".mpe", "form_take_video/mpeg"),
-            arrayOf(".mpeg", "form_take_video/mpeg"),
-            arrayOf(".mpg", "form_take_video/mpeg"),
-            arrayOf(".mpg4", "form_take_video/mp4"),
-            arrayOf(".mpga", "form_take_audio/mpeg"),
+            arrayOf(".mpe", "video/mpeg"),
+            arrayOf(".mpeg", "video/mpeg"),
+            arrayOf(".mpg", "video/mpeg"),
+            arrayOf(".mpg4", "video/mp4"),
+            arrayOf(".mpga", "audio/mpeg"),
             arrayOf(".msg", "application/vnd.ms-outlook"),
-            arrayOf(".ogg", "form_take_audio/ogg"),
+            arrayOf(".ogg", "audio/ogg"),
             arrayOf(".pdf", "application/pdf"),
             arrayOf(".png", "image/png"),
             arrayOf(".pps", "application/vnd.ms-powerpoint"),
@@ -91,15 +92,15 @@ object FileUtils {
             arrayOf(".pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation"),
             arrayOf(".prop", "text/plain"),
             arrayOf(".rc", "text/plain"),
-            arrayOf(".rmvb", "form_take_audio/x-pn-realaudio"),
+            arrayOf(".rmvb", "audio/x-pn-realaudio"),
             arrayOf(".rtf", "application/rtf"),
             arrayOf(".sh", "text/plain"),
             arrayOf(".tar", "application/x-tar"),
             arrayOf(".tgz", "application/x-compressed"),
             arrayOf(".txt", "text/plain"),
-            arrayOf(".wav", "form_take_audio/x-wav"),
-            arrayOf(".wma", "form_take_audio/x-ms-wma"),
-            arrayOf(".wmv", "form_take_audio/x-ms-wmv"),
+            arrayOf(".wav", "audio/x-wav"),
+            arrayOf(".wma", "audio/x-ms-wma"),
+            arrayOf(".wmv", "audio/x-ms-wmv"),
             arrayOf(".wps", "application/vnd.ms-works"),
             arrayOf(".xml", "text/plain"),
             arrayOf(".z", "application/x-compress"),
@@ -160,9 +161,10 @@ object FileUtils {
         val type = getMIMEType(file)
         // 设置intent的data和Type属性。android 7.0以上crash,改用provider
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            val fileUri = FileProvider.getUriForFile(activity, "qsos.core.file.provider", file)
-            intent.setDataAndType(fileUri, type)
+            intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            val fileUri = FileProvider.getUriForFile(activity, BaseConfig.PROVIDER, file)
             grantUriPermission(activity, fileUri, intent)
+            intent.setDataAndType(fileUri, type)
         } else {
             intent.setDataAndType(Uri.fromFile(file), type)
         }
@@ -214,8 +216,7 @@ object FileUtils {
     @JvmStatic
     fun getFileNameByPath(path: String?): String {
         if (path == null || path.isEmpty()) return "unknown"
-        val nameStart = path.lastIndexOf('/') + 1
-        return path.substring(nameStart)
+        return path.substringAfterLast('/')
     }
 
     /**

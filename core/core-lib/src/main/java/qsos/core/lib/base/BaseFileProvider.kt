@@ -1,4 +1,4 @@
-package qsos.core.file
+package qsos.core.lib.base
 
 import androidx.core.content.FileProvider
 
