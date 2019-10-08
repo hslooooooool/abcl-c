@@ -36,7 +36,13 @@ class PlayerConfig : IPlayerConfig {
     }
 
     override fun previewVideo(context: Context, position: Int, list: List<PreVideoEntity>) {
-        // TODO 自行实现视频播放，如使用 节操播放器 等
+        // 自行实现视频播放，如使用 节操播放器 等，这里采用本地软件打开
+        try {
+            FileUtils.openFileByPhone(context as Activity, File(list[position].path))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Timber.tag("文件预览").e(e)
+        }
     }
 
     override fun previewAudio(context: Context, position: Int, list: List<PreAudioEntity>) {
@@ -44,7 +50,7 @@ class PlayerConfig : IPlayerConfig {
     }
 
     override fun previewDocument(context: Context, data: PreDocumentEntity) {
-        // FIXME 测试数据 "http://resource.qsos.vip/test.mp4"
+        // 测试数据 mTestUrl = "http://resource.qsos.vip/test.mp4"
         val mTestUrl = data.path
         when {
             mTestUrl.startsWith("http") || mTestUrl.startsWith("ftp") -> {
