@@ -24,7 +24,7 @@ implementation 'com.github.hslooooooool.abcl-c:core-exception:core_vision'
 
 ## 功能模块
 独立功能模块涵盖所有可单独实现的功能，涵盖以下功能：
-- 网络请求
+### 网络请求
 ```
 dependencies {
     implementation 'com.github.hslooooooool.abcl-c:core-netservice:core_vision'
@@ -45,7 +45,7 @@ open class AppApplication : BaseApplication(){
 }
 ```
 
-- 异常捕获
+### 异常捕获
 ```
 dependencies {
     implementation 'com.github.hslooooooool.abcl-c:core-exception:core_vision'
@@ -76,14 +76,14 @@ open class AppApplication : BaseApplication(){
 }
 ```
 
-- 文件上传与下载(网络请求模块包含实现案例)
+### 文件上传与下载(网络请求模块包含实现案例)
 ```
 dependencies {
     implementation 'com.github.hslooooooool.abcl-c:core-netservice:core_vision'
 }
 ```
 
-- 文件选择（拍照、录像、录音、文件选择）
+### 文件选择（拍照、录像、录音、文件选择）
 ```
 dependencies {
     implementation 'com.github.hslooooooool.abcl-c:core-file:core_vision'
@@ -283,7 +283,7 @@ class FormConfig : IFormConfig {
 
 ![自定义录音操作弹窗](doc/form/form_audio.jpg)
 
-- 动态表单
+### 动态表单
 提供包括文本展示、文本输入、单选/多选、位置设置、日期设置、人员设置、附件（拍照/图库/视频/语音/文件）设置等功能，采用Room数据库进行数据操作
 ```
 dependencies {
@@ -331,10 +331,90 @@ class FormConfig : IFormConfig {
 
 ![表单](doc/form/form_info.jpg);![表单](doc/form/form_user.jpg);![表单](doc/form/form_audio.jpg)
 
-- 图片加载-Glide封装
+### 图片加载-Glide封装
+
+### 媒体文件预览
+提供图片轮播、录音播放、文档下载后本地打开支持等功能，视频播放暂不提供
+```
+dependencies {
+    implementation 'com.github.hslooooooool.abcl-c:core-player:core_vision'
+}
+```
+其中PlayerConfig为IPlayerConfig接口实现类，DefPlayerConfig为IPlayerConfig默认实现（提供图片轮播、录音播放等简单功能），
+PlayerConfig实现了文档下载后本地打开较高级功能，一般APP可对基础文档提供在线预览，这里不这样作了，仅提供调用本地软件打开，代码如下：
+```
+    override fun previewDocument(context: Context, data: PreDocumentEntity) {
+        // FIXME 测试数据 "http://resource.qsos.vip/test.mp4"
+        val mTestUrl = data.path
+        when {
+            mTestUrl.startsWith("http") || mTestUrl.startsWith("ftp") -> {
+                // 网络文件，先下载再调用本地软件打开
+                val mFileHelper = FileHelper()
+                BottomDialogUtils.showCustomerView(context, R.layout.file_download_dialog,
+                        viewListener = object : BottomDialog.ViewListener {
+                            override fun bindView(dialog: AbsBottomDialog) {
+                                var mFilePath: String? = null
+                                val state = dialog.findViewById<TextView>(R.id.file_state)
+                                val progress = dialog.findViewById<ProgressBar>(R.id.file_progress)
+                                val action = dialog.findViewById<Button>(R.id.file_action)
+                                val handler = Handler(Looper.getMainLooper())
+                                action.text = "下载"
+                                action.setOnClickListener {
+                                    when (action.text) {
+                                        "下载" -> {
+                                            action.text = "取消"
+                                            state.text = "开始下载"
+                                            progress.progress = 0
+                                            mFileHelper.downloadFile(HttpFileEntity(mTestUrl, null, "test.mp4", 0),
+                                                    object : OnTListener<HttpFileEntity> {
+                                                        override fun back(t: HttpFileEntity) {
+                                                            if (t.progress == 100) mFilePath = t.path
+                                                            handler.post {
+                                                                progress.progress = t.progress
+                                                                state.text = t.loadMsg
+                                                                if (t.progress == 100) action.text = "打开"
+                                                            }
+                                                        }
+                                                    })
+                                        }
+                                        "打开" -> {
+                                            try {
+                                                FileUtils.openFileByPhone(context as Activity, File(mFilePath))
+                                            } catch (e: Exception) {
+                                                e.printStackTrace()
+                                                Timber.tag("文件预览").e(e)
+                                            }
+                                        }
+                                        "取消" -> {
+                                            dialog.dismiss()
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        cancel = true,
+                        dismissListener = DialogInterface.OnDismissListener {
+                            mFileHelper.clear()
+                        })
+            }
+            else -> {
+                // 本地文件，调用本地软件打开
+                try {
+                    FileUtils.openFileByPhone(context as Activity, File(data.path))
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Timber.tag("文件预览").e(e)
+                }
+            }
+        }
+    }
+
+```
+
+![下载监听](doc/player/download_file.jpg) 
 
 ## [TODO](doc/TODO.md) 计划
-- 媒体文件预览
+
 - 埋点统计
 - 缓存管理
 - 文件解压缩
