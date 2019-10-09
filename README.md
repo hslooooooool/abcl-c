@@ -9,6 +9,7 @@ ABCL-C层提供一些独立功能供使用，各功能相互独立，采用kotli
 - 表单组件采用了Room数据库进行操作；
 - 异常日志提供日志拦截与保存，便于上传日志到服务器进行记录分析，采用Timber日志框架进行操作，拦截了Warm级别以上的日志，但需要开启Timber日志；
 - 文件选择采用RxJava的方式调用回传，参考[RxPermissions](https://github.com/tbruyelle/RxPermissions)/[RxImagePicker](https://github.com/MLSDev/RxImagePicker)；
+- 媒体预览采用原生的方式提供支持，包括音频播放、视频/文档本地APP打开等；
 
 使用
 ```
@@ -20,6 +21,8 @@ implementation 'com.github.hslooooooool.abcl-c:core-file:core_vision'
 implementation 'com.github.hslooooooool.abcl-c:core-netservice:core_vision'
 // 异常捕获
 implementation 'com.github.hslooooooool.abcl-c:core-exception:core_vision'
+// 媒体预览
+implementation 'com.github.hslooooooool.abcl-c:core-player:core_vision'
 ```
 
 ## 功能模块
