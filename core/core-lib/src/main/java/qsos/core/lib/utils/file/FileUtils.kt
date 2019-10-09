@@ -12,7 +12,7 @@ import android.provider.MediaStore
 import android.text.TextUtils
 import androidx.core.content.FileProvider
 import okhttp3.ResponseBody
-import qsos.core.lib.config.BaseConfig
+import qsos.core.lib.config.CoreConfig
 import qsos.lib.base.base.BaseApplication
 import qsos.lib.base.callback.OnTListener
 import top.zibin.luban.Luban
@@ -162,7 +162,7 @@ object FileUtils {
         // 设置intent的data和Type属性。android 7.0以上crash,改用provider
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-            val fileUri = FileProvider.getUriForFile(activity, BaseConfig.PROVIDER, file)
+            val fileUri = FileProvider.getUriForFile(activity, CoreConfig.PROVIDER, file)
             grantUriPermission(activity, fileUri, intent)
             intent.setDataAndType(fileUri, type)
         } else {

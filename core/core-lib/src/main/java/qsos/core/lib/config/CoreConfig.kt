@@ -4,7 +4,7 @@ package qsos.core.lib.config
  * @author : 华清松
  * 配置参数
  */
-object BaseConfig {
+object CoreConfig {
     /**配置是否调试模式
      * 影响范围：OkHttp日志打印，Glide日志打印
      * */

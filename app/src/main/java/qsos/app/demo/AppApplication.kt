@@ -13,7 +13,7 @@ import qsos.app.demo.config.PlayerConfig
 import qsos.core.exception.GlobalException
 import qsos.core.exception.GlobalExceptionHelper
 import qsos.core.form.utils.FormConfigHelper
-import qsos.core.lib.config.BaseConfig
+import qsos.core.lib.config.CoreConfig
 import qsos.core.player.PlayerConfigHelper
 import qsos.lib.base.base.BaseApplication
 import qsos.lib.base.utils.rx.RxBus
@@ -48,10 +48,10 @@ open class AppApplication(
     override fun onCreate() {
         super.onCreate()
 
-        BaseConfig.DEBUG = true
+        CoreConfig.DEBUG = true
         /**BASE_URL配置*/
-        BaseConfig.BASE_URL = "http://192.168.1.10:8084"
-        BaseConfig.PROVIDER = "qsos.app.demo.provider"
+        CoreConfig.BASE_URL = "http://192.168.1.10:8084"
+        CoreConfig.PROVIDER = "qsos.app.demo.provider"
 
         /**Timber 日志*/
         Timber.plant(GlobalExceptionHelper.CrashReportingTree())

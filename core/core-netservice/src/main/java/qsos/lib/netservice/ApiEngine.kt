@@ -4,7 +4,7 @@ import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import qsos.core.lib.config.BaseConfig
+import qsos.core.lib.config.CoreConfig
 import qsos.core.lib.utils.json.DateDeserializer
 import qsos.core.lib.utils.json.DateSerializer
 import qsos.lib.netservice.interceptor.AddCookiesInterceptor
@@ -38,7 +38,7 @@ object ApiEngine {
         mGsonConverterFactory = GsonConverterFactory.create(mGsonBuilder.create())
 
         mBuild = Retrofit.Builder()
-                .baseUrl(BaseConfig.BASE_URL)
+                .baseUrl(CoreConfig.BASE_URL)
                 .addConverterFactory(mGsonConverterFactory)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 
@@ -50,7 +50,7 @@ object ApiEngine {
         // COOKIE拦截器
         mClient.addInterceptor(AddCookiesInterceptor())
 
-        if (BaseConfig.DEBUG) {
+        if (CoreConfig.DEBUG) {
             // 日志拦截器
             mClient.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         }

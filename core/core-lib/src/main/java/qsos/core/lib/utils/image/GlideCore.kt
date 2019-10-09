@@ -17,7 +17,7 @@ import com.bumptech.glide.load.resource.transcode.ResourceTranscoder
 import com.bumptech.glide.module.AppGlideModule
 import com.caverock.androidsvg.SVG
 import com.caverock.androidsvg.SVGParseException
-import qsos.core.lib.config.BaseConfig
+import qsos.core.lib.config.CoreConfig
 import java.io.IOException
 import java.io.InputStream
 
@@ -38,7 +38,7 @@ class GlideCore : AppGlideModule() {
         // 日志级别
         builder.setLogLevel(Log.ERROR)
         // DEBUG模式才打印日志
-        builder.setLogRequestOrigins(BaseConfig.DEBUG)
+        builder.setLogRequestOrigins(CoreConfig.DEBUG)
     }
 
     override fun isManifestParsingEnabled(): Boolean {

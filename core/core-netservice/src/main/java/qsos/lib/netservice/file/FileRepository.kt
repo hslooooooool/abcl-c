@@ -9,7 +9,7 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
-import qsos.core.lib.config.BaseConfig
+import qsos.core.lib.config.CoreConfig
 import qsos.core.lib.utils.file.FileUtils
 import qsos.core.lib.utils.json.DateDeserializer
 import qsos.core.lib.utils.json.DateSerializer
@@ -67,7 +67,7 @@ class FileRepository(
                 val mGsonConverterFactory: GsonConverterFactory = GsonConverterFactory.create(mGsonBuilder.create())
 
                 val mBuild = Retrofit.Builder()
-                        .baseUrl(BaseConfig.BASE_URL)
+                        .baseUrl(CoreConfig.BASE_URL)
                         .addConverterFactory(mGsonConverterFactory)
                         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 
