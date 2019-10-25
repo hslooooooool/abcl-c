@@ -140,9 +140,9 @@ object FileUtils {
         }
         // 获取文件的后缀名
         val end = fName.substring(dotIndex, fName.length).toLowerCase(Locale.CHINA)
-        if (end === "") return type
+        if (end == "") return type
         // 在MIME和文件类型的匹配表中找到对应的MIME类型。
-        for (i in 0 until MIME_TABLE.size) {
+        for (i in MIME_TABLE.indices) {
             if (end == MIME_TABLE[i][0])
                 type = MIME_TABLE[i][1]
         }
