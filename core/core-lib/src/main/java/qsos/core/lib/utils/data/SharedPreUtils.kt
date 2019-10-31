@@ -2,7 +2,9 @@ package qsos.core.lib.utils.data
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.text.TextUtils
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import qsos.lib.base.base.BaseApplication
 
 /**
@@ -44,6 +46,49 @@ object SharedPreUtils {
                 mShared.edit().putString(key, Gson().toJson(value)).apply()
             }
         }
+    }
+
+    fun <T> getValue(key: String, def: T): T? {
+        return when (def) {
+            is String -> {
+                val v = mShared.getString(key, def)
+                v
+            }
+            is Boolean -> {
+                val v = mShared.getBoolean(key, def)
+                v
+            }
+            is Long -> {
+                val v = mShared.getLong(key, def)
+                v
+            }
+            is Int -> {
+                val v = mShared.getInt(key, def)
+                v
+            }
+            is Float -> {
+                val v = mShared.getFloat(key, def)
+                v
+            }
+            is Set<*> -> {
+                val v = mShared.getStringSet(key, def as Set<String>)
+                v
+            }
+            else -> {
+                val type = object : TypeToken<T>() {}.type
+                val json = mShared.getString(key, null)
+                val v = if (TextUtils.isEmpty(json)) {
+                    def
+                } else {
+                    try {
+                        Gson().fromJson<T>(mShared.getString(key, null), type)
+                    } catch (e: Exception) {
+                        def
+                    }
+                }
+                v
+            }
+        } as T?
     }
 
     fun remove(context: Context?, key: String) {
