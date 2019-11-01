@@ -12,6 +12,9 @@ import retrofit2.http.Part
  * 文件上传接口
  */
 interface ApiUploadFile {
+    companion object {
+        const val GROUP = "/upload"
+    }
 
     /**
      * 单文件上传
@@ -21,7 +24,7 @@ interface ApiUploadFile {
      * 则返回的路径应是 file/20190502/head.png ，host由协商确定
      */
     @Multipart
-    @POST("/upload/file")
+    @POST("$GROUP/file")
     fun uploadFile(
             @Part part: MultipartBody.Part
     ): Call<BaseResponse<HttpFileEntity>>
@@ -34,7 +37,7 @@ interface ApiUploadFile {
      * 则返回的路径应是 file/20190502/head.png ，host由协商确定
      */
     @Multipart
-    @POST("/upload/file")
+    @POST("$GROUP/files")
     fun uploadFiles(
             @Part parts: List<MultipartBody.Part>
     ): Call<BaseResponse<List<HttpFileEntity>>>
