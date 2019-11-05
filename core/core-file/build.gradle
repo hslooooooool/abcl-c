@@ -1,6 +1,8 @@
 apply plugin: 'com.android.library'
 
 apply from: '../../base.gradle'
+apply from: '../../push.gradle'
+
 dependencies {
     api project(':core:core-lib')
 }

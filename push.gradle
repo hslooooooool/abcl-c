@@ -1,9 +1,18 @@
-// 打包源码
-task androidSourcesJar(type: Jar) {
-    classifier = 'sources'
+group='com.github.hslooooooool'
+
+task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+    classifier = 'javadoc'
 }
 
 artifacts {
-    archives androidSourcesJar
+    archives javadocJar
+    archives sourcesJar
 }
