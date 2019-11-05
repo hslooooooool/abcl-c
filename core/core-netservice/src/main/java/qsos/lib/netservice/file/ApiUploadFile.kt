@@ -18,7 +18,7 @@ interface ApiUploadFile {
 
     /**
      * 单文件上传
-     * @param part 待上传的文件
+     * @param file 待上传的文件
      * @return BaseHttpResult<String> 文件在服务器的路径，因设计为去除host的路径，
      * 建议：保证后期服务器地址更换带来的数据不一致问题，如访问路径是 http://www.baidu.com/file/20190502/head.png
      * 则返回的路径应是 file/20190502/head.png ，host由协商确定
@@ -31,7 +31,7 @@ interface ApiUploadFile {
 
     /**
      * 多文件上传
-     * @param parts 待上传的文件列表
+     * @param files 待上传的文件列表
      * @return BaseHttpResult<String> 文件在服务器的路径，因设计为去除host的路径，
      * 建议：保证后期服务器地址更换带来的数据不一致问题，如访问路径是 http://www.baidu.com/file/20190502/head.png
      * 则返回的路径应是 file/20190502/head.png ，host由协商确定
