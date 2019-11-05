@@ -139,7 +139,7 @@ class FileRepository(
                     listener.back(fileEntity)
                 }
             })
-            val part = MultipartBody.Part.createFormData("uploadFile", uploadFile.name, uploadBody)
+            val part = MultipartBody.Part.createFormData("file", uploadFile.name, uploadBody)
             CoroutineScope(mCoroutineContext).retrofitByDef<HttpFileEntity> {
                 api = ApiEngine.createService(ApiUploadFile::class.java).uploadFile(part)
                 onStart {
@@ -180,7 +180,7 @@ class FileRepository(
                         listener.back(BaseResponse(HttpStatusEnum.LOADING.code, HttpStatusEnum.LOADING.msg, fileEntityList))
                     }
                 })
-                val part: MultipartBody.Part = MultipartBody.Part.createFormData("uploadFile", uploadFile.name, uploadBody)
+                val part: MultipartBody.Part = MultipartBody.Part.createFormData("file", uploadFile.name, uploadBody)
                 parts.add(part)
             }
         }

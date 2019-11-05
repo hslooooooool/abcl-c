@@ -28,6 +28,11 @@ import qsos.core.player.data.PreAudioEntity
 import qsos.core.player.data.PreDocumentEntity
 import qsos.core.player.data.PreImageEntity
 import qsos.core.player.data.PreVideoEntity
+import qsos.lib.base.callback.OnTListener
+import qsos.lib.base.utils.LogUtil
+import qsos.lib.netservice.data.BaseResponse
+import qsos.lib.netservice.file.FileRepository
+import qsos.lib.netservice.file.HttpFileEntity
 import timber.log.Timber
 import java.io.File
 
@@ -60,8 +65,19 @@ class FormConfig : IFormConfig {
                             RxImageConverters.uriToFileObservable(context, it, FileUtils.createImageFile())
                         }
                         .subscribe {
-                            val file = FormValueOfFile(fileId = it.absolutePath, fileName = it.name, filePath = it.absolutePath, fileType = it.extension, fileUrl = it.absolutePath, fileCover = it.absolutePath)
+                            val file = FormValueOfFile(fileId = it.absolutePath, fileName = it.name,
+                                    filePath = it.absolutePath, fileType = it.extension,
+                                    fileUrl = it.absolutePath, fileCover = it.absolutePath)
                             onSuccess.invoke(arrayListOf(file))
+                            // FIXME 文件上传测试
+                            FileRepository(Dispatchers.Main + Job()).uploadFile(
+                                    HttpFileEntity(url = null, path = it.absolutePath, filename = it.name),
+                                    object : OnTListener<HttpFileEntity> {
+                                        override fun back(t: HttpFileEntity) {
+                                            LogUtil.i("上传图片>>>>>" + t.url)
+                                        }
+                                    }
+                            )
                         }.takeUnless {
                             context.isFinishing
                         }
@@ -82,9 +98,23 @@ class FormConfig : IFormConfig {
                         .subscribe {
                             val files = arrayListOf<FormValueOfFile>()
                             it.forEach { f ->
-                                files.add(FormValueOfFile(fileId = "takeGallery${f.absolutePath}", fileName = f.name, filePath = f.absolutePath, fileType = f.extension, fileUrl = f.absolutePath, fileCover = f.absolutePath))
+                                files.add(FormValueOfFile(fileId = "takeGallery${f.absolutePath}",
+                                        fileName = f.name, filePath = f.absolutePath,
+                                        fileType = f.extension, fileUrl = f.absolutePath,
+                                        fileCover = f.absolutePath))
                             }
                             onSuccess.invoke(files)
+                            // FIXME 文件上传测试
+                            FileRepository(Dispatchers.Main + Job()).uploadFile(
+                                    it.map { file ->
+                                        HttpFileEntity(url = null, path = file.absolutePath, filename = file.name)
+                                    },
+                                    object : OnTListener<BaseResponse<List<HttpFileEntity>>> {
+                                        override fun back(t: BaseResponse<List<HttpFileEntity>>) {
+                                            LogUtil.i("上传图片>>>>>" + t.code)
+                                        }
+                                    }
+                            )
                         }.takeUnless {
                             context.isFinishing
                         }
