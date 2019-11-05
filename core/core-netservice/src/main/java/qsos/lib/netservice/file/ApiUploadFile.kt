@@ -26,7 +26,7 @@ interface ApiUploadFile {
     @Multipart
     @POST("$GROUP/file")
     fun uploadFile(
-            @Part("file") file: MultipartBody.Part
+            @Part file: MultipartBody.Part
     ): Call<BaseResponse<HttpFileEntity>>
 
     /**
@@ -39,7 +39,7 @@ interface ApiUploadFile {
     @Multipart
     @POST("$GROUP/files")
     fun uploadFiles(
-            @Part("files") files: List<MultipartBody.Part>
+            @Part files: List<MultipartBody.Part>
     ): Call<BaseResponse<List<HttpFileEntity>>>
 
 }
