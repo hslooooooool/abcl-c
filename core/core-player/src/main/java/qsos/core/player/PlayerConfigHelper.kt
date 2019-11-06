@@ -28,8 +28,8 @@ object PlayerConfigHelper : IPlayerConfig {
             context: Context, position: Int,
             list: List<PreAudioEntity>,
             onPlayerListener: OnTListener<AudioPlayerHelper.State>?
-    ) {
-        mPlayerConfig?.previewAudio(context, position, list, onPlayerListener)
+    ): AudioPlayerHelper? {
+        return mPlayerConfig?.previewAudio(context, position, list, onPlayerListener)
     }
 
     override fun previewDocument(context: Context, data: PreDocumentEntity) {

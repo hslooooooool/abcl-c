@@ -46,7 +46,7 @@ class DefPlayerConfig : IPlayerConfig {
             context: Context, position: Int,
             list: List<PreAudioEntity>,
             onPlayerListener: OnTListener<AudioPlayerHelper.State>?
-    ) {
+    ): AudioPlayerHelper? {
         val path = list[position].path
         val playType: AudioPlayerHelper.PlayType = when {
             path.startsWith("https") || path.startsWith("ftp") -> AudioPlayerHelper.PlayType.URL
@@ -82,6 +82,7 @@ class DefPlayerConfig : IPlayerConfig {
                     mAudioPlayerHelper?.stop()
                 }
         )
+        return mAudioPlayerHelper
     }
 
     override fun previewDocument(context: Context, data: PreDocumentEntity) {

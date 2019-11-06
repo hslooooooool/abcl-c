@@ -41,12 +41,15 @@ class PlayerConfig : IPlayerConfig {
         mDefPlayerConfig.previewVideo(context, position, list)
     }
 
-    override fun previewAudio(context: Context, position: Int, list: List<PreAudioEntity>, onPlayerListener: OnTListener<AudioPlayerHelper.State>?) {
-        mDefPlayerConfig.previewAudio(context, position, list, onPlayerListener)
+    override fun previewAudio(
+            context: Context, position: Int,
+            list: List<PreAudioEntity>,
+            onPlayerListener: OnTListener<AudioPlayerHelper.State>?
+    ): AudioPlayerHelper? {
+        return mDefPlayerConfig.previewAudio(context, position, list, onPlayerListener)
     }
 
     override fun previewDocument(context: Context, data: PreDocumentEntity) {
-        // 测试数据 mTestUrl = "http://resource.qsos.vip/test.mp4"
         val mPath = data.path
         when {
             mPath.startsWith("http") || mPath.startsWith("ftp") -> {

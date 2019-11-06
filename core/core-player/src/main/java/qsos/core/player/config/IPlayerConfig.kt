@@ -35,7 +35,7 @@ interface IPlayerConfig {
             context: Context, position: Int = 0,
             list: List<PreAudioEntity>,
             onPlayerListener: OnTListener<AudioPlayerHelper.State>? = null
-    )
+    ): AudioPlayerHelper?
 
     /**预览文档
      * @param data 文档
