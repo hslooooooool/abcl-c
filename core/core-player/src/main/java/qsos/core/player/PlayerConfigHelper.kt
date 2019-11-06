@@ -15,6 +15,7 @@ import qsos.lib.base.callback.OnTListener
  * 媒体预览操作帮助类
  */
 object PlayerConfigHelper : IPlayerConfig {
+
     override fun previewImage(context: Context, position: Int, list: List<PreImageEntity>) {
         mPlayerConfig?.previewImage(context, position, list)
     }
