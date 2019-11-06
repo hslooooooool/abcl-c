@@ -34,6 +34,9 @@ class GalleryFragment(
             }
         }).build()
         gallery_image_rv.scrollToPosition(mPosition)
+        gallery_image_close.setOnClickListener {
+            activity?.finish()
+        }
     }
 
     override fun getData() {}

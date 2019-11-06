@@ -25,7 +25,7 @@ open class AudioPlayerHelper {
     private val handler = Handler(Looper.getMainLooper())
 
     interface PlayerListener {
-        fun onPlayerStop()
+        fun onState(state: State)
     }
 
     /**初始化语音播放控制器*/
@@ -49,7 +49,7 @@ open class AudioPlayerHelper {
             if (hasStop) {
                 mMediaPlayer.stop()
                 currentState = State.STOP
-                mPlayerListener?.onPlayerStop()
+                mPlayerListener?.onState(currentState)
             } else {
                 mMediaPlayer.start()
                 currentState = State.PLAYING
@@ -58,12 +58,12 @@ open class AudioPlayerHelper {
         mMediaPlayer.setOnCompletionListener {
             currentState = State.STOP
             mPlayerModeManager.onStop()
-            mPlayerListener?.onPlayerStop()
+            mPlayerListener?.onState(currentState)
         }
         mMediaPlayer.setOnErrorListener { _, _, _ ->
-            currentState = State.STOP
+            currentState = State.ERROR
             mPlayerModeManager.onStop()
-            mPlayerListener?.onPlayerStop()
+            mPlayerListener?.onState(currentState)
             false
         }
     }
@@ -112,7 +112,7 @@ open class AudioPlayerHelper {
     }
 
     fun stop() {
-        if (currentState == State.STOP) return
+        if (currentState == State.STOP || currentState == State.ERROR) return
         if (currentState == State.PREPARING) {
             hasStop = true
         } else if (currentState == State.PLAYING) {
@@ -120,21 +120,22 @@ open class AudioPlayerHelper {
         }
         mPlayerModeManager.onStop()
         currentState = State.STOP
-        mPlayerListener?.onPlayerStop()
+        mPlayerListener?.onState(currentState)
 
         destroy()
     }
 
-    fun destroy() {
-        if (currentState == State.STOP) return
+    private fun destroy() {
+        if (currentState == State.STOP || currentState == State.ERROR) return
         mMediaPlayer.reset()
         mMediaPlayer.release()
     }
 
-    private enum class State {
+    enum class State {
         PREPARING,//准备中
         PLAYING,//播放中
-        STOP//停止中
+        STOP,//停止
+        ERROR//错误
     }
 
     /**播放类型*/

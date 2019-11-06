@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:background="@color/colorPrimary">
+	android:background="@color/colorPrimary"
+	android:gravity="center"
+	android:orientation="vertical">
 	
 	<TextView
 		android:id="@+id/gallery_image_position"
 		android:layout_width="match_parent"
 		android:layout_height="50dp"
-		android:layout_alignParentTop="true"
-		android:layout_margin="20dp"
 		android:gravity="center"
+		android:paddingTop="20dp"
 		android:textColor="@color/white"
 		android:textSize="14sp"
 		tools:text="图片位置" />
@@ -19,20 +21,28 @@
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/gallery_image_rv"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
+		android:layout_height="0dp"
 		android:layout_gravity="center"
-		android:layout_marginTop="50dp"
-		android:layout_marginBottom="100dp"
+		android:layout_weight="1"
 		tools:listitem="@layout/item_gallery_image" />
 	
 	<TextView
 		android:id="@+id/gallery_image_name"
 		android:layout_width="match_parent"
-		android:layout_height="100dp"
-		android:layout_alignParentBottom="true"
-		android:layout_margin="20dp"
+		android:layout_height="wrap_content"
 		android:gravity="center"
+		android:paddingBottom="20dp"
 		android:textColor="@color/white"
 		android:textSize="16sp"
 		tools:text="图片名称" />
-</RelativeLayout>
+	
+	<ImageButton
+		android:id="@+id/gallery_image_close"
+		android:layout_width="42dp"
+		android:layout_height="42dp"
+		android:layout_marginBottom="10dp"
+		android:background="@null"
+		android:padding="3dp"
+		android:scaleType="centerInside"
+		app:srcCompat="@drawable/icon_close" />
+</LinearLayout>

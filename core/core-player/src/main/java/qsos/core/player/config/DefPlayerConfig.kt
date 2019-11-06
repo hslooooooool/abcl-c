@@ -1,5 +1,6 @@
 package qsos.core.player.config
 
+import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.widget.Button
@@ -9,10 +10,14 @@ import com.google.gson.Gson
 import qsos.core.lib.utils.dialog.AbsBottomDialog
 import qsos.core.lib.utils.dialog.BottomDialog
 import qsos.core.lib.utils.dialog.BottomDialogUtils
+import qsos.core.lib.utils.file.FileUtils
 import qsos.core.player.PlayerPath
 import qsos.core.player.R
 import qsos.core.player.audio.AudioPlayerHelper
 import qsos.core.player.data.*
+import qsos.lib.base.callback.OnTListener
+import timber.log.Timber
+import java.io.File
 
 /**
  * @author : 华清松
@@ -28,10 +33,20 @@ class DefPlayerConfig : IPlayerConfig {
     }
 
     override fun previewVideo(context: Context, position: Int, list: List<PreVideoEntity>) {
-        // 视频预览，无默认实现
+        // 自行实现视频播放，如使用 节操播放器 等，这里采用本地软件打开
+        try {
+            FileUtils.openFileByPhone(context as Activity, File(list[position].path))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Timber.tag("文件预览").e(e)
+        }
     }
 
-    override fun previewAudio(context: Context, position: Int, list: List<PreAudioEntity>) {
+    override fun previewAudio(
+            context: Context, position: Int,
+            list: List<PreAudioEntity>,
+            onPlayerListener: OnTListener<AudioPlayerHelper.State>?
+    ) {
         val path = list[position].path
         val playType: AudioPlayerHelper.PlayType = when {
             path.startsWith("https") || path.startsWith("ftp") -> AudioPlayerHelper.PlayType.URL
@@ -41,21 +56,24 @@ class DefPlayerConfig : IPlayerConfig {
         BottomDialogUtils.showCustomerView(context, R.layout.audio_play_dialog,
                 object : BottomDialog.ViewListener {
                     override fun bindView(dialog: AbsBottomDialog) {
-                        val state = dialog.findViewById<TextView>(R.id.audio_state)
-                        val action = dialog.findViewById<Button>(R.id.audio_action)
-                        state.text = "开始播放"
+                        val mState = dialog.findViewById<TextView>(R.id.audio_state)
+                        val mAction = dialog.findViewById<Button>(R.id.audio_action)
+                        mState.text = "开始播放"
                         mAudioPlayerHelper = AudioPlayerHelper().init(
                                 AudioPlayerHelper.PlayBuild(context, playType, list[position].path,
                                         object : AudioPlayerHelper.PlayerListener {
-                                            override fun onPlayerStop() {
-                                                state.text = "完成播放"
-                                                action.isEnabled = true
+                                            override fun onState(state: AudioPlayerHelper.State) {
+                                                onPlayerListener?.back(state)
+                                                if (state == AudioPlayerHelper.State.STOP) {
+                                                    mState.text = "完成播放"
+                                                    mAction.isEnabled = true
+                                                }
                                             }
                                         }
                                 )
                         )
-                        action.setOnClickListener {
-                            action.isEnabled = false
+                        mAction.setOnClickListener {
+                            mAction.isEnabled = false
                             mAudioPlayerHelper?.play()
                         }
                     }

@@ -29,10 +29,10 @@ class GalleryActivity(
     private var mImageList: ArrayList<PreImageEntity>? = null
 
     override fun initData(savedInstanceState: Bundle?) {
-        try {
-            mFile = Gson().fromJson(mData, object : TypeToken<PreFileEntity<PreImageEntity>>() {}.type)
+        mFile = try {
+            Gson().fromJson(mData, object : TypeToken<PreFileEntity<PreImageEntity>>() {}.type)
         } catch (e: Exception) {
-            mFile = null
+            null
         }
     }
 
