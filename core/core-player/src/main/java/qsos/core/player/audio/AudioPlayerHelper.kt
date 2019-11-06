@@ -46,14 +46,14 @@ open class AudioPlayerHelper {
     private fun setOnListener() {
         mPlayerListener = mBuild.listener
         mMediaPlayer.setOnPreparedListener {
-            if (hasStop) {
+            currentState = if (hasStop) {
                 mMediaPlayer.stop()
-                currentState = State.STOP
-                mPlayerListener?.onState(currentState)
+                State.STOP
             } else {
                 mMediaPlayer.start()
-                currentState = State.PLAYING
+                State.PLAYING
             }
+            mPlayerListener?.onState(currentState)
         }
         mMediaPlayer.setOnCompletionListener {
             currentState = State.STOP
@@ -80,6 +80,7 @@ open class AudioPlayerHelper {
             mMediaPlayer.stop()
         }
         currentState = State.PREPARING
+        mPlayerListener?.onState(currentState)
         mPlayerModeManager.onPlay()
         try {
             if (mPlayerModeManager.isReceiver()) {
