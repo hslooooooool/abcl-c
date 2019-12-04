@@ -43,7 +43,13 @@ class AudioRecordController(private val config: AudioRecordConfig) : IControlVie
                                 /**限定最长录制时间，高于此值自动完成录音*/
                                 finish()
                             }
-                            mAudioPublisher.onNext(mRecordData)
+                            when (mRecordData.recordState) {
+                                AudioRecordState.CANCEL, AudioRecordState.ERROR, AudioRecordState.FINISH -> {
+                                }
+                                else -> {
+                                    mAudioPublisher.onNext(mRecordData)
+                                }
+                            }
                         }
                     }
                     mRecordTimer!!.schedule(mRecordTimerTask!!, 1000, 1000)
