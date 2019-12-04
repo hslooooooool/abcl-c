@@ -39,8 +39,8 @@ class AudioRecordController(private val config: AudioRecordConfig) : IControlVie
                     mRecordTimerTask = object : TimerTask() {
                         override fun run() {
                             mRecordData.recordTime++
-                            if (config.limitMaxTime < mRecordData.recordTime) {
-                                /**限定最长录制时间，高于此值自动完成录音*/
+                            if (config.limitMaxTime <= mRecordData.recordTime) {
+                                /**限定最长录制时间，高于等于此值自动完成录音*/
                                 finish()
                             }
                             when (mRecordData.recordState) {
