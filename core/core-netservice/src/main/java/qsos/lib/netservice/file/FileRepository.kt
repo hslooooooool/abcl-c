@@ -150,6 +150,7 @@ class FileRepository(
                     fileEntity.loadSuccess = true
                     fileEntity.progress = 100
                     fileEntity.url = it!!.url
+                    fileEntity.avatar = it.avatar
                     listener.back(fileEntity)
                 }
                 onFailed { _, _, _ ->

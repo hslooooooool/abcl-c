@@ -70,7 +70,7 @@ class PlayerConfig : IPlayerConfig {
                                             action.text = "取消"
                                             state.text = "开始下载"
                                             progress.progress = 0
-                                            mFileHelper.downloadFile(HttpFileEntity(mPath, null, data.name, 0),
+                                            mFileHelper.downloadFile(HttpFileEntity(null, mPath, null, data.name, 0),
                                                     object : OnTListener<HttpFileEntity> {
                                                         override fun back(t: HttpFileEntity) {
                                                             if (t.progress == 100) mFilePath = t.path

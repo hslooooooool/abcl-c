@@ -5,6 +5,8 @@ package qsos.lib.netservice.file
  * HTTP文件上传下载处理实体
  */
 data class HttpFileEntity(
+        /**文件封面路径*/
+        var avatar: String? = null,
         /**网络路径*/
         var url: String?,
         /**本地路径*/
