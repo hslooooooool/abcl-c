@@ -10,9 +10,9 @@ open class Sources {
     companion object {
         /**设备*/
         const val DEVICE: Int = 1
-        /**单选*/
+        /**单类型单选*/
         const val ONE: Int = 2
-        /**多选*/
+        /**多类型选择*/
         const val MULTI: Int = 3
         /**自选操作，设备或单选*/
         const val CHOOSER: Int = 4

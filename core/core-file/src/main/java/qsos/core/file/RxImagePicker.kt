@@ -108,12 +108,12 @@ class RxImagePicker : Fragment(), IDisposable {
     }
 
     /**文件选择*/
-    fun takeFile(mimeType: String = "*/*", chooserTitle: String = "文件选择"): Observable<Uri> {
+    fun takeFile(mimeType: Array<String> = arrayOf("*/*"), chooserTitle: String = "文件选择"): Observable<Uri> {
         initSubjects()
         this.mFileType = 3
         this.isMultiple = false
         this.mTakeType = Sources.ONE
-        this.mMimeTypes = arrayOf(mimeType)
+        this.mMimeTypes = mimeType
         this.mChooserTitle = chooserTitle
         requestPick()
         return publishSubject.takeUntil(canceledSubject)
@@ -121,9 +121,9 @@ class RxImagePicker : Fragment(), IDisposable {
 
     /**文件多选，KITKAT 以上可用*/
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    fun takeFiles(mimeType: Array<String> = arrayOf("*/*"), multiple: Boolean = true): Observable<List<Uri>> {
+    fun takeFiles(mimeType: Array<String> = arrayOf("*/*")): Observable<List<Uri>> {
         initSubjects()
-        this.isMultiple = multiple
+        this.isMultiple = true
         this.mTakeType = Sources.MULTI
         this.mMimeTypes = mimeType
         requestPick()
