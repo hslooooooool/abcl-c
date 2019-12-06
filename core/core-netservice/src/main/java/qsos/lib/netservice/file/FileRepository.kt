@@ -18,7 +18,6 @@ import qsos.lib.netservice.ApiEngine
 import qsos.lib.netservice.data.BaseResponse
 import qsos.lib.netservice.data.HttpStatusEnum
 import qsos.lib.netservice.expand.retrofit
-import qsos.lib.netservice.expand.retrofitByDef
 import qsos.lib.netservice.interceptor.AddCookiesInterceptor
 import qsos.lib.netservice.interceptor.DownloadInterceptor
 import qsos.lib.netservice.interceptor.NetworkInterceptor
@@ -140,18 +139,25 @@ class FileRepository(
                 }
             })
             val part = MultipartBody.Part.createFormData("file", uploadFile.name, uploadBody)
-            CoroutineScope(mCoroutineContext).retrofitByDef<HttpFileEntity> {
+            CoroutineScope(mCoroutineContext).retrofit<BaseResponse<HttpFileEntity>> {
                 api = ApiEngine.createService(ApiUploadFile::class.java).uploadFile(part)
                 onStart {
                     fileEntity.progress = 0
                     listener.back(fileEntity)
                 }
                 onSuccess {
-                    fileEntity.loadSuccess = true
-                    fileEntity.progress = 100
-                    fileEntity.url = it!!.url
-                    fileEntity.avatar = it.avatar
-                    listener.back(fileEntity)
+                    if (it?.code == 200 && it.data != null) {
+                        fileEntity.loadSuccess = true
+                        fileEntity.progress = 100
+                        fileEntity.url = it.data.url
+                        fileEntity.avatar = it.data.avatar
+                        listener.back(fileEntity)
+                    } else {
+                        fileEntity.url = null
+                        fileEntity.progress = -1
+                        fileEntity.loadSuccess = false
+                        listener.back(fileEntity)
+                    }
                 }
                 onFailed { _, _, _ ->
                     fileEntity.url = null
