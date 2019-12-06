@@ -109,18 +109,23 @@ class FileRepository(
                         if (mFile == null) {
                             fileEntity.progress = -1
                             fileEntity.loadSuccess = false
-                            fileEntity.loadMsg = "保存失败"
+                            fileEntity.loadMsg = "下载失败"
                         } else {
                             fileEntity.progress = 100
                             fileEntity.loadSuccess = true
                             fileEntity.loadMsg = "下载完成"
                         }
                         listener.back(fileEntity)
+                    } else {
+                        fileEntity.progress = -1
+                        fileEntity.loadSuccess = false
+                        fileEntity.loadMsg = "下载失败"
+                        listener.back(fileEntity)
                     }
                 } catch (e: Exception) {
                     fileEntity.progress = -1
                     fileEntity.loadSuccess = false
-                    fileEntity.loadMsg = "保存失败"
+                    fileEntity.loadMsg = "下载失败"
                     listener.back(fileEntity)
                 }
             }
