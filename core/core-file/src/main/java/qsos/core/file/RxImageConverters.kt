@@ -19,7 +19,7 @@ import java.io.InputStream
 object RxImageConverters {
 
     /**转为File*/
-    fun uriToFile(context: Context, uri: Uri, file: File?): File? {
+    fun uriToFile(context: Context, uri: Uri, file: File? = null): File? {
         return (file ?: FileUtils.createFileByUri(context, uri))?.let {
             val inputStream = context.contentResolver.openInputStream(uri)
             it.copyInputStreamToFile(inputStream!!)
