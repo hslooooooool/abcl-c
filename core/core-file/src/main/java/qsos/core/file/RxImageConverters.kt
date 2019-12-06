@@ -7,6 +7,7 @@ import android.provider.MediaStore
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.schedulers.Schedulers
+import qsos.core.lib.utils.file.FileUtils
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -19,12 +20,10 @@ object RxImageConverters {
 
     /**转为File*/
     fun uriToFile(context: Context, uri: Uri, file: File?): File? {
-        return try {
+        return (file ?: FileUtils.createFileByUri(context, uri))?.let {
             val inputStream = context.contentResolver.openInputStream(uri)
-            file!!.copyInputStreamToFile(inputStream!!)
-            file
-        } catch (e: Exception) {
-            null
+            it.copyInputStreamToFile(inputStream!!)
+            it
         }
     }
 

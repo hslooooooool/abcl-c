@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.text.TextUtils
+import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
 import okhttp3.ResponseBody
 import qsos.core.lib.config.CoreConfig
@@ -259,9 +260,10 @@ object FileUtils {
 
     /**创建一个图片文件*/
     @JvmStatic
-    fun createImageFile(): File? {
+    fun createImageFile(type: String? = null): File? {
         return try {
-            File(IMAGE_PATH, "IMAGE_" + System.currentTimeMillis().toString() + ".jpg")
+            File(IMAGE_PATH, System.currentTimeMillis().toString() + "." +
+                    (type ?: "jpg"))
         } catch (e: Exception) {
             null
         }
@@ -269,9 +271,10 @@ object FileUtils {
 
     /**创建一个视频文件*/
     @JvmStatic
-    fun createVideoFile(): File? {
+    fun createVideoFile(type: String? = null): File? {
         return try {
-            File(MEDIA_PATH, "VIDEO_" + System.currentTimeMillis().toString() + ".3gp")
+            File(MEDIA_PATH, System.currentTimeMillis().toString() + "." +
+                    (type ?: "3gp"))
         } catch (e: Exception) {
             null
         }
@@ -279,9 +282,10 @@ object FileUtils {
 
     /**创建一个音频文件*/
     @JvmStatic
-    fun createAudioFile(): File? {
+    fun createAudioFile(type: String? = null): File? {
         return try {
-            File(MEDIA_PATH, "AUDIO_" + System.currentTimeMillis().toString() + ".amr")
+            File(MEDIA_PATH, System.currentTimeMillis().toString() + "." +
+                    (type ?: "amr"))
         } catch (e: Exception) {
             null
         }
@@ -291,7 +295,17 @@ object FileUtils {
     @JvmStatic
     fun createFileByUri(context: Context, contentUri: Uri): File? {
         return try {
-            File(MEDIA_PATH, "FILE_" + getNameFromUri(context, contentUri))
+            val type = MimeTypeMap.getSingleton()
+                    .getExtensionFromMimeType(mContext.contentResolver.getType(contentUri))
+                    ?: ""
+            val name = getNameFromUri(context, contentUri)
+            val path = when (type.toLowerCase(Locale.ENGLISH)) {
+                "jpg", "jpeg", "png", "gif" -> IMAGE_PATH
+                "amr", "wav", "mp3",
+                "avi", "mp4", "3gp", "mpeg", "flv" -> MEDIA_PATH
+                else -> OTHER_PATH
+            }
+            File(path, name)
         } catch (e: Exception) {
             null
         }
