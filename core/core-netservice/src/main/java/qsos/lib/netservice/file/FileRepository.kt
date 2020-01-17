@@ -1,6 +1,5 @@
 package qsos.lib.netservice.file
 
-import android.annotation.SuppressLint
 import android.text.TextUtils
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -32,7 +31,6 @@ import kotlin.coroutines.CoroutineContext
  * @author : 华清松
  * 文件上传与下载实现
  */
-@SuppressLint("CheckResult")
 class FileRepository(
         private val mCoroutineContext: CoroutineContext
 ) : IFileModel {
@@ -132,7 +130,7 @@ class FileRepository(
         }
     }
 
-    override fun uploadFile(fileEntity: HttpFileEntity, listener: OnTListener<HttpFileEntity>) {
+    override fun uploadFile(url: String, fileEntity: HttpFileEntity, listener: OnTListener<HttpFileEntity>) {
         val uploadFile = FileUtils.getFile(fileEntity.path)
         if (uploadFile != null) {
             val requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), uploadFile)
@@ -145,7 +143,7 @@ class FileRepository(
             })
             val part = MultipartBody.Part.createFormData("file", uploadFile.name, uploadBody)
             CoroutineScope(mCoroutineContext).retrofit<BaseResponse<HttpFileEntity>> {
-                api = ApiEngine.createService(ApiUploadFile::class.java).uploadFile(part)
+                api = ApiEngine.createService(ApiUploadFile::class.java).uploadFile(url, part)
                 onStart {
                     fileEntity.progress = 0
                     listener.back(fileEntity)
@@ -179,7 +177,7 @@ class FileRepository(
         }
     }
 
-    override fun uploadFile(fileEntityList: List<HttpFileEntity>, listener: OnTListener<BaseResponse<List<HttpFileEntity>>>) {
+    override fun uploadFile(url: String, fileEntityList: List<HttpFileEntity>, listener: OnTListener<BaseResponse<List<HttpFileEntity>>>) {
         val parts = arrayListOf<MultipartBody.Part>()
         fileEntityList.forEach { fileEntity ->
             val uploadFile = FileUtils.getFile(fileEntity.path)
@@ -197,7 +195,7 @@ class FileRepository(
             }
         }
         CoroutineScope(mCoroutineContext).retrofit<BaseResponse<List<HttpFileEntity>>> {
-            api = ApiEngine.createService(ApiUploadFile::class.java).uploadFiles(parts)
+            api = ApiEngine.createService(ApiUploadFile::class.java).uploadFiles(url, parts)
             onSuccess {
                 listener.back(it!!)
             }

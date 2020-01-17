@@ -21,6 +21,7 @@ interface IFileModel {
     fun downloadFile(fileEntity: HttpFileEntity, listener: OnTListener<HttpFileEntity>)
 
     /**上传单文件
+     * @param url 上传地址
      * @param fileEntity 上传的文件。需传入文件的上传本地路径 fileEntity.path。可携带上传标识，比如聊天文件上传，
      * 携带聊天数据 HttpFileEntity.adjoin=ChatEntity(id=1)，上传成功通过携带的聊天数据刷新对应的聊天文件上传进度与消息发送状态。
      * @param listener 文件上传进度监听，进度更新在IO线程，结果更新在UI线程，注意判断
@@ -28,9 +29,10 @@ interface IFileModel {
      * @see HttpFileEntity.path
      * @see HttpFileEntity.adjoin
      * */
-    fun uploadFile(fileEntity: HttpFileEntity, listener: OnTListener<HttpFileEntity>)
+    fun uploadFile(url: String, fileEntity: HttpFileEntity, listener: OnTListener<HttpFileEntity>)
 
     /**上传多文件
+     * @param url 上传地址
      * @param fileEntityList 上传的文件列表。需传入文件的上传本地路径 fileEntity.path。可携带上传标识，比如聊天文件上传，
      * 携带聊天数据 HttpFileEntity.adjoin=ChatEntity(id=1)，上传成功通过携带的聊天数据刷新对应的聊天文件上传进度与消息发送状态。
      * @param listener 文件上传进度监听，进度更新在IO线程，结果更新在UI线程，注意判断
@@ -38,7 +40,7 @@ interface IFileModel {
      * @see HttpFileEntity.path
      * @see HttpFileEntity.adjoin
      * */
-    fun uploadFile(fileEntityList: List<HttpFileEntity>, listener: OnTListener<BaseResponse<List<HttpFileEntity>>>)
+    fun uploadFile(url: String, fileEntityList: List<HttpFileEntity>, listener: OnTListener<BaseResponse<List<HttpFileEntity>>>)
 
     /**停止所有请求，清除缓存*/
     fun clear()

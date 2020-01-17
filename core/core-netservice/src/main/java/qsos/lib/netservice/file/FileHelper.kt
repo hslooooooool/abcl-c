@@ -25,21 +25,21 @@ class FileHelper : IFileModel {
         }
     }
 
-    override fun uploadFile(fileEntity: HttpFileEntity, listener: OnTListener<HttpFileEntity>) {
+    override fun uploadFile(url: String, fileEntity: HttpFileEntity, listener: OnTListener<HttpFileEntity>) {
         if (this::imlFileModel.isInitialized) {
-            imlFileModel.uploadFile(fileEntity, listener)
+            imlFileModel.uploadFile(url, fileEntity, listener)
         } else {
             imlFileModel = FileRepository(mJob)
-            imlFileModel.uploadFile(fileEntity, listener)
+            imlFileModel.uploadFile(url, fileEntity, listener)
         }
     }
 
-    override fun uploadFile(fileEntityList: List<HttpFileEntity>, listener: OnTListener<BaseResponse<List<HttpFileEntity>>>) {
+    override fun uploadFile(url: String, fileEntityList: List<HttpFileEntity>, listener: OnTListener<BaseResponse<List<HttpFileEntity>>>) {
         if (this::imlFileModel.isInitialized) {
-            imlFileModel.uploadFile(fileEntityList, listener)
+            imlFileModel.uploadFile(url, fileEntityList, listener)
         } else {
             imlFileModel = FileRepository(mJob)
-            imlFileModel.uploadFile(fileEntityList, listener)
+            imlFileModel.uploadFile(url, fileEntityList, listener)
         }
     }
 

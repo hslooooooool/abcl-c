@@ -19,6 +19,7 @@ import qsos.core.form.db.FormDatabase
 import qsos.core.form.db.entity.FormValueOfFile
 import qsos.core.form.db.entity.FormValueOfLocation
 import qsos.core.form.db.entity.FormValueOfUser
+import qsos.core.lib.config.CoreConfig
 import qsos.core.lib.utils.dialog.AbsBottomDialog
 import qsos.core.lib.utils.dialog.BottomDialog
 import qsos.core.lib.utils.dialog.BottomDialogUtils
@@ -41,6 +42,8 @@ import java.io.File
  * 表单文件操作具体实现
  */
 class FormConfig : IFormConfig {
+
+    private val uploadUrl = CoreConfig.BASE_URL + "/api/file/upload"
 
     override fun takeCamera(context: Context, formItemId: Long, onSuccess: (FormValueOfFile) -> Any) {
         Timber.tag("表单文件代理").i("拍照")
@@ -71,6 +74,7 @@ class FormConfig : IFormConfig {
                             onSuccess.invoke(arrayListOf(file))
                             // FIXME 文件上传测试
                             FileRepository(Dispatchers.Main + Job()).uploadFile(
+                                    "$uploadUrl/file",
                                     HttpFileEntity(url = null, path = it.absolutePath, filename = it.name),
                                     object : OnTListener<HttpFileEntity> {
                                         override fun back(t: HttpFileEntity) {
@@ -106,6 +110,7 @@ class FormConfig : IFormConfig {
                             onSuccess.invoke(files)
                             // FIXME 文件上传测试
                             FileRepository(Dispatchers.Main + Job()).uploadFile(
+                                    "$uploadUrl/files",
                                     it.map { file ->
                                         HttpFileEntity(url = null, path = file.absolutePath, filename = file.name)
                                     },
