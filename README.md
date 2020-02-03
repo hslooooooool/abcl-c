@@ -2,7 +2,7 @@
 
 名称 | 版本
 --- | ---
-core_vision | [![](https://jitpack.io/v/hslooooooool/abcl-c.svg)](https://jitpack.io/#hslooooooool/abcl-c)
+core_vision | [![](https://www.jitpack.io/v/hslooooooool/abcl-c.svg)](https://www.jitpack.io/#hslooooooool/abcl-c)
 
 ABCL-C层提供一些独立功能供使用，各功能相互独立，采用kotlin协程进行线程处理；
 - 网络请求提供kotlin协程和RxJava两种方式；
