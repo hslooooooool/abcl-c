@@ -87,7 +87,7 @@ fun <ResultType> CoroutineScope.retrofitByDef(
                 if (response.isSuccessful) {
                     retrofitCoroutine.onSuccess?.invoke(response.body()?.data)
                 } else {
-                    retrofitCoroutine.onFailed?.invoke(response.code(), response.errorBody().toString(), null)
+                    retrofitCoroutine.onFailed?.invoke(response.code(), response.message(), null)
                 }
             }
 
@@ -136,7 +136,7 @@ fun <ResultType> CoroutineScope.retrofitWithLiveDataByDef(
                     retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.SUCCESS))
                     retrofitCoroutine.data?.postValue(response.body())
                 } else {
-                    retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.errorBody().toString()))
+                    retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.message()))
                 }
             }
         }
@@ -181,7 +181,7 @@ fun <ResultType> CoroutineScope.retrofitWithSuccessByDef(
                     retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.SUCCESS))
                     retrofitCoroutine.onSuccess?.invoke(response.body()?.data)
                 } else {
-                    retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.errorBody().toString()))
+                    retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.message()))
                 }
             }
         }

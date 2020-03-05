@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 /**
  * @author : 华清松
@@ -16,7 +15,7 @@ open class DBCoroutineScope {
         var db: (() -> ResultType?)? = null
         var onSuccess: ((ResultType?) -> Any?)? = null
         var onFail: ((Exception) -> Any?)? = {
-            Timber.tag("数据库操作日志").e(it)
+
         }
     }
 
@@ -26,7 +25,7 @@ open class DBCoroutineScope {
         }
         var onSuccess: () -> Any? = {}
         var onFail: ((Exception) -> Any?)? = {
-            Timber.tag("数据库操作日志").e(it)
+
         }
     }
 }

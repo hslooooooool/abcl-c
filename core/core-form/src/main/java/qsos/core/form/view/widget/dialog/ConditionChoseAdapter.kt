@@ -12,7 +12,10 @@ import qsos.core.form.R
  * @author 华清松
  * @doc 类说明：多选列表容器
  */
-class ConditionChoseAdapter internal constructor(val mContext: Context, val data: List<Operation>) : RecyclerView.Adapter<ConditionChoseAdapter.ViewHolder>() {
+class ConditionChoseAdapter internal constructor(
+        val mContext: Context,
+        val data: List<Operation>
+) : RecyclerView.Adapter<ConditionChoseAdapter.ViewHolder>() {
     private val inflate: LayoutInflater = LayoutInflater.from(mContext)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

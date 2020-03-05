@@ -91,7 +91,7 @@ class TweetRepository(
                 if (response.isSuccessful && response.code() == 200 && response.body()?.data != null) {
                     success(response.body()!!.data!!)
                 } else {
-                    fail(response.errorBody().toString())
+                    fail(response.message())
                 }
             } catch (http: HttpException) {
                 fail(http.message ?: "网络错误")

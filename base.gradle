@@ -106,6 +106,7 @@ dependencies {
     api deps.lifecycle.reactivestreams
     annotationProcessor deps.lifecycle.compiler
     kapt deps.lifecycle.compiler
+
     // multidex
     api deps.multidex
     // gson

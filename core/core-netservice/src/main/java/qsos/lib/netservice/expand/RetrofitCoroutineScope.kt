@@ -81,12 +81,12 @@ fun <ResultType> CoroutineScope.retrofit(
 
             val response = work.await()
             if (response == null) {
-                retrofitCoroutine.onFailed?.invoke(httpStatus.hashCode(), httpStatus.statusMsg, httpStatus.statusError)
+                retrofitCoroutine.onFailed?.invoke(httpStatus.statusCode, httpStatus.statusMsg, httpStatus.statusError)
             } else {
                 if (response.isSuccessful) {
                     retrofitCoroutine.onSuccess?.invoke(response.body())
                 } else {
-                    retrofitCoroutine.onFailed?.invoke(response.code(), response.errorBody().toString(), null)
+                    retrofitCoroutine.onFailed?.invoke(response.code(), response.message(), null)
                 }
             }
 
@@ -133,7 +133,7 @@ fun <ResultType> CoroutineScope.retrofitWithLiveData(
                     retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.SUCCESS))
                     retrofitCoroutine.data?.postValue(response.body())
                 } else {
-                    retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.errorBody().toString()))
+                    retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.message()))
                 }
             }
         }
@@ -178,7 +178,7 @@ fun <ResultType> CoroutineScope.retrofitWithSuccess(
                     retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus.base(HttpStatusEnum.SUCCESS))
                     retrofitCoroutine.onSuccess?.invoke(response.body())
                 } else {
-                    retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.errorBody().toString()))
+                    retrofitCoroutine.data?.httpState?.postValue(BaseHttpStatus(response.code(), response.message()))
                 }
             }
         }

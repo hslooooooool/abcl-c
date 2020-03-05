@@ -21,7 +21,13 @@ import java.util.*
  * @param startDate 最小可选时间
  * @param endDate   最大可选时间
  */
-class CustomDatePicker(context: Context, private val sdf: SimpleDateFormat, startDate: String, endDate: String, resultHandler: OnDateListener?) {
+class CustomDatePicker(
+        context: Context,
+        private val sdf: SimpleDateFormat,
+        startDate: String,
+        endDate: String,
+        resultHandler: OnDateListener?
+) {
 
     private var selectState = false
 
