@@ -43,6 +43,9 @@ object GlobalExceptionHelper : Thread.UncaughtExceptionHandler {
     fun caughtException(e: Throwable, deal: (e: ExceptionEvent) -> Unit? = {}) {
         Timber.e(e)
         val mExceptionEvent: ExceptionEvent = when (e) {
+            is GlobalException -> {
+                ExceptionEvent(e)
+            }
             is ConnectException -> {
                 ExceptionEvent(GlobalException(404, e))
             }
