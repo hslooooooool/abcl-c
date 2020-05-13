@@ -8,6 +8,7 @@ import qsos.app.demo.R
 import qsos.core.form.dbComplete
 import qsos.lib.base.base.adapter.BaseAdapter
 import qsos.lib.base.base.holder.BaseHolder
+import qsos.lib.base.callback.OnItemListener
 import qsos.lib.base.callback.OnTListener
 import qsos.lib.base.utils.ToastUtils
 import java.util.*
@@ -20,7 +21,7 @@ import kotlin.coroutines.CoroutineContext
 class FormUsersAdapter(
         private val mJob: CoroutineContext,
         users: ArrayList<UserEntity>
-) : BaseAdapter<UserEntity>(users) {
+) : BaseAdapter<UserEntity>(users), OnItemListener<Any?> {
 
     private var chose = 0
     private var limitMin: Int? = 0
@@ -31,70 +32,72 @@ class FormUsersAdapter(
 
     override fun getLayoutId(viewType: Int): Int = R.layout.app_form_users_item
 
-    override fun onItemClick(view: View, position: Int, obj: Any?) {
-        when (view.id) {
-            R.id.form_user_ll -> {
-                if (limitMax == 1) {
-                    /**单选*/
-                    CoroutineScope(mJob).dbComplete {
-                        db = {
-                            UserDatabase.getInstance().userDao.updateAllUncheck()
-                            data[position].checked = true
-                            UserDatabase.getInstance().userDao.update(data[position])
-                        }
-                        onSuccess = {
-                            chose = 1
-                            for ((index, user) in data.withIndex()) {
-                                user.checked = index == position
-                            }
-                            notifyDataSetChanged()
-                            if (chose == limitMax && limitMax == 1) {
-                                (mContext as Activity).finish()
-                            }
-                        }
-                        onFail = {
-                            it.printStackTrace()
-                            ToastUtils.showToast(mContext, "选择失败")
-                        }
-                    }
-                } else {
-                    /**多选*/
-                    if (data[position].checked) {
+    override fun onClick(view: View, position: Int, obj: Any?, long: Boolean) {
+        if (!long) {
+            when (view.id) {
+                R.id.form_user_ll -> {
+                    if (limitMax == 1) {
+                        /**单选*/
                         CoroutineScope(mJob).dbComplete {
                             db = {
-                                data[position].checked = false
+                                UserDatabase.getInstance().userDao.updateAllUncheck()
+                                data[position].checked = true
                                 UserDatabase.getInstance().userDao.update(data[position])
                             }
                             onSuccess = {
-                                chose--
-                                mOnChoseUserNum?.back(chose)
-                                notifyItemChanged(position)
+                                chose = 1
+                                for ((index, user) in data.withIndex()) {
+                                    user.checked = index == position
+                                }
+                                notifyDataSetChanged()
+                                if (chose == limitMax && limitMax == 1) {
+                                    (mContext as Activity).finish()
+                                }
                             }
                             onFail = {
                                 it.printStackTrace()
-                                data[position].checked = true
                                 ToastUtils.showToast(mContext, "选择失败")
                             }
                         }
                     } else {
-                        if (chose == limitMax) {
-                            ToastUtils.showToast(mContext, "最多选择 $limitMax 人")
-                            return
-                        }
-                        CoroutineScope(mJob).dbComplete {
-                            db = {
-                                data[position].checked = true
-                                UserDatabase.getInstance().userDao.update(data[position])
+                        /**多选*/
+                        if (data[position].checked) {
+                            CoroutineScope(mJob).dbComplete {
+                                db = {
+                                    data[position].checked = false
+                                    UserDatabase.getInstance().userDao.update(data[position])
+                                }
+                                onSuccess = {
+                                    chose--
+                                    mOnChoseUserNum?.back(chose)
+                                    notifyItemChanged(position)
+                                }
+                                onFail = {
+                                    it.printStackTrace()
+                                    data[position].checked = true
+                                    ToastUtils.showToast(mContext, "选择失败")
+                                }
                             }
-                            onSuccess = {
-                                chose++
-                                data[position].checked = true
-                                mOnChoseUserNum?.back(chose)
-                                notifyItemChanged(position)
+                        } else {
+                            if (chose == limitMax) {
+                                ToastUtils.showToast(mContext, "最多选择 $limitMax 人")
+                                return
                             }
-                            onFail = {
-                                it.printStackTrace()
-                                ToastUtils.showToast(mContext, "选择失败")
+                            CoroutineScope(mJob).dbComplete {
+                                db = {
+                                    data[position].checked = true
+                                    UserDatabase.getInstance().userDao.update(data[position])
+                                }
+                                onSuccess = {
+                                    chose++
+                                    data[position].checked = true
+                                    mOnChoseUserNum?.back(chose)
+                                    notifyItemChanged(position)
+                                }
+                                onFail = {
+                                    it.printStackTrace()
+                                    ToastUtils.showToast(mContext, "选择失败")
+                                }
                             }
                         }
                     }
@@ -102,8 +105,6 @@ class FormUsersAdapter(
             }
         }
     }
-
-    override fun onItemLongClick(view: View, position: Int, obj: Any?) {}
 
     fun setLimit(chose: Int, limitMin: Int?, limitMax: Int?) {
         this.chose = chose

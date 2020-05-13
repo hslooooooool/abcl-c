@@ -7,7 +7,7 @@ import kotlinx.android.synthetic.main.app_form_users_item.view.*
 import qsos.app.demo.R
 import qsos.core.lib.utils.image.ImageLoaderUtils
 import qsos.lib.base.base.holder.BaseHolder
-import qsos.lib.base.callback.OnListItemClickListener
+import qsos.lib.base.callback.OnItemListener
 
 /**
  * @author : 华清松
@@ -15,12 +15,12 @@ import qsos.lib.base.callback.OnListItemClickListener
  */
 class FormChoseUserItemHolder(
         itemView: View,
-        private val itemClick: OnListItemClickListener
+        private val itemClick: OnItemListener<Any?>
 ) : BaseHolder<UserEntity>(itemView) {
 
     private val context: Context = itemView.context
 
-    override fun setData(data: UserEntity, position: Int) {
+    override fun bind(data: UserEntity, position: Int) {
 
         itemView.form_user_name.text = data.userName
         itemView.form_user_desc.text = data.userDesc
@@ -37,7 +37,7 @@ class FormChoseUserItemHolder(
 
         if (!data.limitEdit) {
             itemView.form_user_ll.setOnClickListener {
-                itemClick.onItemClick(it, position, data)
+                itemClick.onClick(it, position, data)
             }
         }
     }

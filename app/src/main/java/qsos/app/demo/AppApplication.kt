@@ -23,10 +23,7 @@ import timber.log.Timber
  * @author : 华清松
  * AppApplication
  */
-open class AppApplication(
-        override var debugARouter: Boolean = true,
-        override var debugTimber: Boolean = true
-) : BaseApplication(), LifecycleOwner {
+open class AppApplication : BaseApplication(true), LifecycleOwner {
     init {
         // 设置全局的Header构建器
         SmartRefreshLayout.setDefaultRefreshHeaderCreator { context, layout ->

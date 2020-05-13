@@ -15,11 +15,11 @@ import com.scwang.smartrefresh.layout.api.RefreshHeader
 import com.scwang.smartrefresh.layout.listener.SimpleMultiPurposeListener
 import kotlinx.android.synthetic.main.app_activity_demo.*
 import kotlinx.android.synthetic.main.app_item_tweet.view.*
-import qsos.app.demo.R
 import qsos.app.demo.AppPath
+import qsos.app.demo.R
 import qsos.core.lib.utils.image.ImageLoaderUtils
 import qsos.lib.base.base.activity.BaseActivity
-import qsos.lib.base.base.adapter.BaseNormalAdapter
+import qsos.lib.base.base.adapter.NormalAdapter
 import qsos.lib.base.base.holder.BaseHolder
 import qsos.lib.base.utils.BaseUtils
 import qsos.lib.base.utils.ToastUtils
@@ -31,13 +31,10 @@ import kotlin.math.min
  * 朋友圈界面
  */
 @Route(group = AppPath.GROUP, path = AppPath.TWEET)
-class TweetActivity(
-        override val layoutId: Int? = R.layout.app_activity_demo,
-        override val reload: Boolean = false
-) : BaseActivity() {
+class TweetActivity : BaseActivity(R.layout.app_activity_demo, false) {
 
     private lateinit var mTweetModel: TweetModelIml
-    private lateinit var mTweetAdapter: BaseNormalAdapter<EmployeeBeen>
+    private lateinit var mTweetAdapter: NormalAdapter<EmployeeBeen>
     private lateinit var mLinearLayoutManager: LinearLayoutManager
     private val mList = arrayListOf<EmployeeBeen>()
 
@@ -58,7 +55,7 @@ class TweetActivity(
         /**默认Toolbar背景透明*/
         tweet_list_head_tb.setBackgroundColor(0)
 
-        mTweetAdapter = BaseNormalAdapter(R.layout.app_item_tweet, mList,
+        mTweetAdapter = NormalAdapter(R.layout.app_item_tweet, mList,
                 setHolder = { holder, data, _ ->
                     setHolder(holder, data)
                 }
@@ -152,7 +149,7 @@ class TweetActivity(
         getData()
     }
 
-    override fun getData() {
+    override fun getData(loadMore: Boolean) {
 
         mTweetModel.delete(
                 {

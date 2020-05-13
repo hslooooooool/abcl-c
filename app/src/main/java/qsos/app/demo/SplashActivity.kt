@@ -14,17 +14,14 @@ import qsos.core.form.data.FormRepository
 import qsos.core.form.db
 import qsos.core.form.db.entity.FormEntity
 import qsos.lib.base.base.activity.BaseActivity
-import qsos.lib.base.base.adapter.BaseNormalAdapter
+import qsos.lib.base.base.adapter.NormalAdapter
 import qsos.lib.base.utils.ActivityManager
 
 /**
  * @author : 华清松
  * 闪屏界面
  */
-class SplashActivity(
-        override val layoutId: Int = R.layout.app_activity_splash,
-        override val reload: Boolean = false
-) : BaseActivity() {
+class SplashActivity : BaseActivity(R.layout.app_activity_splash, false) {
 
     private val mList = arrayListOf("朋友圈", "表单", "表单2")
     private lateinit var mFormRepository: FormRepository
@@ -38,7 +35,7 @@ class SplashActivity(
         ActivityManager.finishAllButNotMe(this)
 
         splash_rv.layoutManager = GridLayoutManager(this, 3)
-        splash_rv.adapter = BaseNormalAdapter(R.layout.app_item_component, mList, setHolder = { holder, data, _ ->
+        splash_rv.adapter = NormalAdapter(R.layout.app_item_component, mList, setHolder = { holder, data, _ ->
             holder.itemView.tv_item_component.text = data
             holder.itemView.tv_item_component.setOnClickListener {
                 when (data) {
@@ -75,5 +72,6 @@ class SplashActivity(
         splash_rv.adapter?.notifyDataSetChanged()
     }
 
-    override fun getData() {}
+    override fun getData(loadMore: Boolean) {}
+
 }

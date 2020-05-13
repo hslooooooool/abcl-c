@@ -12,7 +12,10 @@ import qsos.lib.base.base.fragment.BaseFragment
  * @author : 华清松
  * 表单界面Fragment
  */
-abstract class AbsFormFragment : BaseFragment(), IDisposable {
+abstract class AbsFormFragment(
+        layoutId: Int?,
+        reload: Boolean = false
+) : BaseFragment(layoutId, reload), IDisposable {
     override var mCompositeDisposable: CompositeDisposable? = CompositeDisposable()
     val mJob = Dispatchers.Main + Job()
 

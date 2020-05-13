@@ -11,7 +11,10 @@ import qsos.lib.base.base.activity.BaseActivity
  * @author : 华清松
  * AbsDisposeActivity
  */
-abstract class AbsDisposeActivity : BaseActivity(), IDisposable {
+abstract class AbsDisposeActivity(
+        layoutId: Int?,
+        reload: Boolean = false
+) : BaseActivity(layoutId, reload), IDisposable {
     override var mCompositeDisposable: CompositeDisposable? = CompositeDisposable()
     val mJob = Dispatchers.Main + Job()
 

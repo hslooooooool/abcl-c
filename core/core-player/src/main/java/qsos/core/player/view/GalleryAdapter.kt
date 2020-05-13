@@ -18,14 +18,10 @@ class GalleryAdapter(mList: ArrayList<PreImageEntity>) : BaseAdapter<PreImageEnt
     override fun getHolder(view: View, viewType: Int): BaseHolder<PreImageEntity> = GalleryHolder(view)
 
     override fun getLayoutId(viewType: Int): Int = R.layout.item_gallery_image
-
-    override fun onItemClick(view: View, position: Int, obj: Any?) {}
-
-    override fun onItemLongClick(view: View, position: Int, obj: Any?) {}
 }
 
 class GalleryHolder(itemView: View) : BaseHolder<PreImageEntity>(itemView) {
-    override fun setData(data: PreImageEntity, position: Int) {
+    override fun bind(data: PreImageEntity, position: Int) {
         itemView.item_gallery_image.setTag(itemView.item_gallery_image.id, data.path)
         val tag = itemView.item_gallery_image.getTag(itemView.item_gallery_image.id) as String
         if (tag == data.path) {

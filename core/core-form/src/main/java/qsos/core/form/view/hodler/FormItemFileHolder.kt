@@ -8,7 +8,7 @@ import qsos.core.form.db.entity.FormItem
 import qsos.core.form.db.entity.FormValueOfFile
 import qsos.core.form.view.adapter.FormFileAdapter
 import qsos.lib.base.base.holder.BaseHolder
-import qsos.lib.base.callback.OnListItemClickListener
+import qsos.lib.base.callback.OnItemListener
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -18,10 +18,10 @@ import kotlin.coroutines.CoroutineContext
 class FormItemFileHolder(
         itemView: View,
         private val mJob: CoroutineContext,
-        private val itemClick: OnListItemClickListener
+        private val itemClick: OnItemListener<Any?>
 ) : BaseHolder<FormItem>(itemView) {
 
-    override fun setData(data: FormItem, position: Int) {
+    override fun bind(data: FormItem, position: Int) {
         itemView.form_item_title.text = data.title
 
         data.formItemValue!!.limitTypeList?.forEach {
@@ -50,22 +50,22 @@ class FormItemFileHolder(
         }
 
         itemView.form_item_title.setOnClickListener {
-            itemClick.onItemClick(it, position, data)
+            itemClick.onClick(it, position, data)
         }
         itemView.form_item_file_take_camera.setOnClickListener {
-            itemClick.onItemClick(it, position, data)
+            itemClick.onClick(it, position, data)
         }
         itemView.form_item_file_take_album.setOnClickListener {
-            itemClick.onItemClick(it, position, data)
+            itemClick.onClick(it, position, data)
         }
         itemView.form_item_file_take_video.setOnClickListener {
-            itemClick.onItemClick(it, position, data)
+            itemClick.onClick(it, position, data)
         }
         itemView.form_item_file_take_audio.setOnClickListener {
-            itemClick.onItemClick(it, position, data)
+            itemClick.onClick(it, position, data)
         }
         itemView.form_item_file_take_file.setOnClickListener {
-            itemClick.onItemClick(it, position, data)
+            itemClick.onClick(it, position, data)
         }
     }
 

@@ -15,10 +15,8 @@ import qsos.lib.base.base.fragment.BaseFragment
  */
 class GalleryFragment(
         private val mPosition: Int = 0,
-        private val mImageList: ArrayList<PreImageEntity> = arrayListOf(),
-        override val layoutId: Int = R.layout.fragment_gallery_image,
-        override val reload: Boolean = false
-) : BaseFragment() {
+        private val mImageList: ArrayList<PreImageEntity> = arrayListOf()
+) : BaseFragment(R.layout.fragment_gallery_image) {
 
     override fun initData(savedInstanceState: Bundle?) {}
 
@@ -36,5 +34,6 @@ class GalleryFragment(
         gallery_image_rv.scrollToPosition(mPosition)
     }
 
-    override fun getData() {}
+    override fun getData(loadMore: Boolean) {}
+
 }

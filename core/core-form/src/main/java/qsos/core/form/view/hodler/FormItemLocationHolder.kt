@@ -5,7 +5,7 @@ import kotlinx.android.synthetic.main.form_item_location.view.*
 import kotlinx.android.synthetic.main.form_normal_title.view.*
 import qsos.core.form.db.entity.FormItem
 import qsos.lib.base.base.holder.BaseHolder
-import qsos.lib.base.callback.OnListItemClickListener
+import qsos.lib.base.callback.OnItemListener
 
 /**
  * @author : 华清松
@@ -13,19 +13,19 @@ import qsos.lib.base.callback.OnListItemClickListener
  */
 class FormItemLocationHolder(
         itemView: View,
-        private val itemClick: OnListItemClickListener
+        private val itemClick: OnItemListener<Any?>
 ) : BaseHolder<FormItem>(itemView) {
 
-    override fun setData(data: FormItem, position: Int) {
+    override fun bind(data: FormItem, position: Int) {
 
         itemView.form_item_title.text = data.title
         itemView.item_form_location.text = data.formItemValue!!.value?.location?.locName ?: ""
 
         itemView.form_item_title.setOnClickListener {
-            itemClick.onItemClick(it, position, data)
+            itemClick.onClick(it, position, data)
         }
         itemView.item_form_location.setOnClickListener {
-            itemClick.onItemClick(it, position, data)
+            itemClick.onClick(it, position, data)
         }
 
     }

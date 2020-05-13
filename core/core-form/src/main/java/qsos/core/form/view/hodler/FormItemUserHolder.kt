@@ -14,9 +14,9 @@ import qsos.core.form.db.entity.Value
 import qsos.core.form.dbComplete
 import qsos.core.form.utils.FormConfigHelper
 import qsos.core.lib.utils.image.ImageLoaderUtils
-import qsos.lib.base.base.adapter.BaseNormalAdapter
+import qsos.lib.base.base.adapter.NormalAdapter
 import qsos.lib.base.base.holder.BaseHolder
-import qsos.lib.base.callback.OnListItemClickListener
+import qsos.lib.base.callback.OnItemListener
 import qsos.lib.base.utils.ToastUtils
 import kotlin.coroutines.CoroutineContext
 
@@ -28,10 +28,10 @@ import kotlin.coroutines.CoroutineContext
 class FormItemUserHolder(
         itemView: View,
         private val mJob: CoroutineContext,
-        private val itemClick: OnListItemClickListener
+        private val itemClick: OnItemListener<Any?>
 ) : BaseHolder<FormItem>(itemView) {
 
-    override fun setData(data: FormItem, position: Int) {
+    override fun bind(data: FormItem, position: Int) {
         val values: ArrayList<Value> = data.formItemValue?.values!!
 
         itemView.form_item_title.text = "${data.title}"
@@ -39,7 +39,7 @@ class FormItemUserHolder(
 
         if (itemView.item_form_users_rv.layoutManager == null) {
             itemView.item_form_users_rv.layoutManager = GridLayoutManager(itemView.context, 4)
-            itemView.item_form_users_rv.adapter = BaseNormalAdapter(R.layout.form_item_user_item, values,
+            itemView.item_form_users_rv.adapter = NormalAdapter(R.layout.form_item_user_item, values,
                     setHolder = { holder, value, p ->
                         val user = value.user!!
                         ImageLoaderUtils.display(holder.itemView.context, holder.itemView.item_form_user_icon, user.userAvatar)
@@ -67,10 +67,10 @@ class FormItemUserHolder(
         }
 
         itemView.form_item_title.setOnClickListener {
-            itemClick.onItemClick(it, position, data)
+            itemClick.onClick(it, position, data)
         }
         itemView.item_form_users_size.setOnClickListener {
-            itemClick.onItemClick(it, position, data)
+            itemClick.onClick(it, position, data)
         }
     }
 

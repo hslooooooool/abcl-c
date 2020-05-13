@@ -25,21 +25,25 @@ import qsos.lib.base.utils.ToastUtils
  * 表单界面Fragment
  */
 @SuppressLint("CheckResult")
-class FormFragment(
-        var formId: Long? = -1L,
-        override val layoutId: Int? = R.layout.form_main,
-        override val reload: Boolean = false
-) : AbsFormFragment() {
+class FormFragment : AbsFormFragment(R.layout.form_main, false) {
+
+    private var formId: Long? = -1L
+
     /**表单列表项容器*/
     private lateinit var mAdapter: FormAdapter
+
     /**表单列表项*/
     private val mFormList = arrayListOf<FormItem>()
+
     /**表单对象*/
     private var mForm: FormEntity? = null
+
     /**表单数据实现类*/
     private val mModel: IFormModel = FormModelIml()
 
-    override fun initData(savedInstanceState: Bundle?) {}
+    override fun initData(savedInstanceState: Bundle?) {
+        formId = arguments?.getLong("formId")
+    }
 
     override fun initView(view: View) {
         if (formId == null || formId == -1L) {
@@ -72,7 +76,7 @@ class FormFragment(
         getData()
     }
 
-    override fun getData() {
+    override fun getData(loadMore: Boolean) {
         CoroutineScope(mJob).db<FormEntity> {
             db = { mModel.getForm(formId!!) }
             onSuccess = {

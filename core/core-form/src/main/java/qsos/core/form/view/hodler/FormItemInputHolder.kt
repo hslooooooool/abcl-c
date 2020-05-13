@@ -13,7 +13,7 @@ import qsos.core.form.db
 import qsos.core.form.db.FormDatabase
 import qsos.core.form.db.entity.FormItem
 import qsos.lib.base.base.holder.BaseHolder
-import qsos.lib.base.callback.OnListItemClickListener
+import qsos.lib.base.callback.OnItemListener
 import timber.log.Timber
 
 /**
@@ -22,11 +22,11 @@ import timber.log.Timber
  */
 class FormItemInputHolder(
         itemView: View,
-        private val itemClick: OnListItemClickListener
+        private val itemClick: OnItemListener<Any?>
 ) : BaseHolder<FormItem>(itemView) {
     private val mJob = Job()
 
-    override fun setData(data: FormItem, position: Int) {
+    override fun bind(data: FormItem, position: Int) {
 
         itemView.form_item_title.text = data.title
 
@@ -64,7 +64,7 @@ class FormItemInputHolder(
         })
 
         itemView.form_item_title.setOnClickListener {
-            itemClick.onItemClick(it, position, data)
+            itemClick.onClick(it, position, data)
         }
     }
 

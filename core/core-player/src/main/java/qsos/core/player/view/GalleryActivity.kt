@@ -16,10 +16,7 @@ import qsos.lib.base.base.activity.BaseActivity
  * 画廊界面
  */
 @Route(group = PlayerPath.GROUP, path = PlayerPath.GALLERY)
-class GalleryActivity(
-        override val layoutId: Int = R.layout.activity_gallery,
-        override val reload: Boolean = false
-) : BaseActivity() {
+class GalleryActivity : BaseActivity(R.layout.activity_gallery, false) {
 
     @Autowired(name = PlayerPath.GALLERY_DATA)
     @JvmField
@@ -29,10 +26,10 @@ class GalleryActivity(
     private var mImageList: ArrayList<PreImageEntity>? = null
 
     override fun initData(savedInstanceState: Bundle?) {
-        try {
-            mFile = Gson().fromJson(mData, object : TypeToken<PreFileEntity<PreImageEntity>>() {}.type)
+        mFile = try {
+            Gson().fromJson(mData, object : TypeToken<PreFileEntity<PreImageEntity>>() {}.type)
         } catch (e: Exception) {
-            mFile = null
+            null
         }
     }
 
@@ -43,7 +40,9 @@ class GalleryActivity(
         supportFragmentManager.beginTransaction().add(R.id.gallery_frg, GalleryFragment(mFile!!.position, mImageList!!), "GalleryFragment").commit()
     }
 
-    override fun getData() {}
+    override fun getData(loadMore: Boolean) {
+
+    }
 
     override fun finish() {
         super.finish()

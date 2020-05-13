@@ -23,10 +23,9 @@ import qsos.lib.base.utils.ToastUtils
  */
 @Route(group = FormPath.FORM, path = FormPath.MAIN)
 class FormActivity(
-        @JvmField @Autowired(name = FormPath.FORM_ID) var formId: Long? = -1L,
-        override val layoutId: Int = R.layout.form_activity_demo,
-        override val reload: Boolean = true
-) : AbsDisposeActivity() {
+        @JvmField @Autowired(name = FormPath.FORM_ID) var formId: Long? = -1L
+) : AbsDisposeActivity(R.layout.form_activity_demo, true) {
+
     private lateinit var mFormFragment: FormFragment
 
     override fun initData(savedInstanceState: Bundle?) {}
@@ -41,8 +40,11 @@ class FormActivity(
                 if (formId == null || formId == -1L) {
                     finish()
                 }
-                mFormFragment = FormFragment(formId)
-                supportFragmentManager.beginTransaction().add(R.id.form_demo_frg, FormFragment(formId), "$formId").commit()
+                mFormFragment = FormFragment()
+                val mBundle = Bundle()
+                mBundle.putLong("formId", formId!!)
+                mFormFragment.arguments = mBundle
+                supportFragmentManager.beginTransaction().add(R.id.form_demo_frg, mFormFragment, "$formId").commit()
             } else {
                 ToastUtils.showToastLong(mContext, "权限开启失败，无法使用此功能")
             }
@@ -53,7 +55,7 @@ class FormActivity(
         }
     }
 
-    override fun getData() {}
+    override fun getData(loadMore: Boolean) {}
 
     override fun onBackPressed() {
         CoroutineScope(Dispatchers.Main).dbComplete {

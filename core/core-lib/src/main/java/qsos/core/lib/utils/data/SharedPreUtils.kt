@@ -14,7 +14,7 @@ object SharedPreUtils {
     private const val SHARED_PRE = "QSOS_SHARED_PRE"
 
     private val mShared: SharedPreferences = BaseApplication.appContext.getSharedPreferences(SHARED_PRE, Context.MODE_PRIVATE)
-    @SuppressWarnings
+
     val mEdit = mShared.edit()
 
     /**保存数据
@@ -52,5 +52,32 @@ object SharedPreUtils {
 
     fun clear(context: Context?) {
         mShared.edit().clear().apply()
+    }
+
+    fun <T> getValue(key: String, default: T): T {
+        val value = when (default) {
+            is String -> {
+                mShared.getString(key, default)
+            }
+            is Boolean -> {
+                mShared.getBoolean(key, default)
+            }
+            is Long -> {
+                mShared.getLong(key, default)
+            }
+            is Int -> {
+                mShared.getInt(key, default)
+            }
+            is Float -> {
+                mShared.getFloat(key, default)
+            }
+            is Set<*> -> {
+                mShared.getStringSet(key, default as Set<String>)
+            }
+            else -> {
+                mShared.getString(key, Gson().toJson(default))
+            }
+        }
+        return value as T
     }
 }

@@ -33,10 +33,7 @@ import qsos.lib.base.utils.BaseUtils
  */
 @SuppressLint("SetTextI18n")
 @Route(group = AppPath.GROUP, path = AppPath.FORM_ITEM_USERS)
-class FormUserChoseActivity(
-        override val layoutId: Int = R.layout.app_form_users,
-        override val reload: Boolean = false
-) : AbsDisposeActivity() {
+class FormUserChoseActivity : AbsDisposeActivity(R.layout.app_form_users, false) {
 
     private val mFormModel: IFormModel = FormModelIml()
 
@@ -50,8 +47,10 @@ class FormUserChoseActivity(
 
     private var mFormItem: FormItem? = null
     private var mAdapter: FormUsersAdapter? = null
+
     /**可选用户列表*/
     private var mList = ArrayList<UserEntity>()
+
     /**已选用户*/
     private var mCheckedUser = ArrayList<Value>()
     private var manager: LinearLayoutManager? = null
@@ -102,7 +101,7 @@ class FormUserChoseActivity(
         initUser()
     }
 
-    override fun getData() {
+    override fun getData(loadMore: Boolean) {
         /**获取可选用户列表数据*/
         formItemId?.let {
             CoroutineScope(mJob).db<List<UserEntity>> {

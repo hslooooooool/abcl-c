@@ -19,6 +19,7 @@ import qsos.core.form.view.widget.dialog.OnDateListener
 import qsos.core.form.view.widget.dialog.Operation
 import qsos.lib.base.base.adapter.BaseAdapter
 import qsos.lib.base.base.holder.BaseHolder
+import qsos.lib.base.callback.OnItemListener
 import qsos.lib.base.callback.OnTListener
 import qsos.lib.base.utils.ToastUtils
 import timber.log.Timber
@@ -33,7 +34,7 @@ import kotlin.coroutines.CoroutineContext
 class FormAdapter(
         formItems: ArrayList<FormItem>,
         private val mJob: CoroutineContext
-) : BaseAdapter<FormItem>(formItems) {
+) : BaseAdapter<FormItem>(formItems), OnItemListener<Any?> {
 
     override fun getHolder(view: View, viewType: Int): BaseHolder<FormItem> {
         when (viewType) {
@@ -71,69 +72,70 @@ class FormAdapter(
 
     override fun getLayoutId(viewType: Int): Int = viewType
 
-    override fun onItemClick(view: View, position: Int, obj: Any?) {
-        if (!data[position].editable) {
-            return
-        }
-        val limitMax = data[position].formItemValue!!.limitMax
-        val valueSize: Int = data[position].formItemValue!!.values?.size ?: 0
-        /**可选数*/
-        var canTakeSize = 0
-        limitMax?.let { canTakeSize = limitMax - valueSize }
-        when (view.id) {
-            /**表单项提示*/
-            R.id.form_item_title -> {
-                data[position].notice?.let { ToastUtils.showToastLong(mContext, it) }
+    override fun onClick(view: View, position: Int, obj: Any?, long: Boolean) {
+        if (!long) {
+            if (!data[position].editable) {
+                return
             }
-            /**选择时间*/
-            R.id.item_form_time -> {
-                chooseTime(view, position)
-            }
-            /**选择人员*/
-            R.id.item_form_users_size -> {
-                FormConfigHelper.takeUser(mContext!!, data[position].id!!, canTakeSize, data[position].formItemValue!!.values!!.map { v -> v.user!! }) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        data[position].formItemValue!!.values!!.removeIf { v -> !v.limitEdit }
-                    } else {
-                        val tempList = arrayListOf<Value>()
-                        data[position].formItemValue!!.values!!.forEach { v ->
-                            if (v.limitEdit) tempList.add(v.copy())
+            val limitMax = data[position].formItemValue!!.limitMax
+            val valueSize: Int = data[position].formItemValue!!.values?.size ?: 0
+
+            /**可选数*/
+            var canTakeSize = 0
+            limitMax?.let { canTakeSize = limitMax - valueSize }
+            when (view.id) {
+                /**表单项提示*/
+                R.id.form_item_title -> {
+                    data[position].notice?.let { ToastUtils.showToastLong(mContext, it) }
+                }
+                /**选择时间*/
+                R.id.item_form_time -> {
+                    chooseTime(view, position)
+                }
+                /**选择人员*/
+                R.id.item_form_users_size -> {
+                    FormConfigHelper.takeUser(mContext!!, data[position].id!!, canTakeSize, data[position].formItemValue!!.values!!.map { v -> v.user!! }) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            data[position].formItemValue!!.values!!.removeIf { v -> !v.limitEdit }
+                        } else {
+                            val tempList = arrayListOf<Value>()
+                            data[position].formItemValue!!.values!!.forEach { v ->
+                                if (v.limitEdit) tempList.add(v.copy())
+                            }
+                            data[position].formItemValue!!.values!!.clear()
+                            data[position].formItemValue!!.values!!.addAll(tempList)
                         }
-                        data[position].formItemValue!!.values!!.clear()
-                        data[position].formItemValue!!.values!!.addAll(tempList)
+                        it.forEachIndexed { index, user ->
+                            val v = Value(formItemId = data[position].id, position = index)
+                            v.user = user
+                            data[position].formItemValue!!.values!!.add(v)
+                        }
+                        overFormItemValueByPosition(position)
                     }
-                    it.forEachIndexed { index, user ->
-                        val v = Value(formItemId = data[position].id, position = index)
-                        v.user = user
-                        data[position].formItemValue!!.values!!.add(v)
+                }
+                /**选择选项*/
+                R.id.form_item_check -> {
+                    chooseCheck(position)
+                }
+                /**选择附件*/
+                R.id.form_item_file_take_camera, R.id.form_item_file_take_album,
+                R.id.form_item_file_take_video, R.id.form_item_file_take_audio,
+                R.id.form_item_file_take_file -> {
+                    takeFile(canTakeSize, view, position)
+                }
+                /**选择位置*/
+                R.id.item_form_location -> {
+                    FormConfigHelper.takeLocation(mContext!!, data[position].id!!, data[position].formItemValue?.value?.location) {
+                        Timber.tag("表单位置获取结果").i(Gson().toJson(it))
+                        data[position].formItemValue!!.value!!.location = it
+                        updateFormItemValueByPosition(position)
                     }
-                    overFormItemValueByPosition(position)
                 }
-            }
-            /**选择选项*/
-            R.id.form_item_check -> {
-                chooseCheck(position)
-            }
-            /**选择附件*/
-            R.id.form_item_file_take_camera, R.id.form_item_file_take_album,
-            R.id.form_item_file_take_video, R.id.form_item_file_take_audio,
-            R.id.form_item_file_take_file -> {
-                takeFile(canTakeSize, view, position)
-            }
-            /**选择位置*/
-            R.id.item_form_location -> {
-                FormConfigHelper.takeLocation(mContext!!, data[position].id!!, data[position].formItemValue?.value?.location) {
-                    Timber.tag("表单位置获取结果").i(Gson().toJson(it))
-                    data[position].formItemValue!!.value!!.location = it
-                    updateFormItemValueByPosition(position)
+                else -> {
                 }
-            }
-            else -> {
             }
         }
     }
-
-    override fun onItemLongClick(view: View, position: Int, obj: Any?) {}
 
     /**时间选择*/
     private fun chooseTime(view: View, position: Int) {

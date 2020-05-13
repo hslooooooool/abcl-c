@@ -8,7 +8,7 @@ import qsos.core.form.db.entity.FormValueOfFile
 import qsos.core.form.db.entity.Value
 import qsos.core.lib.utils.image.ImageLoaderUtils
 import qsos.lib.base.base.holder.BaseHolder
-import qsos.lib.base.callback.OnListItemClickListener
+import qsos.lib.base.callback.OnItemListener
 
 /**
  * @author : 华清松
@@ -16,10 +16,10 @@ import qsos.lib.base.callback.OnListItemClickListener
  */
 class FormItemFileItemHolder(
         itemView: View,
-        private val itemClick: OnListItemClickListener
+        private val itemClick: OnItemListener<Any?>
 ) : BaseHolder<Value>(itemView) {
 
-    override fun setData(data: Value, position: Int) {
+    override fun bind(data: Value, position: Int) {
         data.file!!.fileCover?.let {
             itemView.iv_item_form_file_icon.setTag(itemView.iv_item_form_file_icon.id, data.file!!.fileCover)
         }
@@ -56,10 +56,10 @@ class FormItemFileItemHolder(
         itemView.tv_item_form_file_name.text = data.file!!.fileName
 
         itemView.iv_item_form_file_icon.setOnClickListener {
-            itemClick.onItemClick(it, position, data)
+            itemClick.onClick(it, position, data)
         }
         itemView.iv_item_form_file_delete.setOnClickListener {
-            itemClick.onItemClick(it, position, data)
+            itemClick.onClick(it, position, data)
         }
     }
 }
