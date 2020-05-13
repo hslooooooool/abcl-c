@@ -15,3 +15,4 @@ include ':core:core-netservice'
 include ':core:core-exception'
 // 基础依赖集合
 include ':core:core-lib'
+include ':demo:netservice'

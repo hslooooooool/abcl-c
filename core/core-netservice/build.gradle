@@ -3,8 +3,6 @@ apply plugin: 'com.android.library'
 apply from: '../../base.gradle'
 
 dependencies {
-    api project(':core:core-lib')
-
     // retrofit2
     api "com.squareup.retrofit2:retrofit:2.6.1"
     api "com.squareup.retrofit2:converter-gson:2.6.1"
